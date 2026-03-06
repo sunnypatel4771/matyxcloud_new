@@ -1,0 +1,60 @@
+<?php $CI = &get_instance();
+    $CI->load->model('staff_model');
+    $staff = $CI->staff_model->get(); ?>
+   
+
+<div role="tabpanel" class="tab-pane" id="client_custome">
+     <div class="row">
+     <div class="col-md-12">
+
+     <?php
+    //    echo render_select('cam_id', $staff, ['staffid', ['firstname', 'lastname']], 'cam_id', $client->cam_id ?? '', []); 
+       echo render_select('cam_id', $staff, ['staffid', ['firstname', 'lastname']], 'CAM Assigned', $client->cam_id ?? '', []); 
+       ?>
+     </div>
+     <div class="col-md-12">
+
+     <?php  
+    //  echo render_select('optimizer_id', $staff, ['staffid', ['firstname', 'lastname']], 'optimizer_id', $client->optimizer_id ?? '', []); 
+     echo render_select('optimizer_id', $staff, ['staffid', ['firstname', 'lastname']], 'Optimizer Assigned', $client->optimizer_id ?? '', []); 
+     ?>
+     </div>
+     <div class="col-md-12">
+
+     <?php  
+    //  echo render_select('organic_social_id', $staff, ['staffid', ['firstname', 'lastname']], 'organic_social_id',  $client->organic_social_id ?? '', []); 
+     echo render_select('organic_social_id', $staff, ['staffid', ['firstname', 'lastname']], 'Organic Social Lead',  $client->organic_social_id ?? '', []); 
+     ?>
+     </div>
+     <div class="col-md-12">
+
+     <?php  
+     echo render_select('seo_lead_id', $staff, ['staffid', ['firstname',  'lastname']], 'seo_lead_id', $client->seo_lead_id ?? '', []); 
+     ?>
+     </div>
+     <div class="col-md-12">
+
+     <?php  
+    //  echo render_select('sale_rep_id', $staff, ['staffid', ['firstname', 'lastname']], 'sale_rep_id', $client->sale_rep_id ?? '', []); 
+     echo render_select('sale_rep_id', $staff, ['staffid', ['firstname', 'lastname']], 'Sales Rep', $client->sale_rep_id ?? '', []); 
+     ?>
+     </div>
+         <!-- Content -->
+     <div class="col-md-12">
+
+     <?php  
+    //  echo render_select('content_id', $staff, ['staffid', ['firstname', 'lastname']], 'content_id', $client->content_id ?? '', []); 
+     echo render_select('content_id', $staff, ['staffid', ['firstname', 'lastname']], 'Content Lead', $client->content_id ?? '', []); 
+     
+     ?>
+
+     </div>
+     <!-- Web Lead -->
+     <div class="col-md-12">
+
+     <?php  echo render_select('web_lead_id', $staff, ['staffid', ['firstname', 'lastname']], 'web_lead_id', $client->web_lead_id ?? '', []); ?>
+
+     </div>
+    </div>
+
+    </div>
