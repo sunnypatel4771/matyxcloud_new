@@ -547,9 +547,6 @@ class Tasks_model extends App_Model
             unset($data['followers']);
         }
 
-        // echo '<pre>';
-        //  print_r($data);
-        //  die;
         $this->db->insert(db_prefix() . 'tasks', $data);
         $insert_id = $this->db->insert_id();
         if ($insert_id) {

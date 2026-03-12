@@ -16,8 +16,6 @@ class App_table_filter implements JsonSerializable
     public $emptyOperatorValue = null; // or '' // or any
     public $withEmptyOperators = false;
     public $options = [];
-    // public $group = 'Select Group'; // add default group
-
     protected $visibleToAll = true;
 
     protected $commonOperators = [
@@ -196,13 +194,12 @@ class App_table_filter implements JsonSerializable
         return call_user_func($this->visibleToAll);
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize() : array
     {
         return [
             "id" => $this->id,
             "type" => $this->type,
             "label" => $this->label,
-            // "group" => $this->group, // include in json
             "value" => $this->value,
             "has_dynamic_value" => $this->hasDynamicValue,
             "visible_to_all" => $this->checkVisibility(),
@@ -213,10 +210,4 @@ class App_table_filter implements JsonSerializable
             "options" => $this->getOptions(),
         ];
     }
-
-    // public function group($group)
-    // {
-    //     $this->group = $group;
-    //     return $this;
-    // }
 }

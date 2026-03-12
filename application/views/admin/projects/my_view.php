@@ -85,14 +85,14 @@
 
 
                                 ?>
-
-                                <!-- //add chat icon with modal open  -->
-                                <a href="javascript.void(0);" data-toggle="modal" data-target="#project-comment-modal"
+                                
+                                  <!-- //add chat icon with modal open  -->
+                                <a href="javascript:void(0);" data-toggle="modal" data-target="#project-comment-modal"
                                     class="tw-ml-2 tw-text-neutral-500 hover:tw-text-neutral-700">
                                     <i class="fa fa-comment"></i>
                                 </a>
                                 
-                               <?php if (staff_can('edit', 'projects')) { ?>
+                                <?php if (staff_can('edit', 'projects')) { ?>
                                 <div class="tw-ml-2 play_pause_section">
                                     <?php if ($project->status != '4' && $project->status != '5') {
                                         $this->db->where('project_id', $project->id);
@@ -287,8 +287,6 @@
     <!-- /.modal-dialog -->
 </div>
 
-
-
 <div class="modal fade" id="project-comment-modal" tabindex="-1" role="dialog" aria-labelledby="project-comment-modal"
     aria-hidden="true">
     <div class="modal-dialog">
@@ -369,184 +367,6 @@ echo form_hidden('project_percent', $percent);
         }).on('circle-animation-progress', function(event, progress, stepValue) {
             $(this).find('strong.project-percent').html(parseInt(100 * stepValue) + '<i>%</i>');
         });
-
-
-
-
-
-
-
-
-        //set task id on modal open
-        $('#project-comment-modal').on('show.bs.modal', function(event) {
-
-            var project_id = <?php echo $project->id; ?>;
-
-            // //get project comments
-            $.post(admin_url + 'task_customize/get_project_comments', {
-                project_id: project_id
-            }).done(function(response) {
-                var res = JSON.parse(response);
-                if (res.status == true) {
-                    var comments = res.comments;
-                    $('.project-comment-history-body').html(comments);
-                }
-            });
-
-            $('#project_id_comment').val(project_id);
-        });
-
-        //model hidden reset form
-        $('#project-comment-modal').on('hidden.bs.modal', function() {
-            $('#project-comment-form').trigger("reset");
-            $('#project-comment-form button[type="submit"]').prop('disabled', false);
-
-        });
-
-        //project-comment-form submit
-        $('#project-comment-form').submit(function(event) {
-            //save button make disabled
-            $('#project-comment-form button[type="submit"]').prop('disabled', true);
-            event.preventDefault();
-            var form = $(this);
-            var url = form.attr('action');
-            var data = form.serialize();
-            $.post(url, data).done(function(success) {
-                var res = JSON.parse(success);
-                if (res.status == true) {
-                    alert_float('success', res.message);
-                    //reload table
-                    $('#project-comment-modal').modal('hide');
-                } else {
-                    //save button make enabled
-                    $('#project-comment-form button[type="submit"]').prop('disabled', false);
-
-                    alert_float('danger', res.message);
-                }
-            });
-        });
-        
-        $('body').on('click', '.vault-edit-entry', function(e) {
-            e.preventDefault();
-
-            let field = $(this).data('field');
-            let id = $(this).data('entry-id');
-            let rawValue = $(this).data('value') || '';
-
-            // Convert stored HTML <br> tags and entities into readable plain text for editing
-            let cleanValue = $('<div/>').html(rawValue).text()
-                .replace(/<br\s*\/?>/gi, '\n')
-                .replace(/&nbsp;/g, ' ');
-
-            $('#vaultEditField').val(field);
-            $('#vaultEditId').val(id);
-
-            let label = field.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
-            $('#vaultEditModalLabel').text('Edit ' + label);
-
-            let fieldHTML = '';
-
-            if (field === 'description') {
-                // Use textarea for description
-                fieldHTML = `
-        <div class="form-group" app-field-wrapper="${field}">
-          <label for="vaultEditValue" class="control-label">${label}</label>
-          <textarea id="vaultEditValue" name="${field}" class="form-control" rows="4">${cleanValue}</textarea>
-        </div>
-      `;
-            } else {
-                // Use input for simple fields
-                fieldHTML = `
-        <div class="form-group" app-field-wrapper="${field}">
-          <label for="vaultEditValue" class="control-label">${label}</label>
-          <input type="text" id="vaultEditValue" name="${field}" value="${cleanValue}" class="form-control">
-        </div>
-      `;
-            }
-
-            $('#vaultEditFieldContainer').html(fieldHTML);
-            $('#vaultEditModal').modal('show');
-        });
-
-        // Apply and save changes
-        // $('#vaultApplyEdit').on('click', function() {
-        //     let field = $('#vaultEditField').val();
-        //     let id = $('#vaultEditId').val();
-        //     let newValue = $('#vaultEditValue').val();
-
-        //     // Convert plain text newlines into <br> for HTML storage
-        //     let htmlValue = newValue.replace(/\n/g, '<br>');
-
-        //     // Update view immediately
-        //     let entrySelector = '#vaultEntry-' + id + ' .vault-' + field;
-        //     $(entrySelector).html(htmlValue);
-
-        //     // Save to DB (with HTML)
-        //     $.post(admin_url + 'task_customize/update_vault_field', {
-        //         id: id,
-        //         field: field,
-        //         value: htmlValue, // <-- send HTML version
-        //         csrf_token_name: csrfData.token
-        //     }).done(function(response) {
-        //         alert_float('success', 'Updated successfully');
-        //     }).fail(function() {
-        //         alert_float('danger', 'Failed to update');
-        //     });
-
-        //     $('#vaultEditModal').modal('hide');
-        // });
-        $('.panel-collapse.in').prev('.panel-heading').find('.rotate-icon').addClass('rotate');
-
-        // Toggle icon rotation
-        $('.panel-collapse').on('show.bs.collapse', function() {
-            $(this).prev('.panel-heading').find('.rotate-icon').addClass('rotate');
-        }).on('hide.bs.collapse', function() {
-            $(this).prev('.panel-heading').find('.rotate-icon').removeClass('rotate');
-        });
-
-        // Allow clicking anywhere on header to toggle
-        $('.toggle-header').on('click', function() {
-            var target = $(this).data('target');
-            $(target).collapse('toggle');
-        });
-    });
-    
-    var project_id = "<?php echo $project->id ?? ''; ?>";
-
-    $(document).on('blur', '.panel-body input[type="text"]', function() {
-        var field_id = $(this).attr('id');
-        var field_value = $(this).val();
-
-        $.ajax({
-            url: admin_url + 'task_customize/update_project_resource_field',
-            type: "POST",
-            data: {
-                project_id: project_id,
-                field_id: field_id,
-                field_value: field_value
-            },
-            dataType: "json",
-            success: function(response) {
-                console.log(response);
-            },
-            error: function(xhr, status, error) {
-                console.error("❌ AJAX Error:", error);
-            }
-        });
-    });
-
-    $('.search-icon').on('click', function() {
-        var inputVal = $(this).closest('.input-group').find('input').val().trim();
-
-        if (inputVal) {
-            if (!/^https?:\/\//i.test(inputVal)) {
-                inputVal = 'https://' + inputVal;
-            }
-
-            window.open(inputVal, '_blank');
-        } else {
-            alert_float('danger', 'No Url Provided!');
-        }
     });
 
     function project_mark_as_view(status, project_id) {
@@ -576,8 +396,7 @@ echo form_hidden('project_percent', $percent);
         });
     }
 
-
- function toggleProjectTimer(project_id) {
+function toggleProjectTimer(project_id) {
 
         $.post(admin_url + 'task_customize/toggle_project_timer', {
             project_id: project_id
@@ -778,6 +597,111 @@ echo form_hidden('project_percent', $percent);
         var settings = $.extend({}, defaults, options);
         $(selector).comments(settings);
     }
+    
+    //set task id on modal open
+        $('#project-comment-modal').on('show.bs.modal', function(event) {
+
+            var project_id = <?php echo $project->id; ?>;
+
+            // //get project comments
+            $.post(admin_url + 'task_customize/get_project_comments', {
+                project_id: project_id
+            }).done(function(response) {
+                var res = JSON.parse(response);
+                if (res.status == true) {
+                    var comments = res.comments;
+                    $('.project-comment-history-body').html(comments);
+                }
+            });
+
+            $('#project_id_comment').val(project_id);
+        });
+        
+        //model hidden reset form
+        $('#project-comment-modal').on('hidden.bs.modal', function() {
+            $('#project-comment-form').trigger("reset");
+            $('#project-comment-form button[type="submit"]').prop('disabled', false);
+
+        });
+
+        //project-comment-form submit
+        // $('#project-comment-form').submit(function(event) {
+        //     console.log('submit fired');
+        //     //save button make disabled
+        //     $('#project-comment-form button[type="submit"]').prop('disabled', true);
+        //     event.preventDefault();
+        //     var form = $(this);
+        //     var url = form.attr('action');
+        //     var data = form.serialize();
+        //     $.post(url, data).done(function(success) {
+        //         var res = JSON.parse(success);
+        //         if (res.status == true) {
+        //             alert_float('success', res.message);
+        //             //reload table
+        //             $('#project-comment-modal').modal('hide');
+        //         } else {
+        //             //save button make enabled
+        //             $('#project-comment-form button[type="submit"]').prop('disabled', false);
+
+        //             alert_float('danger', res.message);
+        //         }
+        //     });
+        // });
+
+        $('.panel-collapse.in').prev('.panel-heading').find('.rotate-icon').addClass('rotate');
+
+        // Toggle icon rotation
+        $('.panel-collapse').on('show.bs.collapse', function() {
+            $(this).prev('.panel-heading').find('.rotate-icon').addClass('rotate');
+        }).on('hide.bs.collapse', function() {
+            $(this).prev('.panel-heading').find('.rotate-icon').removeClass('rotate');
+        });
+
+        // Allow clicking anywhere on header to toggle
+        $('.toggle-header').on('click', function() {
+            var target = $(this).data('target');
+            $(target).collapse('toggle');
+        });
+    // });
+
+    var project_id = "<?php echo $project->id ?? ''; ?>";
+
+    $(document).on('blur', '.panel-body input[type="text"]', function() {
+        var field_id = $(this).attr('id');
+        var field_value = $(this).val();
+
+        $.ajax({
+            url: admin_url + 'task_customize/update_project_resource_field',
+            type: "POST",
+            data: {
+                project_id: project_id,
+                field_id: field_id,
+                field_value: field_value
+            },
+            dataType: "json",
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                console.error("❌ AJAX Error:", error);
+            }
+        });
+    });
+
+    $('.search-icon').on('click', function() {
+        var inputVal = $(this).closest('.input-group').find('input').val().trim();
+
+        if (inputVal) {
+            if (!/^https?:\/\//i.test(inputVal)) {
+                inputVal = 'https://' + inputVal;
+            }
+
+            window.open(inputVal, '_blank');
+        } else {
+            alert_float('danger', 'No Url Provided!');
+        }
+    });
+
 </script>
 </body>
 

@@ -359,33 +359,8 @@ init_head(); ?>
             }
         });
     }
-
-    function project_change_custom_notes_field_value(project_id, custom_field_id, value) {
-        url = admin_url + 'task_customize/project_change_custom_notes_field_value/' + project_id + '/' + custom_field_id;
-        $("body").append('<div class="dt-loader"></div>');
-
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: {
-                value: value
-            },
-            success: function(response) {
-                var response = JSON.parse(response);
-                if (response.success) {
-                    $("body").find(".dt-loader").remove();
-                    $('#projects').DataTable().ajax.reload();
-                    $('#project_status_note').modal('hide');
-                } else {
-                    $("body").find(".dt-loader").remove();
-                    alert(response.message);
-                    $('#project_status_note').modal('hide');
-                }
-            }
-        });
-    }
-
-    $(document).on("change", ".cam_meeting_date", function() {
+    
+     $(document).on("change", ".cam_meeting_date", function() {
         var project_id = $(this).data("project_id");
         var value = $(this).val();
         // var custom_field_id = 51;

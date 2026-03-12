@@ -1,3 +1,13 @@
 /vendor/
 application/logs/
 node_modules/
+uploads/
+modules/project_templates/
+modules/google_drive/
+modules/google_workspace/
+media/
+info.php
+readme.php
+.user.ini
+_install_.zip
+_install_/

@@ -1,8 +1,8 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 
-<?php init_head(); ?>
+<?php init_head();?>
 
-<div id="wrapper">
+<div id="wrapper" >
 
     <div class="content">
 
@@ -20,7 +20,7 @@
                         <?php echo _l('task_manage_group_new'); ?>
 
                     </a>
-
+                    
                     <a href="<?php echo admin_url('wiki/articles/show/133'); ?>" 
                     target="_blank" 
                     class="ml-2" style="margin-left: 5px;">
@@ -49,9 +49,9 @@
                             <table class="table table_task_manage">
                                 <thead>
                                     <th>#</th>
-                                    <th><?php echo _l('task_manage_group_name') ?></th>
-                                    <th><?php echo _l('task_manage_date') ?></th>
-                                    <th><?php echo _l('task_manage_status') ?></th>
+                                    <th><?php echo _l('task_manage_group_name')?></th>
+                                    <th><?php echo _l('task_manage_date')?></th>
+                                    <th><?php echo _l('task_manage_status')?></th>
                                 </thead>
                                 <tbody>
 
@@ -87,13 +87,13 @@
 
                 <h4 class="modal-title" id="myModalLabel">
 
-                    <span class="edit-title"> <?php echo _l('task_manage_model_title') ?> </span>
+                    <span class="edit-title"> <?php echo _l('task_manage_model_title')?> </span>
 
                 </h4>
 
             </div>
 
-            <?php echo form_open('task_manage/manage/group_save', ['id' => 'form_task_manage']); ?>
+            <?php echo form_open('task_manage/manage/group_save', [ 'id' => 'form_task_manage' ]); ?>
 
             <input type="hidden" name="group_id" id="group_id">
 
@@ -103,7 +103,7 @@
 
                     <div class="col-md-12">
 
-                        <?php echo render_input('group_name', _l('task_manage_group_name'), '', 'input', ['required' => true]); ?>
+                        <?php echo render_input('group_name', _l('task_manage_group_name') , '' , 'input' , [ 'required' => true ] ); ?>
 
                     </div>
 
@@ -130,12 +130,14 @@
 <?php init_tail(); ?>
 
 <script>
+
+
     (function($) {
         "use strict";
 
         $(function() {
 
-            initDataTable('.table_task_manage', admin_url + 'task_manage/manage/lists', false, false);
+            initDataTable('.table_task_manage', admin_url + 'task_manage/manage/lists', false, false );
 
         });
 
@@ -143,19 +145,19 @@
     })(jQuery);
 
 
-    function task_manage_model(task_group_id = 0) {
+    function task_manage_model( task_group_id = 0 )
+    {
 
         $('#group_name').val('');
 
         $('#group_id').val(0);
 
-        $.post(admin_url + "task_manage/manage/group_detail", {
-            group_id: task_group_id
-        }).done(function(response) {
+        $.post(admin_url+"task_manage/manage/group_detail" , { group_id : task_group_id } ).done(function ( response ){
 
-            response = JSON.parse(response);
+            response = JSON.parse( response );
 
-            if (response.detail) {
+            if( response.detail )
+            {
 
                 $('#group_name').val(response.detail.group_name);
 
@@ -170,6 +172,7 @@
 
 
     }
+
 </script>
 
 

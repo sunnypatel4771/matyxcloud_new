@@ -45,6 +45,7 @@ return App_table::find('projects')
         }
 
         $custom_fields = get_table_custom_fields('projects');
+      
 
         foreach ($custom_fields as $key => $field) {
             $selectAs = (is_cf_date($field) ? 'date_picker_cvalue_' . $key : 'cvalue_' . $key);
@@ -57,7 +58,7 @@ return App_table::find('projects')
             array_push($aColumns, 'ctable_' . $key . '.value as ' . $selectAs);
             array_push($join, 'LEFT JOIN ' . db_prefix() . 'customfieldsvalues as ctable_' . $key . ' ON ' . db_prefix() . 'projects.id = ctable_' . $key . '.relid AND ctable_' . $key . '.fieldto="' . $field['fieldto'] . '" AND ctable_' . $key . '.fieldid=' . $field['id']);
         }
-
+        
         $custom_view_type = $this->ci->input->post('custom_view_type');
         $filters = $this->ci->input->post('filters');
 
@@ -170,9 +171,10 @@ return App_table::find('projects')
 
             $row[] = e(_d($aRow['deadline']));
 
-
+            
 
             $membersOutput = '<div class="tw-flex -tw-space-x-1">';
+            
             $exportMembers = '';
             if ($aRow['members'] != '') {
                 $members       = explode(',', $aRow['members']);
@@ -227,13 +229,13 @@ return App_table::find('projects')
 
             // $status = get_project_status_by_id($aRow['status']);
             // $row[]  = '<span class="label project-status-' . $aRow['status'] . '" style="color:' . $status['color'] . ';border:1px solid ' . adjust_hex_brightness($status['color'], 0.4) . ';background: ' . adjust_hex_brightness($status['color'], 0.04) . ';">' . e($status['name']) . '</span>';
-
+           
             // Custom fields add values
             foreach ($customFieldsColumns as $customFieldColumn) {
-
+             
 
                 if ($customFieldColumn['id'] == PROJECT_SERVICES_INCLUDED && staff_can('edit',  'projects')) {
-
+               
                     $options = explode(',', $customFieldColumn['options']);
                     $select_options = [];
                     foreach ($options as $option) {
@@ -241,16 +243,18 @@ return App_table::find('projects')
                         $select_options[] = ['id' => $option, 'name' => $option];
                     }
 
-                    if ($aRow[$customFieldColumn['name']] != '') {
+                    if($aRow[$customFieldColumn['name']] != ''){
                         $selected = array_map('trim', explode(',', $aRow[$customFieldColumn['name']]));
                     } else {
                         $selected = [];
                     }
+               
+           
+                    $row[] = render_select('service_include', $select_options, ['id', 'name'], '', $selected, ['multiple' => true, 'data-width' => '100%', 'onchange' => 'project_change_custom_field_value_multiselect(' . $aRow['id'] . ',' . $customFieldColumn['id'] . ',$(this).val())'],['style'=>'width:200px;'],'custom-field-select');
 
-
-                    $row[] = render_select('service_include', $select_options, ['id', 'name'], '', $selected, ['multiple' => true, 'data-width' => '100%', 'onchange' => 'project_change_custom_field_value_multiselect(' . $aRow['id'] . ',' . $customFieldColumn['id'] . ',$(this).val())'], ['style' => 'width:200px;'], 'custom-field-select') . '<span class="hide">'.e(implode(',', $selected)).'</span>';
-                } else if ($customFieldColumn['id'] == PROJECT_PRIORITY) {
-
+                 
+                    } else if ($customFieldColumn['id'] == PROJECT_PRIORITY) {
+               
                     $outputCustomPriority = '<div class="dropdown inline-block table-export-exclude">';
                     $outputCustomPriority .= '<a href="#" class="dropdown-toggle tw-flex tw-items-center tw-gap-1 tw-flex-nowrap hover:tw-opacity-80 tw-align-middle" id="tableCustomPriority-' . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
                     $outputCustomPriority .= e($aRow[$customFieldColumn['name']] ?? 'Please Select');
@@ -264,7 +268,7 @@ return App_table::find('projects')
                         // '' space add - 
                         if (strpos($option, ' ') !== false) {
                             $value = str_replace(' ', '-', $option);
-                        } else {
+                        }else{
                             $value = $option;
                         }
 
@@ -277,8 +281,10 @@ return App_table::find('projects')
                     }
                     $outputCustomPriority .= '</ul>';
                     $outputCustomPriority .= '</div>';
+                    // $row[] = $outputCustomPriority;
                     $row[] = $outputCustomPriority . '<span class="hide">' . e($aRow[$customFieldColumn['name']]) . '</span>';
-                } else if ($customFieldColumn['id'] == PROJECT_PRIORITY_2 && staff_can('edit',  'projects')) {
+
+                }else if ($customFieldColumn['id'] == PROJECT_PRIORITY_2 && staff_can('edit',  'projects')) {
                     $outputCustomPriority = '<div class="dropdown inline-block table-export-exclude">';
                     $outputCustomPriority .= '<a href="#" class="dropdown-toggle tw-flex tw-items-center tw-gap-1 tw-flex-nowrap hover:tw-opacity-80 tw-align-middle" id="tableCustomPriority-' . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
                     $outputCustomPriority .= e($aRow[$customFieldColumn['name']] ?? 'Please Select');
@@ -292,7 +298,7 @@ return App_table::find('projects')
                         // '' space add - 
                         if (strpos($option, ' ') !== false) {
                             $value = str_replace(' ', '-', $option);
-                        } else {
+                        }else{
                             $value = $option;
                         }
                         $outputCustomPriority .= '<li>
@@ -303,21 +309,18 @@ return App_table::find('projects')
                     }
                     $outputCustomPriority .= '</ul>';
                     $outputCustomPriority .= '</div>';
+                    // $row[] = $outputCustomPriority;
                     $row[] = $outputCustomPriority . '<span class="hide">' . e($aRow[$customFieldColumn['name']]) . '</span>';
-                } else if ($customFieldColumn['id'] == PROJECT_STATUS_NOTE && staff_can('edit',  'projects')) {
-                    //make text area  when typing save in database
+                }else if ($customFieldColumn['id'] == PROJECT_STATUS_NOTE && staff_can('edit',  'projects')) {
+                     //make text area  when typing save in database
                     /* <textarea class="form-control status_notes" rows="3"  data-custom-field-id="' . $customFieldColumn['id'] . '" data-project-id="' . $aRow['id'] . '">' . $aRow[$customFieldColumn['name']] . '</textarea> */
-                    //  $row[] = '<a href="javascript:void(0);" class="project_status_note" data-custom-field-id="' . $customFieldColumn['id'] . '" data-custom-field-value="' . $aRow[$customFieldColumn['name']] . '" data-project-id="' . $aRow['id'] . '" ><i class="fa fa-comment"></i></a>';
-                    $row[] = '<a href="javascript:void(0);" 
-                    class="tw-ml-2 tw-text-neutral-500 hover:tw-text-neutral-700 project_status_note" data-custom-field-id="' . $customFieldColumn['id'] . '" data-custom-field-value="' . $aRow[$customFieldColumn['name']] . '" data-project-id="' . $aRow['id'] . '">
-                    <i class="fa fa-comment"></i>
-                </a>'. '<span class="hide">' . e($aRow[$customFieldColumn['name']]) . '</span>';
-                } else if ($customFieldColumn['id'] == PROJECT_LAUNCH_ETA && staff_can('edit',  'projects')) {
+                     $row[] = '<a href="javascript:void(0);" class="project_status_note" data-custom-field-id="' . $customFieldColumn['id'] . '" data-custom-field-value="' . $aRow[$customFieldColumn['name']] . '" data-project-id="' . $aRow['id'] . '" ><i class="fa fa-comment"></i></a>' .'<span class="hide">' . e($aRow[$customFieldColumn['name']]) . '</span>';
+                }else if ($customFieldColumn['id'] == PROJECT_LAUNCH_ETA && staff_can('edit',  'projects')) {
                     $row[] = '<input name="project_launch_eta" tabindex="-1"
                             value="' . $aRow[$customFieldColumn['name']] . '"
                             id="project_launch_eta"
                             class="form-control project_launch_eta datepicker pointer tw-text-neutral-800" data-project_id="' . $aRow['id'] . '"
-                        data-field_id="" style="width: 100%;">' . '<span class="hide">'.e($aRow[$customFieldColumn['name']]).'</span>';
+                        data-field_id="" style="width: 100%;">'. '<span class="hide">'.e($aRow[$customFieldColumn['name']]).'</span>';
                 } else if ($customFieldColumn['id'] == STOPLIGHT_REPORT && staff_can('edit',  'projects')) {
                     // for stoplight report render select picker jp
 
@@ -409,6 +412,7 @@ return App_table::find('projects')
                             </span>';
                     }
 
+                    // $row[] = $outputStatus;
                     $row[] = $outputStatus . '<span class="hide">'.e($option_value).'</span>';
 
                     // for stoplight report render select picker 
@@ -420,7 +424,7 @@ return App_table::find('projects')
                             class="form-control cam_meeting_date datepicker pointer tw-text-neutral-800" data-project_id="' . $aRow['id'] . '"
                         data-field_id="" style="width: 100%;">'. '<span class="hide">' . e($aRow[$customFieldColumn['name']]) . '</span>';
 
-                } else {
+                }else {
                     $row[] = (strpos($customFieldColumn['name'], 'date_picker_') !== false ? _d($aRow[$customFieldColumn['name']]) : $aRow[$customFieldColumn['name']]);
                 }
             }
@@ -435,26 +439,25 @@ return App_table::find('projects')
         }
         return $output;
     })->setRules([
-        App_table_filter::new('name', 'TextRule')->label(_l('project_name')),
-        App_table_filter::new('start_date', 'DateRule')->label(_l('project_start_date')),
-        App_table_filter::new('deadline', 'DateRule')->label(_l('project_deadline')),
-        App_table_filter::new('billing_type', 'SelectRule')->label(_l('project_billing_type'))->options(function ($ci) {
+        App_table_filter::new('name','TextRule')->label(_l('project_name')),
+        App_table_filter::new('start_date','DateRule')->label(_l('project_start_date')),
+        App_table_filter::new('deadline','DateRule')->label(_l('project_deadline')),
+        App_table_filter::new('billing_type','SelectRule')->label(_l('project_billing_type'))->options(function($ci) {
             return [
-                ['value' => 1, 'label' => _l('project_billing_type_fixed_cost')],
-                ['value' => 2, 'label' => _l('project_billing_type_project_hours')],
-                ['value' => 3, 'label' => _l('project_billing_type_project_task_hours_hourly_rate')],
+                ['value'=>1,'label'=>_l('project_billing_type_fixed_cost')],
+                ['value'=>2,'label'=>_l('project_billing_type_project_hours')],
+                ['value'=>3,'label'=>_l('project_billing_type_project_task_hours_hourly_rate')],
             ];
         }),
-
-        App_table_filter::new('status', 'MultiSelectRule')->label(_l('project_status'))->options(function ($ci) {
-            return collect($ci->projects_model->get_project_statuses())->map(fn($data) => [
-                'value' => $data['id'],
-                'label' => $data['name'],
-            ])->all();
+        App_table_filter::new('status','MultiSelectRule')->label(_l('project_status'))->options(function($ci){
+                return collect($ci->projects_model->get_project_statuses())->map(fn ($data) => [
+                    'value' => $data['id'],
+                    'label' => $data['name'],
+                ])->all();
         }),
 
         App_table_filter::new('members', 'MultiSelectRule')->label(_l('project_members'))
-            ->isVisible(fn() => staff_can('view', 'projects'))
+            ->isVisible(fn () => staff_can('view', 'projects'))
             ->options(function ($ci) {
                 return collect($ci->projects_model->get_distinct_projects_members())->map(function ($staff) {
                     return [
@@ -467,7 +470,7 @@ return App_table::find('projects')
                 $sqlOperator = $sqlOperator['operator'];
                 return "({$dbPrefix}projects.id IN (SELECT project_id FROM {$dbPrefix}project_members WHERE staff_id $sqlOperator ('" . implode("','", $value) . "')))";
             }),
-            App_table_filter::new('cam_id', 'SelectRule')
+                App_table_filter::new('cam_id', 'SelectRule')
                 ->label(_l('cam_id'))
                 ->options(function ($ci) {
                     $ci->load->model('staff_model');

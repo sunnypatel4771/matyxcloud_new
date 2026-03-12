@@ -87,9 +87,7 @@ return App_table::find('contracts')
         if (count($custom_fields) > 4) {
             @$this->ci->db->query('SET SQL_BIG_SELECTS=1');
         }
-        // echo '<pre>';
-        //  print_r($aColumns);
-        //  die;
+
         $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [db_prefix() . 'contracts.id', 'trash', 'client', 'hash', 'marked_as_signed', 'project_id']);
 
         $output  = $result['output'];
@@ -208,9 +206,8 @@ return App_table::find('contracts')
                     'label' => $data['year'],
                 ])->all();
             }),
-
-
-        App_table_filter::new('cam_id', 'SelectRule')
+            
+            App_table_filter::new('cam_id', 'SelectRule')
             ->label(_l('cam_id'))
             ->options(function ($ci) {
                 $ci->load->model('staff_model');
@@ -307,50 +304,6 @@ return App_table::find('contracts')
             ->raw(function ($value) {
                 return db_prefix() . 'contracts.web_lead_id = ' . (int) $value;
             }),
-
-        // App_table_filter::new('subject', 'TextRule')
-        //     ->label(_l('contract_subject'))
-        //     ->group('contract'),
-
-        // App_table_filter::new('datestart', 'DateRule')
-        //     ->label(_l('contract_start_date'))
-        //     ->group('contract'),
-
-        // App_table_filter::new('client', 'SelectRule')
-        //     ->label(_l('date tttt'))
-        //     ->group('customer')
-        //     ->options(function ($ci) {
-        //         $ci->load->model('staff_model');
-
-        //         return collect($ci->staff_model->get())->map(fn($staff) => [
-        //             'value' => $staff['staffid'],
-        //             'label' => $staff['firstname'] . ' ' . $staff['lastname'],
-        //         ]);
-        //     }),
-
-        // App_table_filter::new('purchase_code', 'SelectRule')
-        //     ->label(_l('SKU'))
-        //     ->group('purchase')
-        //     ->options(function ($ci) {
-        //         $ci->load->model('staff_model');
-
-        //         return collect($ci->staff_model->get())->map(fn($staff) => [
-        //             'value' => $staff['staffid'],
-        //             'label' => $staff['firstname'] . ' ' . $staff['lastname'],
-        //         ]);
-        //     }),
-
-
-        // App_table_filter::new('Wide', 'SelectRule')
-            // ->label(_l('Wide'))
-            // ->group('upussy')
-            // ->options(function ($ci) {
-            //     $ci->load->model('staff_model');
-
-            //     return collect($ci->staff_model->get())->map(fn($staff) => [
-            //         'value' => $staff['staffid'],
-            //         'label' => $staff['firstname'] . ' ' . $staff['lastname'],
-            //     ]);
-            // }),
-
+            
+            
     ]);

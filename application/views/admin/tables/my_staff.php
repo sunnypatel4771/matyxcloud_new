@@ -11,23 +11,14 @@ $custom_fields = get_custom_fields('staff', [
 $aColumns = [
     '1', // bulk actions
     'firstname',
-    db_prefix() . 'staff.email',
+    'email',
     db_prefix() . 'roles.name',
-    '(
-        SELECT GROUP_CONCAT(d2.name SEPARATOR ", ")
-        FROM ' . db_prefix() . 'staff_departments sd2
-        JOIN ' . db_prefix() . 'departments d2 
-        ON d2.departmentid = sd2.departmentid
-        WHERE sd2.staffid = ' . db_prefix() . 'staff.staffid
-    ) as departments',
     'last_login',
     'active',
 ];
 $sIndexColumn = 'staffid';
 $sTable       = db_prefix() . 'staff';
 $join         = ['LEFT JOIN ' . db_prefix() . 'roles ON ' . db_prefix() . 'roles.roleid = ' . db_prefix() . 'staff.role'];
-// $join[] = 'LEFT JOIN ' . db_prefix() . 'staff_departments sd ON sd.staffid = ' . db_prefix() . 'staff.staffid';
-// $join[] = 'LEFT JOIN ' . db_prefix() . 'departments d ON d.departmentid = sd.departmentid';
 $i            = 0;
 foreach ($custom_fields as $field) {
     $select_as = 'cvalue_' . $i;
@@ -38,7 +29,6 @@ foreach ($custom_fields as $field) {
     array_push($join, 'LEFT JOIN ' . db_prefix() . 'customfieldsvalues as ctable_' . $i . ' ON ' . db_prefix() . 'staff.staffid = ctable_' . $i . '.relid AND ctable_' . $i . '.fieldto="' . $field['fieldto'] . '" AND ctable_' . $i . '.fieldid=' . $field['id']);
     $i++;
 }
-
 // Fix for big queries. Some hosting have max_join_limit
 if (count($custom_fields) > 4) {
     @$this->ci->db->query('SET SQL_BIG_SELECTS=1');
@@ -66,28 +56,11 @@ if ($cus_roles_filter != '') {
     $where[] = 'AND ctable_0.value LIKE "%' . $cus_roles_filter . '%"';
 }
 
-$department_filter = $this->ci->input->post('department_filter');
-if ($department_filter && $department_filter != '') {
-    $where[] = 'AND EXISTS (
-        SELECT 1 
-        FROM ' . db_prefix() . 'staff_departments sd_filter
-        WHERE sd_filter.staffid = ' . db_prefix() . 'staff.staffid
-        AND sd_filter.departmentid = ' . (int)$department_filter . '
-    )';
-}
-
-$result = data_tables_init(
-    $aColumns,
-    $sIndexColumn,
-    $sTable,
-    $join,
-    $where,
-    [
-        'profile_image',
-        'lastname',
-        db_prefix() . 'staff.staffid',
-    ],
-);
+$result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
+    'profile_image',
+    'lastname',
+    'staffid',
+]);
 
 $output  = $result['output'];
 $rResult = $result['rResult'];
@@ -142,8 +115,6 @@ foreach ($rResult as $aRow) {
             }
 
             $_data .= '</div>';
-        } elseif (strpos($aColumns[$i], 'departments') !== false) {
-            $_data = $_data ? $_data : '-';
         } elseif ($aColumns[$i] == 'email') {
             $_data = '<a href="mailto:' . e($_data) . '">' . e($_data) . '</a>';
         } else {

@@ -69,10 +69,6 @@ class Filters_model extends App_Model
         $this->db->or_where('is_shared', 1);
         $this->db->group_end();
 
-        // if ($identifier == 'contracts') {
-        //     $this->db->order_by('name', 'ASC');
-        // }
-
         $filters = $this->db->get("filters")->result_array();
 
         foreach ($filters as $key => $filter) {

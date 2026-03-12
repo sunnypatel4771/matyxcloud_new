@@ -2321,6 +2321,7 @@ class Projects_model extends App_Model
         $data['dateadded'] = date('Y-m-d H:i:s');
 
         $data = hooks()->apply_filters('before_log_project_activity', $data);
+
         $this->db->insert(db_prefix() . 'project_activity', $data);
     }
 

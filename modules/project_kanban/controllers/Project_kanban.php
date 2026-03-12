@@ -16,8 +16,8 @@ class Project_kanban extends AdminController
 
         parent::__construct();
 
-        if (!staff_can('project_kanban', 'project_kanban'))
-            access_denied(_l('project_kanban'));
+        if( !staff_can( 'project_kanban' , 'project_kanban' ) )
+            access_denied( _l('project_kanban') );
 
 
         $this->load->model('projects_model');
@@ -26,21 +26,24 @@ class Project_kanban extends AdminController
         /**
          * Db Checking
          */
-        if (!$this->db->table_exists(db_prefix() . 'project_kanban_settings')) {
+        if ( !$this->db->table_exists( db_prefix() . 'project_kanban_settings' ) )
+        {
 
             $this->db->query("
-                    CREATE TABLE `" . db_prefix() . "project_kanban_settings` (
+                    CREATE TABLE `".db_prefix()."project_kanban_settings` (
                         `status_id` int(11) NOT NULL 
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
                 ");
+
         }
 
 
-        if (!$this->db->table_exists(db_prefix() . 'project_kanban_project_statuses')) {
+        if ( !$this->db->table_exists( db_prefix() . 'project_kanban_project_statuses' ) )
+        {
 
 
             $this->db->query("
-                    CREATE TABLE `" . db_prefix() . "project_kanban_project_statuses` (
+                    CREATE TABLE `".db_prefix()."project_kanban_project_statuses` (
                         `status_id` int(11) NOT NULL AUTO_INCREMENT,
                         `status_name` varchar(255) NULL,
                         `status_order` int NULL,
@@ -49,16 +52,23 @@ class Project_kanban extends AdminController
                         PRIMARY KEY (`status_id`)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
                 ");
+
         }
 
 
 
 
-        if (!$this->db->field_exists('es_status_change_date', db_prefix() . 'projects')) {
+        if( !$this->db->field_exists('es_status_change_date', db_prefix() .'projects') )
+        {
 
-            $this->db->query('ALTER TABLE `' . db_prefix() . 'projects`
+            $this->db->query('ALTER TABLE `'.db_prefix().'projects`
                                 ADD COLUMN `es_status_change_date` datetime NULL AFTER `status`;');
+
         }
+
+
+
+
     }
 
 
@@ -75,7 +85,7 @@ class Project_kanban extends AdminController
 
         $data['title']          = _l('leads_switch_to_kanban');
 
-        if (!class_exists('Staff_model'))
+        if( !class_exists('Staff_model') )
             $this->ci->load->model('staff_model');
 
 
@@ -88,6 +98,8 @@ class Project_kanban extends AdminController
         $this->app_scripts->add('circle-progress-js', 'assets/plugins/jquery-circle-progress/circle-progress.min.js');
 
         $this->load->view('v_kanban_project', $data);
+
+
     }
 
     public function kanban_content()
@@ -100,12 +112,14 @@ class Project_kanban extends AdminController
         $data['active_statuses']    = $this->get_settings();
 
         $this->load->view('v_kanban_detail', $data);
+
     }
 
-    public function kanban_content_load($status_id = 0)
+    public function kanban_content_load( $status_id = 0 )
     {
 
-        $this->load->view('v_kanban_load_more', ['status_id' => $status_id]);
+        $this->load->view('v_kanban_load_more' , [ 'status_id' => $status_id ] );
+
     }
 
     /**
@@ -118,44 +132,53 @@ class Project_kanban extends AdminController
 
         $message = '';
 
-        if ($this->input->is_ajax_request() && $this->input->post('projects') && $this->input->post('status')) {
+        if( $this->input->is_ajax_request() && $this->input->post('projects') && $this->input->post('status') )
+        {
 
 
-            if (!class_exists('projects_model'))
+            if (!class_exists('projects_model') )
                 $this->load->model('projects_model');
 
 
-            if (staff_can('create', 'projects') || staff_can('edit', 'projects')) {
+            if (staff_can('create', 'projects') || staff_can('edit', 'projects') )
+            {
 
                 $projects   = $this->input->post('projects');
                 $status_id  = $this->input->post('status');
 
                 $status     = get_project_status_by_id($status_id);
 
-                foreach ($projects as $project_id) {
+                foreach ( $projects as $project_id )
+                {
 
-                    $project_info = $this->db->select('status')->from(db_prefix() . 'projects')->where('id', $project_id)->get()->row();
+                    $project_info = $this->db->select('status')->from(db_prefix().'projects')->where('id',$project_id)->get()->row();
 
-                    if ($project_info->status != $status_id) {
+                    if ( $project_info->status != $status_id )
+                    {
 
                         $post_data = [
-                            'project_id' => $project_id,
-                            'status_id' => $status_id,
-                            'notify_project_members_status_change' => false,
-                            'mark_all_tasks_as_completed' => false,
+                            'project_id' => $project_id ,
+                            'status_id' => $status_id ,
+                            'notify_project_members_status_change' => false ,
+                            'mark_all_tasks_as_completed' => false ,
                         ];
 
-                        $success = $this->projects_model->mark_as($post_data);
+                        $success = $this->projects_model->mark_as( $post_data );
 
                         $message = _l('project_marked_as_failed', $status['name']);
 
                         if ($success) {
 
                             $message = _l('project_marked_as_success', $status['name']);
+
                         }
+
                     }
+
                 }
+
             }
+
         }
 
         echo json_encode([
@@ -165,10 +188,12 @@ class Project_kanban extends AdminController
             'message' => $message,
 
         ]);
+
+
     }
 
 
-    public function preview($project_id)
+    public function preview( $project_id )
     {
 
 
@@ -176,7 +201,7 @@ class Project_kanban extends AdminController
 
         $data = [];
 
-        $project = $this->projects_model->get($project_id);
+        $project = $this->projects_model->get( $project_id );
 
 
 
@@ -200,7 +225,8 @@ class Project_kanban extends AdminController
 
         $data['members'] = $this->projects_model->get_project_members($project_id);
 
-        foreach ($data['members'] as $key => $member) {
+        foreach ($data['members'] as $key => $member)
+        {
 
             $data['members'][$key]['total_logged_time'] = 0;
 
@@ -211,7 +237,9 @@ class Project_kanban extends AdminController
             foreach ($member_timesheets as $member_task) {
 
                 $data['members'][$key]['total_logged_time'] += $this->tasks_model->calc_task_total_time($member_task->task_id, ' AND staff_id=' . $member['staff_id']);
+
             }
+
         }
 
 
@@ -223,7 +251,8 @@ class Project_kanban extends AdminController
 
         $data['project_time_left_percent'] = 100;
 
-        if ($data['project']->deadline) {
+        if ($data['project']->deadline)
+        {
 
             if (human_to_unix($data['project']->start_date . ' 00:00') < time() && human_to_unix($data['project']->deadline . ' 00:00') > time()) {
 
@@ -232,6 +261,7 @@ class Project_kanban extends AdminController
                 $data['project_time_left_percent'] = $data['project_days_left'] / $data['project_total_days'] * 100;
 
                 $data['project_time_left_percent'] = round($data['project_time_left_percent'], 2);
+
             }
 
             if (human_to_unix($data['project']->deadline . ' 00:00') < time()) {
@@ -239,7 +269,9 @@ class Project_kanban extends AdminController
                 $data['project_days_left']         = 0;
 
                 $data['project_time_left_percent'] = 0;
+
             }
+
         }
 
 
@@ -255,7 +287,9 @@ class Project_kanban extends AdminController
             if (get_option('show_all_tasks_for_project_member') == 1) {
 
                 $__total_where_tasks .= ' AND (rel_type="project" AND rel_id IN (SELECT project_id FROM ' . db_prefix() . 'project_members WHERE staff_id=' . get_staff_user_id() . '))';
+
             }
+
         }
 
 
@@ -320,7 +354,9 @@ class Project_kanban extends AdminController
             if (isset($status['filter_default']) && $status['filter_default']) {
 
                 $other_projects_where .= 'status = ' . $status['id'] . ' OR ';
+
             }
+
         }
 
 
@@ -336,6 +372,7 @@ class Project_kanban extends AdminController
         if (!staff_can('view', 'projects')) {
 
             $other_projects_where .= ' AND ' . db_prefix() . 'projects.id IN (SELECT project_id FROM ' . db_prefix() . 'project_members WHERE staff_id=' . get_staff_user_id() . ')';
+
         }
 
 
@@ -358,22 +395,25 @@ class Project_kanban extends AdminController
 
         // invoices
         $data['invoices']       = $this->db->select('id, currency, number, total, total_tax, YEAR(date) as year, date, status')
-            ->from(db_prefix() . 'invoices')
-            ->where('project_id', $project_id)
-            ->get()
-            ->result();
+                                            ->from(db_prefix().'invoices')
+                                            ->where('project_id',$project_id)
+                                            ->get()
+                                            ->result();
 
 
-        $this->load->view('v_project_modal', $data);
+        $this->load->view('v_project_modal' , $data);
+
     }
 
 
     public function save_project()
     {
 
-        if ($this->input->post()) {
+        if( $this->input->post() )
+        {
 
-            if (!has_permission('projects', '', 'edit')) {
+            if ( !has_permission('projects', '', 'edit') )
+            {
 
                 echo json_encode([
                     'success' => false,
@@ -381,6 +421,7 @@ class Project_kanban extends AdminController
                 ]);
 
                 die();
+
             }
 
 
@@ -399,6 +440,7 @@ class Project_kanban extends AdminController
                 handle_custom_fields_post($id, $custom_fields);
 
                 unset($data['custom_fields']);
+
             }
 
 
@@ -428,9 +470,11 @@ class Project_kanban extends AdminController
             if ($old_status == 4 && $data['status'] != 4) {
 
                 $data['date_finished'] = null;
+
             } elseif (isset($data['date_finished'])) {
 
                 $data['date_finished'] = to_sql_date($data['date_finished'], true);
+
             }
 
 
@@ -438,9 +482,11 @@ class Project_kanban extends AdminController
             if (isset($data['progress_from_tasks'])) {
 
                 $data['progress_from_tasks'] = 1;
+
             } else {
 
                 $data['progress_from_tasks'] = 0;
+
             }
 
 
@@ -448,9 +494,11 @@ class Project_kanban extends AdminController
             if (!empty($data['deadline'])) {
 
                 $data['deadline'] = to_sql_date($data['deadline']);
+
             } else {
 
                 $data['deadline'] = null;
+
             }
 
 
@@ -460,14 +508,17 @@ class Project_kanban extends AdminController
             if ($data['billing_type'] == 1) {
 
                 $data['project_rate_per_hour'] = 0;
+
             } elseif ($data['billing_type'] == 2) {
 
                 $data['project_cost'] = 0;
+
             } else {
 
                 $data['project_rate_per_hour'] = 0;
 
                 $data['project_cost']          = 0;
+
             }
 
             if (isset($data['project_members'])) {
@@ -475,6 +526,7 @@ class Project_kanban extends AdminController
                 $project_members = $data['project_members'];
 
                 unset($data['project_members']);
+
             }
 
             $_pm = [];
@@ -482,6 +534,7 @@ class Project_kanban extends AdminController
             if (isset($project_members)) {
 
                 $_pm['project_members'] = $project_members;
+
             }
 
 
@@ -501,12 +554,15 @@ class Project_kanban extends AdminController
 
             $affectedRows = 0;
 
-            if ($this->db->affected_rows() > 0) {
+            if ( $this->db->affected_rows() > 0 )
+            {
 
                 $affectedRows++;
+
             }
 
-            if ($affectedRows > 0) {
+            if ( $affectedRows > 0 )
+            {
 
                 $this->projects_model->log_activity($id, 'project_activity_updated');
 
@@ -535,10 +591,15 @@ class Project_kanban extends AdminController
                         $this->db->where('id', $id);
 
                         $this->db->update(db_prefix() . 'projects', ['date_finished' => date('Y-m-d H:i:s')]);
+
                     } else {
 
                         $this->projects_model->log_activity($id, 'project_status_updated', '<b><lang>project_status_' . $data['status'] . '</lang></b>');
+
                     }
+
+
+
                 }
 
                 hooks()->do_action('after_update_project', $id);
@@ -549,140 +610,177 @@ class Project_kanban extends AdminController
                     'success' => true,
                     'message' =>  _l('updated_successfully', _l('project')),
                 ]);
+
+
             }
+
+
         }
+
     }
 
 
     public function save_settings()
     {
 
-        $table = db_prefix() . 'project_kanban_settings';
+        $table = db_prefix().'project_kanban_settings';
 
 
         $this->db->truncate($table);
 
         $statuses = $this->input->post('project_kanban_status');
 
-        if ($statuses) {
+        if ( $statuses )
+        {
 
-            foreach ($statuses as $status) {
+            foreach ( $statuses as $status )
+            {
 
-                $this->db->insert($table, ['status_id' => $status]);
+                $this->db->insert( $table , [ 'status_id' => $status ] );
+
             }
+
         }
 
         $enable_status = $this->input->post('project_kanban_status_management');
 
-        if (!empty($enable_status))
+        if ( !empty( $enable_status ) )
             $enable_status = 1;
         else
             $enable_status = 0;
 
-        if (option_exists('project_kanban_status_management')) {
-            update_option('project_kanban_status_management', $enable_status, 0);
-        } else {
-            add_option('project_kanban_status_management', $enable_status, 0);
+        if ( option_exists('project_kanban_status_management') )
+        {
+            update_option( 'project_kanban_status_management' , $enable_status  , 0 );
+        }
+        else
+        {
+            add_option( 'project_kanban_status_management' , $enable_status  , 0 );
         }
 
 
-        if (empty($enable_status)) {
+        if ( empty( $enable_status ) )
+        {
 
-            $this->db->truncate(db_prefix() . 'project_kanban_project_statuses');
+            $this->db->truncate(db_prefix().'project_kanban_project_statuses');
+
         }
 
-        redirect(admin_url('project_kanban'));
+        redirect( admin_url('project_kanban') );
+
     }
 
     public function get_settings()
     {
 
-        $active_statuses = $this->db->select('*')->from(db_prefix() . 'project_kanban_settings')->get()->result();
+        $active_statuses = $this->db->select('*')->from(db_prefix().'project_kanban_settings')->get()->result();
 
-        if (!empty($active_statuses)) {
+        if ( !empty( $active_statuses ) )
+        {
 
-            $return_status = [];
+            $return_status = [] ;
 
-            foreach ($active_statuses as $status) {
+            foreach ( $active_statuses as $status )
+            {
 
-                $return_status[$status->status_id] = $status->status_id;
+                $return_status[ $status->status_id ] = $status->status_id;
+
             }
 
             return $return_status;
+
         }
 
         return [];
+
     }
 
 
     /**
      * Project status changes
      */
-    public function status_detail($status_id = 0)
+    public function status_detail( $status_id = 0 )
     {
 
-        $data['status']     = $this->db->select('*')->from(db_prefix() . 'project_kanban_project_statuses')->where('status_id', $status_id)->get()->row();
+        $data['status']     = $this->db->select('*')->from(db_prefix().'project_kanban_project_statuses')->where('status_id',$status_id)->get()->row();
 
-        if (!empty($data['status'])) {
+        if ( !empty( $data['status'] ) )
+        {
 
             $data['title']      = $data['status']->status_name;
-        } else {
-            $status_id = 0;
+
+        }
+        else
+        {
+            $status_id = 0 ;
 
             $data['status'] = new stdClass();
 
-            $data['status']->status_order   = '';
+            $data['status']->status_order   = '' ;
             $data['status']->status_name    = '';
             $data['status']->status_color   = '';
             $data['status']->filter_default = '';
 
             $data['title']      = _l('project_kanban_new_status');
+
         }
 
         $data['status_id']  = $status_id;
 
-        $this->load->view('v_project_status_detail', $data);
+        $this->load->view('v_project_status_detail' , $data );
+
     }
 
 
-    public function status_save($status_id = 0)
+    public function status_save( $status_id = 0 )
     {
 
 
-        if ($this->input->post()) {
+        if ( $this->input->post() )
+        {
 
 
             $post_data = $this->input->post();
 
-            if (empty($post_data['filter_default']))
+            if( empty( $post_data['filter_default'] ) )
                 $post_data['filter_default'] = 0;
 
 
-            if ($status_id > 0) {
+            if ( $status_id > 0 )
+            {
 
-                $this->db->where('status_id', $status_id)->update(db_prefix() . 'project_kanban_project_statuses', $post_data);
+                $this->db->where('status_id',$status_id)->update(db_prefix().'project_kanban_project_statuses',$post_data);
 
 
-                set_alert('success', _l('added_successfully', _l('project_kanban_project_status')));
-            } else {
+                set_alert('success', _l('added_successfully', _l('project_kanban_project_status') ) );
 
-                $this->db->insert(db_prefix() . 'project_kanban_project_statuses', $post_data);
+            }
+            else
+            {
 
-                set_alert('success', _l('updated_successfully', _l('project_kanban_project_status')));
+                $this->db->insert(db_prefix().'project_kanban_project_statuses',$post_data);
+
+                set_alert('success', _l('updated_successfully', _l('project_kanban_project_status') ) );
+
             }
 
 
-            redirect(admin_url('project_kanban'));
+            redirect( admin_url('project_kanban') );
+
         }
+
+
+
     }
 
 
-    public function status_remove($status_id = 0)
+    public function status_remove( $status_id = 0 )
     {
 
-        $status     = $this->db->select('*')->from(db_prefix() . 'project_kanban_project_statuses')->where('status_id', $status_id)->get()->row();
+        $status     = $this->db->select('*')->from(db_prefix().'project_kanban_project_statuses')->where('status_id',$status_id)->get()->row();
 
-        if ($status) {
+        if ( $status )
+        {
 
             $data['status']  = $status;
 
@@ -690,55 +788,69 @@ class Project_kanban extends AdminController
 
             $data['statuses']   = $this->projects_model->get_project_statuses();
 
-            $this->load->view('v_project_status_remove', $data);
+            $this->load->view('v_project_status_remove' , $data );
+
         }
+
     }
 
     // new_status_id  status_delete
     public function status_delete()
     {
 
-        if ($this->input->post()) {
+        if ( $this->input->post() )
+        {
 
-            $table_name = db_prefix() . 'project_kanban_project_statuses';
+            $table_name = db_prefix().'project_kanban_project_statuses';
 
             $status_id      = $this->input->post('status_id');
 
             $new_status_id  = $this->input->post('new_status_id');
 
 
-            $status     = $this->db->select('status_name')->from($table_name)->where('status_id', $status_id)->get()->row();
+            $status     = $this->db->select('status_name')->from($table_name)->where('status_id',$status_id)->get()->row();
 
-            $this->db->where('status_id', $status_id)->delete($table_name);
+            $this->db->where('status_id',$status_id)->delete($table_name);
 
-            log_activity("Project status deleted [ Status ID : $status_id  Status name : $status->status_name ] ");
-
-
-            if (!empty($new_status_id) && $new_status_id != $status_id) {
+            log_activity( "Project status deleted [ Status ID : $status_id  Status name : $status->status_name ] " );
 
 
-                $projects = $this->db->select('')->from(db_prefix() . 'projects')->where('status', $status_id)->get()->result();
+            if ( !empty( $new_status_id ) && $new_status_id != $status_id )
+            {
 
-                if (!empty($projects)) {
 
-                    foreach ($projects as $project) {
+                $projects = $this->db->select('')->from(db_prefix().'projects')->where('status',$status_id)->get()->result();
+
+                if ( !empty( $projects ) )
+                {
+
+                    foreach ( $projects as $project )
+                    {
 
                         $post_data = [
-                            'project_id' => $project->id,
-                            'status_id' => $new_status_id,
-                            'notify_project_members_status_change' => false,
-                            'mark_all_tasks_as_completed' => false,
+                            'project_id' => $project->id ,
+                            'status_id' => $new_status_id ,
+                            'notify_project_members_status_change' => false ,
+                            'mark_all_tasks_as_completed' => false ,
                         ];
 
-                        $this->projects_model->mark_as($post_data);
+                        $this->projects_model->mark_as( $post_data );
+
                     }
+
                 }
+
+
             }
 
 
-            set_alert('success', _l('deleted', _l('project_kanban_project_status')));
+            set_alert('success', _l('deleted', _l('project_kanban_project_status') ) );
 
-            redirect(admin_url('project_kanban'));
+            redirect( admin_url('project_kanban') );
+
+
         }
+
     }
+
 }

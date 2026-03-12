@@ -18,6 +18,9 @@ return App_table::find('tasks')
             get_sql_select_task_asignees_full_names() . ' as assignees',
             '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'tasks.id and rel_type="task" ORDER by tag_order ASC) as tags',
             'priority',
+            'GROUP_CONCAT(DISTINCT d.name) as department_names',
+            'GROUP_CONCAT(DISTINCT cf.value) as staff_roles'
+
         ];
 
         $additionalColumns = [
@@ -38,7 +41,17 @@ return App_table::find('tasks')
         $sTable       = db_prefix() . 'tasks';
 
         $where = [];
-        $join  = [];
+        // $join  = [];
+        $join[] = 'LEFT JOIN ' . db_prefix() . 'task_assigned ta ON ta.taskid = ' . db_prefix() . 'tasks.id';
+
+        $join[] = 'LEFT JOIN ' . db_prefix() . 'staff_departments sd ON sd.staffid = ta.staffid';
+
+        $join[] = 'LEFT JOIN ' . db_prefix() . 'departments d ON d.departmentid = sd.departmentid';
+
+        $join[] = 'LEFT JOIN ' . db_prefix() . 'customfieldsvalues cf 
+           ON cf.relid = ta.staffid 
+           AND cf.fieldto = "staff"
+           AND cf.fieldid = 96';
 
         if ($filtersWhere = $this->getWhereFromRules()) {
             $where[] = $filtersWhere;
@@ -57,7 +70,37 @@ return App_table::find('tasks')
             $where[] = 'AND (' . db_prefix() . 'tasks.id IN (SELECT taskid FROM ' . db_prefix() . 'task_assigned WHERE staffid = ' . get_staff_user_id() . ') AND status != ' . Tasks_model::STATUS_COMPLETE . ')';
         }
 
-        array_push($where, 'AND CASE WHEN rel_type="project" AND rel_id IN (SELECT project_id FROM ' . db_prefix() . 'project_settings WHERE project_id=rel_id AND name="hide_tasks_on_main_tasks_table" AND value=1) THEN rel_type != "project" ELSE 1=1 END');
+        // array_push($where, 'AND CASE WHEN rel_type="project" AND rel_id IN (SELECT project_id FROM ' . db_prefix() . 'project_settings WHERE project_id=rel_id AND name="hide_tasks_on_main_tasks_table" AND value=1) THEN rel_type != "project" ELSE 1=1 END');
+
+        // array_push($where, 'AND (
+        //     rel_type != "project"
+        //     OR rel_id NOT IN (
+        //         SELECT project_id 
+        //         FROM ' . db_prefix() . 'project_settings 
+        //         WHERE name="hide_tasks_on_main_tasks_table" 
+        //         AND value=1
+        //     )
+        // )');
+
+
+        // array_push($where, 'AND NOT EXISTS (
+        //     SELECT 1 
+        //     FROM ' . db_prefix() . 'project_settings ps
+        //     WHERE ps.project_id = ' . db_prefix() . 'tasks.rel_id
+        //     AND ps.name="hide_tasks_on_main_tasks_table"
+        //     AND ps.value=1
+        //     AND ' . db_prefix() . 'tasks.rel_type="project"
+        // )');
+
+        array_push($where, 'AND NOT EXISTS (
+            SELECT 1 
+            FROM ' . db_prefix() . 'project_settings ps
+            WHERE ps.project_id = ' . db_prefix() . 'tasks.rel_id
+            AND ps.name = "hide_tasks_on_main_tasks_table"
+            AND ps.value = 1
+            AND ' . db_prefix() . 'tasks.rel_type = "project"
+        )');
+
 
         $custom_fields = get_table_custom_fields('tasks');
 
@@ -86,13 +129,17 @@ return App_table::find('tasks')
             @$this->ci->db->query('SET SQL_BIG_SELECTS=1');
         }
 
+        // $groupBy = db_prefix() . 'tasks.id';
+        $groupBy = 'GROUP BY ' . db_prefix() . 'tasks.id';
+
         $result = task_data_tables_init(
             $aColumns,
             $sIndexColumn,
             $sTable,
             $join,
             $where,
-            $additionalColumns
+            $additionalColumns,
+            $groupBy
         );
 
 
@@ -100,6 +147,9 @@ return App_table::find('tasks')
         $rResult = $result['rResult'];
 
         foreach ($rResult as $aRow) {
+            // echo '<pre>';
+            //  print_r($aRow);
+            //  die;
             $row = [];
 
             $row[] = '<div class="checkbox"><input type="checkbox" value="' . $aRow['id'] . '"><label></label></div>';
@@ -108,7 +158,7 @@ return App_table::find('tasks')
             $id_html = '';
             $id_html .= '<div class="d-flex align-items-center">';
             $id_html .= ' <a href="' . admin_url('tasks/view/' . $aRow['id']) . '" onclick="init_task_modal(' . $aRow['id'] . '); return false;">' . $aRow['id'] . '</a>';
-            if($hasPermissionEdit){
+            if ($hasPermissionEdit) {
                 $id_html .= '
                  <div style="margin-left: 1.25rem;">
                  <label
@@ -126,7 +176,7 @@ return App_table::find('tasks')
                     style="display: none;">
 
                  <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-	 width="32px" height="32px" viewBox="0 0 512 512"  xml:space="preserve"  ' . ($aRow['is_poked'] == 1 ? 'fill="#c6393d" stroke="#c6393d"' : 'fill="#ccc" stroke="#ccc"') . '">
+	 width="25px" height="25px" viewBox="0 0 512 512"  xml:space="preserve"  ' . ($aRow['is_poked'] == 1 ? 'fill="#c6393d" stroke="#c6393d"' : 'fill="#ccc" stroke="#ccc"') . '">
 
       <g>
 	      <path class="st0" d="M487.347,0.004C425.284,53.191,365.44,68.707,365.44,68.707L144.534,289.629l-32.25-32.219l-24.156,24.156
@@ -300,6 +350,8 @@ return App_table::find('tasks')
             // foreach ($customFieldsColumns as $customFieldColumn) {
             //     $row[] = (strpos($customFieldColumn, 'date_picker_') !== false ? _d($aRow[$customFieldColumn]) : $aRow[$customFieldColumn]);
             // }
+            // $row[] = $aRow['department_names'];
+            // $row[] = $aRow['staff_roles'];
             foreach ($customFieldsColumns as $customFieldColumn) {
                 if ($customFieldColumn['slug'] != 'tasks_eta') {
                     $row[] = (strpos($customFieldColumn['name'], 'date_picker_') !== false ? _d($aRow[$customFieldColumn['name']]) : $aRow[$customFieldColumn['name']]);
@@ -308,7 +360,8 @@ return App_table::find('tasks')
 
             $row[] = '<a href="#" class="task-comment" data-task-id="' . $aRow['id'] . '" data-toggle="modal" data-target="#task-comment-modal"><i class="fa fa-comment"></i>   ' . get_comments_count($aRow['id']) . '</a>';
 
-
+            $row[] = $aRow['department_names'];
+            $row[] = $aRow['staff_roles'];
 
             $row = hooks()->apply_filters('tasks_table_row_data', $row, $aRow);
             $row['DT_RowClass'] = 'has-row-options has-border-left';
@@ -321,7 +374,9 @@ return App_table::find('tasks')
             if ((! empty($aRow['duedate']) && $aRow['duedate'] < date('Y-m-d')) && $aRow['status'] != Tasks_model::STATUS_COMPLETE) {
                 $row['DT_RowClass'] .= ' danger';
             }
-
+            // echo '<pre>';
+            //  print_r(count($row));
+            //  die;
             $output['aaData'][] = $row;
         }
         return $output;
@@ -409,5 +464,75 @@ return App_table::find('tasks')
                 $sqlOperator = $sqlOperator['operator'];
 
                 return "({$dbPrefix}tasks.id IN (SELECT taskid FROM {$dbPrefix}task_assigned WHERE staffid $sqlOperator ('" . implode("','", $value) . "')))";
+            }),
+
+        App_table_filter::new('department', 'MultiSelectRule')
+            ->label('Member Departments')
+            ->options(function ($ci) {
+                $ci->load->model('departments_model');
+                $departments = $ci->departments_model->get();
+                $options = [];
+                foreach ($departments as $department) {
+                    if (!empty($department['departmentid']) && !empty($department['name'])) {
+                        $options[] = [
+                            'value' => $department['departmentid'],
+                            'label' => $department['name'],
+                        ];
+                    }
+                }
+                return $options;
             })
+            ->raw(function ($value, $operator, $sqlOperator) {
+                $dbPrefix = db_prefix();
+                $sqlOperator = $sqlOperator['operator'];
+
+                return "({$dbPrefix}tasks.id IN (
+                SELECT ta.taskid
+                FROM {$dbPrefix}task_assigned ta
+                JOIN {$dbPrefix}staff_departments sd 
+                    ON sd.staffid = ta.staffid
+                WHERE sd.departmentid $sqlOperator ('" . implode("','", $value) . "')
+            ))";
+            }),
+        App_table_filter::new('staff_roles', 'MultiSelectRule')
+            ->label('Staff Roles')
+            ->options(function ($ci) {
+
+                $fieldId = 96;
+
+                $values = $ci->db
+                    ->select('DISTINCT(value)')
+                    ->where('fieldid', $fieldId)
+                    ->where('fieldto', 'staff')
+                    ->where('value !=', '')
+                    ->get(db_prefix() . 'customfieldsvalues')
+                    ->result_array();
+
+                $options = [];
+
+                foreach ($values as $val) {
+                    $options[] = [
+                        'value' => $val['value'],
+                        'label' => $val['value'],
+                    ];
+                }
+
+                return $options;
+            })->raw(function ($value, $operator, $sqlOperator) {
+
+                $dbPrefix = db_prefix();
+                $fieldId = 96;
+                $sqlOperator = $sqlOperator['operator'];
+
+                return "({$dbPrefix}tasks.id IN (
+                    SELECT ta.taskid
+                    FROM {$dbPrefix}task_assigned ta
+                    JOIN {$dbPrefix}customfieldsvalues cf 
+                        ON cf.relid = ta.staffid
+                    WHERE cf.fieldid = {$fieldId}
+                    AND cf.fieldto = 'staff'
+                    AND cf.value $sqlOperator ('" . implode("','", $value) . "')
+                ))";
+            })
+
     ]);

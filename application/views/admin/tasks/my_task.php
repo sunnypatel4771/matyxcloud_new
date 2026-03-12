@@ -1,10 +1,10 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <?php echo form_open_multipart(admin_url('tasks/task' . ($id ? '/' . $id : '')), ['id' => 'task-form']); ?>
 <div class="modal fade<?php if (isset($task)) {
-                          echo ' edit';
-                      }?>" id="_task_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" <?php if ($this->input->get('opened_from_lead_id')) {
-                                                                                  echo 'data-lead-id=' . $this->input->get('opened_from_lead_id');
-                                                                              }?>>
+                            echo ' edit';
+                        } ?>" id="_task_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" <?php if ($this->input->get('opened_from_lead_id')) {
+                                                                                                                echo 'data-lead-id=' . $this->input->get('opened_from_lead_id');
+                                                                                                            } ?>>
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -18,97 +18,97 @@
                 <div class="row">
                     <div class="col-md-12">
                         <?php
-                            $rel_type = '';
-                            $rel_id   = '';
-                            if (isset($task) || ($this->input->get('rel_id') && $this->input->get('rel_type'))) {
-                                $rel_id   = isset($task) ? $task->rel_id : $this->input->get('rel_id');
-                                $rel_type = isset($task) ? $task->rel_type : $this->input->get('rel_type');
-                            }
-                            if (isset($task) && $task->billed == 1) {
-                                echo '<div class="alert alert-success text-center no-margin">' . _l('task_is_billed', '<a href="' . admin_url('invoices/list_invoices/' . $task->invoice_id) . '" target="_blank" class="alert-link">' . e(format_invoice_number($task->invoice_id))) . '</a></div><br />';
-                            }
+                        $rel_type = '';
+                        $rel_id   = '';
+                        if (isset($task) || ($this->input->get('rel_id') && $this->input->get('rel_type'))) {
+                            $rel_id   = isset($task) ? $task->rel_id : $this->input->get('rel_id');
+                            $rel_type = isset($task) ? $task->rel_type : $this->input->get('rel_type');
+                        }
+                        if (isset($task) && $task->billed == 1) {
+                            echo '<div class="alert alert-success text-center no-margin">' . _l('task_is_billed', '<a href="' . admin_url('invoices/list_invoices/' . $task->invoice_id) . '" target="_blank" class="alert-link">' . e(format_invoice_number($task->invoice_id))) . '</a></div><br />';
+                        }
                         ?>
-                        <?php if (isset($task)) {?>
+                        <?php if (isset($task)) { ?>
                             <div class="pull-right mbot10 task-single-menu task-menu-options">
                                 <div class="content-menu hide">
                                     <ul>
-                                        <?php if (staff_can('create', 'tasks')) {?>
+                                        <?php if (staff_can('create',  'tasks')) { ?>
                                             <?php
-                                                $copy_template = '';
-                                                    if (total_rows(db_prefix() . 'task_assigned', ['taskid' => $task->id]) > 0) {
-                                                        $copy_template .= "<div class='checkbox checkbox-primary'><input type='checkbox' name='copy_task_assignees' id='copy_task_assignees' checked><label for='copy_task_assignees'>" . _l('task_single_assignees') . '</label></div>';
-                                                    }
-                                                    if (total_rows(db_prefix() . 'task_followers', ['taskid' => $task->id]) > 0) {
-                                                        $copy_template .= "<div class='checkbox checkbox-primary'><input type='checkbox' name='copy_task_followers' id='copy_task_followers' checked><label for='copy_task_followers'>" . _l('task_single_followers') . '</label></div>';
-                                                    }
-                                                    if (total_rows(db_prefix() . 'task_checklist_items', ['taskid' => $task->id]) > 0) {
-                                                        $copy_template .= "<div class='checkbox checkbox-primary'><input type='checkbox' name='copy_task_checklist_items' id='copy_task_checklist_items' checked><label for='copy_task_checklist_items'>" . _l('task_checklist_items') . '</label></div>';
-                                                    }
-                                                    if (total_rows(db_prefix() . 'files', ['rel_id' => $task->id, 'rel_type' => 'task']) > 0) {
-                                                        $copy_template .= "<div class='checkbox checkbox-primary'><input type='checkbox' name='copy_task_attachments' id='copy_task_attachments'><label for='copy_task_attachments'>" . _l('task_view_attachments') . '</label></div>';
-                                                    }
+                                            $copy_template = '';
+                                            if (total_rows(db_prefix() . 'task_assigned', ['taskid' => $task->id]) > 0) {
+                                                $copy_template .= "<div class='checkbox checkbox-primary'><input type='checkbox' name='copy_task_assignees' id='copy_task_assignees' checked><label for='copy_task_assignees'>" . _l('task_single_assignees') . '</label></div>';
+                                            }
+                                            if (total_rows(db_prefix() . 'task_followers', ['taskid' => $task->id]) > 0) {
+                                                $copy_template .= "<div class='checkbox checkbox-primary'><input type='checkbox' name='copy_task_followers' id='copy_task_followers' checked><label for='copy_task_followers'>" . _l('task_single_followers') . '</label></div>';
+                                            }
+                                            if (total_rows(db_prefix() . 'task_checklist_items', ['taskid' => $task->id]) > 0) {
+                                                $copy_template .= "<div class='checkbox checkbox-primary'><input type='checkbox' name='copy_task_checklist_items' id='copy_task_checklist_items' checked><label for='copy_task_checklist_items'>" . _l('task_checklist_items') . '</label></div>';
+                                            }
+                                            if (total_rows(db_prefix() . 'files', ['rel_id' => $task->id, 'rel_type' => 'task']) > 0) {
+                                                $copy_template .= "<div class='checkbox checkbox-primary'><input type='checkbox' name='copy_task_attachments' id='copy_task_attachments'><label for='copy_task_attachments'>" . _l('task_view_attachments') . '</label></div>';
+                                            }
 
-                                                    $copy_template      .= '<p>' . _l('task_status') . '</p>';
-                                                    $task_copy_statuses  = hooks()->apply_filters('task_copy_statuses', $task_statuses);
-                                                    foreach ($task_copy_statuses as $copy_status) {
-                                                        $copy_template .= "<div class='radio radio-primary'><input type='radio' value='" . $copy_status['id'] . "' name='copy_task_status' id='copy_task_status_" . $copy_status['id'] . "'" . ($copy_status['id'] == hooks()->apply_filters('copy_task_default_status', 1) ? ' checked' : '') . "><label for='copy_task_status_" . $copy_status['id'] . "'>" . $copy_status['name'] . '</label></div>';
-                                                    }
+                                            $copy_template .= '<p>' . _l('task_status') . '</p>';
+                                            $task_copy_statuses = hooks()->apply_filters('task_copy_statuses', $task_statuses);
+                                            foreach ($task_copy_statuses as $copy_status) {
+                                                $copy_template .= "<div class='radio radio-primary'><input type='radio' value='" . $copy_status['id'] . "' name='copy_task_status' id='copy_task_status_" . $copy_status['id'] . "'" . ($copy_status['id'] == hooks()->apply_filters('copy_task_default_status', 1) ? ' checked' : '') . "><label for='copy_task_status_" . $copy_status['id'] . "'>" . $copy_status['name'] . '</label></div>';
+                                            }
 
-                                                    $copy_template .= "<div class='text-center'>";
-                                                    $copy_template .= "<button type='button' data-task-copy-from='" . $task->id . "' class='btn btn-success copy_task_action'>" . _l('copy_task_confirm') . '</button>';
-                                                    $copy_template .= '</div>';
-                                                ?>
+                                            $copy_template .= "<div class='text-center'>";
+                                            $copy_template .= "<button type='button' data-task-copy-from='" . $task->id . "' class='btn btn-success copy_task_action'>" . _l('copy_task_confirm') . '</button>';
+                                            $copy_template .= '</div>';
+                                            ?>
                                             <li> <a href="#" onclick="return false;" data-placement="bottom"
                                                     data-toggle="popover"
                                                     data-content="<?php echo htmlspecialchars($copy_template); ?>"
                                                     data-html="true"><?php echo _l('task_copy'); ?></span></a>
                                             </li>
-                                        <?php }?>
-                                        <?php if (staff_can('delete', 'tasks')) {?>
+                                        <?php } ?>
+                                        <?php if (staff_can('delete',  'tasks')) { ?>
                                             <li>
                                                 <a href="<?php echo admin_url('tasks/delete_task/' . $task->id); ?>"
                                                     class="_delete task-delete">
                                                     <?php echo _l('task_single_delete'); ?>
                                                 </a>
                                             </li>
-                                        <?php }?>
+                                        <?php } ?>
                                     </ul>
                                 </div>
-                                <?php if (staff_can('delete', 'tasks') || staff_can('create', 'tasks')) {?>
+                                <?php if (staff_can('delete',  'tasks') || staff_can('create',  'tasks')) { ?>
                                     <a href="#" onclick="return false;" class="trigger manual-popover mright5">
                                         <i class="fa-regular fa-circle fa-sm"></i>
                                         <i class="fa-regular fa-circle fa-sm"></i>
                                         <i class="fa-regular fa-circle fa-sm"></i>
                                     </a>
-                                <?php }?>
+                                <?php } ?>
                             </div>
-                        <?php }?>
+                        <?php } ?>
                         <div class="checkbox checkbox-primary checkbox-inline task-add-edit-public tw-pt-2">
                             <input type="checkbox" id="task_is_public" name="is_public" <?php if (isset($task)) {
-                                                                                                if ($task->is_public == 1) {
-                                                                                                    echo 'checked';
+                                                                                            if ($task->is_public == 1) {
+                                                                                                echo 'checked';
                                                                                             }
-                                                                                        }?>>
+                                                                                        }; ?>>
                             <label for="task_is_public" data-toggle="tooltip" data-placement="bottom"
                                 title="<?php echo _l('task_public_help'); ?>"><?php echo _l('task_public'); ?></label>
                         </div>
                         <div class="checkbox checkbox-primary checkbox-inline task-add-edit-billable tw-pt-2">
-                            <input type="checkbox" id="task_is_billable" name="billable" <?php if ((isset($task) && $task->billable == 1) || (! isset($task) && get_option('task_biillable_checked_on_creation') == 1)) {
-                                                                                             echo ' checked';
-                                                                                         }?>>
+                            <input type="checkbox" id="task_is_billable" name="billable" <?php if ((isset($task) && $task->billable == 1) || (!isset($task) && get_option('task_biillable_checked_on_creation') == 1)) {
+                                                                                                echo ' checked';
+                                                                                            } ?>>
                             <label for="task_is_billable"><?php echo _l('task_billable'); ?></label>
                         </div>
-                        <div class="task-visible-to-customer tw-pt-2 checkbox checkbox-inline checkbox-primary<?php if ((isset($task) && $task->rel_type != 'project') || ! isset($task) || (isset($task) && $task->rel_type == 'project' && total_rows(db_prefix() . 'project_settings', ['project_id' => $task->rel_id, 'name' => 'view_tasks', 'value' => 0]) > 0)) {
-                                                                                                                  echo ' hide';
-                                                                                                              }?>">
+                        <div class="task-visible-to-customer tw-pt-2 checkbox checkbox-inline checkbox-primary<?php if ((isset($task) && $task->rel_type != 'project') || !isset($task) || (isset($task) && $task->rel_type == 'project' && total_rows(db_prefix() . 'project_settings', ['project_id' => $task->rel_id, 'name' => 'view_tasks', 'value' => 0]) > 0)) {
+                                                                                                                    echo ' hide';
+                                                                                                                } ?>">
                             <input type="checkbox" id="task_visible_to_client" name="visible_to_client" <?php if (isset($task)) {
-                                                                                                                if ($task->visible_to_client == 1) {
-                                                                                                                    echo 'checked';
+                                                                                                            if ($task->visible_to_client == 1) {
+                                                                                                                echo 'checked';
                                                                                                             }
-                                                                                                        }?>>
+                                                                                                        } ?>>
                             <label for="task_visible_to_client"><?php echo _l('task_visible_to_client'); ?></label>
                         </div>
-                        <?php if (! isset($task)) {?>
+                        <?php if (!isset($task)) { ?>
                             <a href="#" class="pull-right tw-pt-2"
                                 onclick="slideToggle('#new-task-attachments'); return false;">
                                 <?php echo _l('attach_files'); ?>
@@ -139,49 +139,48 @@
                         <?php
                             if ($this->input->get('ticket_to_task')) {
                                 echo form_hidden('ticket_to_task', $rel_id);
-                        }}?>
+                            }
+                        } ?>
                         <hr class="-tw-mx-3.5" />
                         <?php $value = (isset($task) ? $task->name : ''); ?>
                         <?php echo render_input('name', 'task_add_edit_subject', $value); ?>
-
-                    <?php if (isset($id) && $id != '') {?>
+                        <?php if (isset($id) && $id != '') { ?>
                         <div class="task-hours<?php if (isset($task) && $task->rel_type == 'project' && total_rows(db_prefix() . 'projects', ['id' => $task->rel_id, 'billing_type' => 3]) == 0) {
-                                                  echo ' hide';
-                                              }?>">
+                                                    echo ' hide';
+                                                } ?>">
                             <?php $value = (isset($task) ? $task->hourly_rate : 0); ?>
                             <?php echo render_input('hourly_rate', 'task_hourly_rate', $value); ?>
                         </div>
-                    <?php }?>
-
+                        <?php } ?>
                         <div class="project-details<?php if ($rel_type != 'project') {
-                                                       echo ' hide';
-                                                   }?>">
+                                                        echo ' hide';
+                                                    } ?>">
                             <div class="form-group">
                                 <label for="milestone"><?php echo _l('task_milestone'); ?></label>
                                 <select name="milestone" id="milestone" class="selectpicker" data-width="100%"
                                     data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
                                     <option value=""></option>
-                                    <?php foreach ($milestones as $milestone) {?>
+                                    <?php foreach ($milestones as $milestone) { ?>
                                         <option value="<?php echo e($milestone['id']); ?>" <?php if (isset($task) && $task->milestone == $milestone['id']) {
-      echo 'selected';
-  }?>><?php echo e($milestone['name']); ?></option>
-                                    <?php }?>
+                                                                                                echo 'selected';
+                                                                                            } ?>><?php echo e($milestone['name']); ?></option>
+                                    <?php } ?>
                                 </select>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <?php if (isset($task)) {
-                                        $value = _d($task->startdate);
-                                    } elseif (isset($start_date)) {
-                                        $value = $start_date;
-                                    } else {
-                                        $value = _d(date('Y-m-d'));
-                                    }
-                                    $date_attrs = [];
-                                    if (isset($task) && $task->recurring > 0 && $task->last_recurring_date != null) {
-                                        $date_attrs['disabled'] = true;
-                                    }
+                                    $value = _d($task->startdate);
+                                } elseif (isset($start_date)) {
+                                    $value = $start_date;
+                                } else {
+                                    $value = _d(date('Y-m-d'));
+                                }
+                                $date_attrs = [];
+                                if (isset($task) && $task->recurring > 0 && $task->last_recurring_date != null) {
+                                    $date_attrs['disabled'] = true;
+                                }
                                 ?>
                                 <?php echo render_date_input('startdate', 'task_add_edit_start_date', $value, $date_attrs); ?>
                             </div>
@@ -195,11 +194,11 @@
                                         class="control-label"><?php echo _l('task_add_edit_priority'); ?></label>
                                     <select name="priority" class="selectpicker" id="priority" data-width="100%"
                                         data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
-                                        <?php foreach (get_tasks_priorities() as $priority) {?>
-                                            <option value="<?php echo e($priority['id']); ?>" <?php if (isset($task) && $task->priority == $priority['id'] || ! isset($task) && get_option('default_task_priority') == $priority['id']) {
-      echo ' selected';
-  }?>><?php echo e($priority['name']); ?></option>
-                                        <?php }?>
+                                        <?php foreach (get_tasks_priorities() as $priority) { ?>
+                                            <option value="<?php echo e($priority['id']); ?>" <?php if (isset($task) && $task->priority == $priority['id'] || !isset($task) && get_option('default_task_priority') == $priority['id']) {
+                                                                                                    echo ' selected';
+                                                                                                } ?>><?php echo e($priority['name']); ?></option>
+                                        <?php } ?>
                                         <?php hooks()->do_action('task_priorities_select', (isset($task) ? $task : 0)); ?>
                                     </select>
                                 </div>
@@ -212,36 +211,36 @@
                                         data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
                                         <option value=""></option>
                                         <option value="1-week" <?php if (isset($task) && $task->repeat_every == 1 && $task->recurring_type == 'week') {
-                                                                   echo 'selected';
-                                                               }?>><?php echo _l('week'); ?></option>
+                                                                    echo 'selected';
+                                                                } ?>><?php echo _l('week'); ?></option>
                                         <option value="2-week" <?php if (isset($task) && $task->repeat_every == 2 && $task->recurring_type == 'week') {
-                                                                   echo 'selected';
-                                                               }?>>2 <?php echo _l('weeks'); ?></option>
+                                                                    echo 'selected';
+                                                                } ?>>2 <?php echo _l('weeks'); ?></option>
                                         <option value="1-month" <?php if (isset($task) && $task->repeat_every == 1 && $task->recurring_type == 'month') {
                                                                     echo 'selected';
-                                                                }?>>1 <?php echo _l('month'); ?></option>
+                                                                } ?>>1 <?php echo _l('month'); ?></option>
                                         <option value="2-month" <?php if (isset($task) && $task->repeat_every == 2 && $task->recurring_type == 'month') {
                                                                     echo 'selected';
-                                                                }?>>2 <?php echo _l('months'); ?></option>
+                                                                } ?>>2 <?php echo _l('months'); ?></option>
                                         <option value="3-month" <?php if (isset($task) && $task->repeat_every == 3 && $task->recurring_type == 'month') {
                                                                     echo 'selected';
-                                                                }?>>3 <?php echo _l('months'); ?></option>
+                                                                } ?>>3 <?php echo _l('months'); ?></option>
                                         <option value="6-month" <?php if (isset($task) && $task->repeat_every == 6 && $task->recurring_type == 'month') {
                                                                     echo 'selected';
-                                                                }?>>6 <?php echo _l('months'); ?></option>
+                                                                } ?>>6 <?php echo _l('months'); ?></option>
                                         <option value="1-year" <?php if (isset($task) && $task->repeat_every == 1 && $task->recurring_type == 'year') {
-                                                                   echo 'selected';
-                                                               }?>>1 <?php echo _l('year'); ?></option>
+                                                                    echo 'selected';
+                                                                } ?>>1 <?php echo _l('year'); ?></option>
                                         <option value="custom" <?php if (isset($task) && $task->custom_recurring == 1) {
-                                                                   echo 'selected';
-                                                               }?>><?php echo _l('recurring_custom'); ?></option>
+                                                                    echo 'selected';
+                                                                } ?>><?php echo _l('recurring_custom'); ?></option>
                                     </select>
                                 </div>
                             </div>
                         </div>
-                        <div class="recurring_custom <?php if ((isset($task) && $task->custom_recurring != 1) || (! isset($task))) {
-                                                         echo 'hide';
-                                                     }?>">
+                        <div class="recurring_custom <?php if ((isset($task) && $task->custom_recurring != 1) || (!isset($task))) {
+                                                            echo 'hide';
+                                                        } ?>">
                             <div class="row">
                                 <div class="col-md-6">
                                     <?php $value = (isset($task) && $task->custom_recurring == 1 ? $task->repeat_every : 1); ?>
@@ -253,42 +252,42 @@
                                         data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
                                         <option value="day" <?php if (isset($task) && $task->custom_recurring == 1 && $task->recurring_type == 'day') {
                                                                 echo 'selected';
-                                                            }?>><?php echo _l('task_recurring_days'); ?></option>
+                                                            } ?>><?php echo _l('task_recurring_days'); ?></option>
                                         <option value="week" <?php if (isset($task) && $task->custom_recurring == 1 && $task->recurring_type == 'week') {
-                                                                 echo 'selected';
-                                                             }?>><?php echo _l('task_recurring_weeks'); ?></option>
+                                                                    echo 'selected';
+                                                                } ?>><?php echo _l('task_recurring_weeks'); ?></option>
                                         <option value="month" <?php if (isset($task) && $task->custom_recurring == 1 && $task->recurring_type == 'month') {
-                                                                  echo 'selected';
-                                                              }?>><?php echo _l('task_recurring_months'); ?></option>
+                                                                    echo 'selected';
+                                                                } ?>><?php echo _l('task_recurring_months'); ?></option>
                                         <option value="year" <?php if (isset($task) && $task->custom_recurring == 1 && $task->recurring_type == 'year') {
-                                                                 echo 'selected';
-                                                             }?>><?php echo _l('task_recurring_years'); ?></option>
+                                                                    echo 'selected';
+                                                                } ?>><?php echo _l('task_recurring_years'); ?></option>
                                     </select>
                                 </div>
                             </div>
                         </div>
-                        <div id="cycles_wrapper" class="<?php if (! isset($task) || (isset($task) && $task->recurring == 0)) {
+                        <div id="cycles_wrapper" class="<?php if (!isset($task) || (isset($task) && $task->recurring == 0)) {
                                                             echo ' hide';
-                                                        }?>">
+                                                        } ?>">
                             <?php $value = (isset($task) ? $task->cycles : 0); ?>
                             <div class="form-group recurring-cycles">
                                 <label for="cycles"><?php echo _l('recurring_total_cycles'); ?>
                                     <?php if (isset($task) && $task->total_cycles > 0) {
-                                            echo '<small>' . e(_l('cycles_passed', $task->total_cycles)) . '</small>';
-                                        }
+                                        echo '<small>' . e(_l('cycles_passed', $task->total_cycles)) . '</small>';
+                                    }
                                     ?>
                                 </label>
                                 <div class="input-group">
                                     <input type="number" class="form-control" <?php if ($value == 0) {
-                                                                                  echo ' disabled';
-                                                                              }?> name="cycles" id="cycles" value="<?php echo e($value); ?>" <?php if (isset($task) && $task->total_cycles > 0) {
-      echo 'min="' . e($task->total_cycles) . '"';
-  }?>>
+                                                                                    echo ' disabled';
+                                                                                } ?> name="cycles" id="cycles" value="<?php echo e($value); ?>" <?php if (isset($task) && $task->total_cycles > 0) {
+                                                                                                                                                    echo 'min="' . e($task->total_cycles) . '"';
+                                                                                                                                                } ?>>
                                     <div class="input-group-addon">
                                         <div class="checkbox">
                                             <input type="checkbox" <?php if ($value == 0) {
-                                                                       echo ' checked';
-                                                                   }?> id="unlimited_cycles">
+                                                                        echo ' checked';
+                                                                    } ?> id="unlimited_cycles">
                                             <label for="unlimited_cycles"><?php echo _l('cycles_infinity'); ?></label>
                                         </div>
                                     </div>
@@ -304,92 +303,92 @@
                                         data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
                                         <option value=""></option>
                                         <option value="project" <?php if (isset($task) || $this->input->get('rel_type')) {
-                                                                        if ($rel_type == 'project') {
-                                                                            echo 'selected';
+                                                                    if ($rel_type == 'project') {
+                                                                        echo 'selected';
                                                                     }
-                                                                }?>><?php echo _l('project'); ?></option>
+                                                                } ?>><?php echo _l('project'); ?></option>
                                         <option value="invoice" <?php if (isset($task) || $this->input->get('rel_type')) {
-                                                                        if ($rel_type == 'invoice') {
-                                                                            echo 'selected';
+                                                                    if ($rel_type == 'invoice') {
+                                                                        echo 'selected';
                                                                     }
-                                                                }?>>
+                                                                } ?>>
                                             <?php echo _l('invoice'); ?>
                                         </option>
                                         <option value="customer" <?php if (isset($task) || $this->input->get('rel_type')) {
-                                                                         if ($rel_type == 'customer') {
-                                                                             echo 'selected';
-                                                                     }
-                                                                 }?>>
+                                                                        if ($rel_type == 'customer') {
+                                                                            echo 'selected';
+                                                                        }
+                                                                    } ?>>
                                             <?php echo _l('client'); ?>
                                         </option>
                                         <option value="estimate" <?php if (isset($task) || $this->input->get('rel_type')) {
-                                                                         if ($rel_type == 'estimate') {
-                                                                             echo 'selected';
-                                                                     }
-                                                                 }?>>
+                                                                        if ($rel_type == 'estimate') {
+                                                                            echo 'selected';
+                                                                        }
+                                                                    } ?>>
                                             <?php echo _l('estimate'); ?>
                                         </option>
                                         <option value="contract" <?php if (isset($task) || $this->input->get('rel_type')) {
-                                                                         if ($rel_type == 'contract') {
-                                                                             echo 'selected';
-                                                                     }
-                                                                 }?>>
+                                                                        if ($rel_type == 'contract') {
+                                                                            echo 'selected';
+                                                                        }
+                                                                    } ?>>
                                             <?php echo _l('contract'); ?>
                                         </option>
                                         <option value="ticket" <?php if (isset($task) || $this->input->get('rel_type')) {
-                                                                       if ($rel_type == 'ticket') {
-                                                                           echo 'selected';
-                                                                   }
-                                                               }?>>
+                                                                    if ($rel_type == 'ticket') {
+                                                                        echo 'selected';
+                                                                    }
+                                                                } ?>>
                                             <?php echo _l('ticket'); ?>
                                         </option>
                                         <option value="expense" <?php if (isset($task) || $this->input->get('rel_type')) {
-                                                                        if ($rel_type == 'expense') {
-                                                                            echo 'selected';
+                                                                    if ($rel_type == 'expense') {
+                                                                        echo 'selected';
                                                                     }
-                                                                }?>>
+                                                                } ?>>
                                             <?php echo _l('expense'); ?>
                                         </option>
                                         <option value="lead" <?php if (isset($task) || $this->input->get('rel_type')) {
-                                                                     if ($rel_type == 'lead') {
-                                                                         echo 'selected';
-                                                                 }
-                                                             }?>>
+                                                                    if ($rel_type == 'lead') {
+                                                                        echo 'selected';
+                                                                    }
+                                                                } ?>>
                                             <?php echo _l('lead'); ?>
                                         </option>
                                         <option value="proposal" <?php if (isset($task) || $this->input->get('rel_type')) {
-                                                                         if ($rel_type == 'proposal') {
-                                                                             echo 'selected';
-                                                                     }
-                                                                 }?>>
+                                                                        if ($rel_type == 'proposal') {
+                                                                            echo 'selected';
+                                                                        }
+                                                                    } ?>>
                                             <?php echo _l('proposal'); ?>
                                         </option>
                                         <?php
-                                            hooks()->do_action('task_modal_rel_type_select', ['task' => (isset($task) ? $task : 0), 'rel_type' => $rel_type]);
+                                        hooks()->do_action('task_modal_rel_type_select', ['task' => (isset($task) ? $task : 0), 'rel_type' => $rel_type]);
                                         ?>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group<?php if ($rel_id == '') {
-                                                          echo ' hide';
-                                                      }?>" id="rel_id_wrapper">
+                                                            echo ' hide';
+                                                        } ?>" id="rel_id_wrapper">
                                     <label for="rel_id" class="control-label"><span class="rel_id_label"></span></label>
                                     <div id="rel_id_select">
                                         <select name="rel_id" id="rel_id" class="ajax-sesarch" data-width="100%"
                                             data-live-search="true"
                                             data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
                                             <?php if ($rel_id != '' && $rel_type != '') {
-                                                    $rel_data = get_relation_data($rel_type, $rel_id);
-                                                    $rel_val  = get_relation_values($rel_data, $rel_type);
-                                                    echo '<option value="' . $rel_val['id'] . '" selected>' . $rel_val['name'] . '</option>';
-                                            }?>
+                                                $rel_data = get_relation_data($rel_type, $rel_id);
+                                                $rel_val  = get_relation_values($rel_data, $rel_type);
+                                                echo '<option value="' . $rel_val['id'] . '" selected>' . $rel_val['name'] . '</option>';
+                                            } ?>
                                         </select>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <?php if (! isset($task)) {?>
+                        <?php if (!isset($task)) { ?>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group select-placeholder>">
@@ -397,49 +396,48 @@
                                         <select name="assignees[]" id="assignees" class="selectpicker" data-width="100%"
                                             data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>"
                                             multiple data-live-search="true">
-                                            <?php foreach ($members as $member) {?>
+                                            <?php foreach ($members as $member) { ?>
                                                 <option value="<?php echo e($member['staffid']); ?>" <?php if ((get_option('new_task_auto_assign_current_member') == '1') && get_staff_user_id() == $member['staffid']) {
-      echo 'selected';
-  }?>>
+                                                                                                            echo 'selected';
+                                                                                                        } ?>>
                                                     <?php echo e($member['firstname'] . ' ' . $member['lastname']); ?>
                                                 </option>
-                                            <?php }?>
+                                            <?php } ?>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <?php
-                                        $follower = (get_option('new_task_auto_follower_current_member') == '1') ? [get_staff_user_id()] : '';
-                                            echo render_select('followers[]', $members, ['staffid', ['firstname', 'lastname']], 'task_single_followers', $follower, ['multiple' => true], [], '', '', false);
-                                        ?>
+                                    $follower = (get_option('new_task_auto_follower_current_member') == '1') ? [get_staff_user_id()] : '';
+                                    echo render_select('followers[]', $members, ['staffid', ['firstname', 'lastname']], 'task_single_followers', $follower, ['multiple' => true], [], '', '', false);
+                                    ?>
                                 </div>
                             </div>
-                        <?php }?>
+                        <?php } ?>
 
-                    <?php if (isset($id) && $id != '') {?>
                         <?php
-                            if (
-                                isset($task)
-                                && $task->status == Tasks_model::STATUS_COMPLETE
-                                && (staff_can('create', 'tasks') || staff_can('edit', 'tasks'))
-                            ) {
-                                echo render_datetime_input('datefinished', 'task_finished', _dt($task->datefinished));
-                            }
-                            ?>
+                        if (
+                            isset($task)
+                            && $task->status == Tasks_model::STATUS_COMPLETE
+                            && (staff_can('create', 'tasks') || staff_can('edit', 'tasks'))
+                        ) {
+                            echo render_datetime_input('datefinished', 'task_finished', _dt($task->datefinished));
+                        }
+                        ?>
                         <div class="form-group checklist-templates-wrapper<?php if (count($checklistTemplates) == 0 || isset($task)) {
-                                                                                  echo ' hide';
-                                                                              }?>">
+                                                                                echo ' hide';
+                                                                            }  ?>">
                             <label for="checklist_items"><?php echo _l('insert_checklist_templates'); ?></label>
                             <select id="checklist_items" name="checklist_items[]"
                                 class="selectpicker checklist-items-template-select" multiple="1"
                                 data-none-selected-text="<?php echo _l('dropdown_non_selected_tex') ?>"
                                 data-width="100%" data-live-search="true" data-actions-box="true">
                                 <option value="" class="hide"></option>
-                                <?php foreach ($checklistTemplates as $chkTemplate) {?>
+                                <?php foreach ($checklistTemplates as $chkTemplate) { ?>
                                     <option value="<?php echo e($chkTemplate['id']); ?>">
                                         <?php echo e($chkTemplate['description']); ?>
                                     </option>
-                                <?php }?>
+                                <?php } ?>
                             </select>
                         </div>
                         <div class="form-group">
@@ -447,53 +445,53 @@
                                 <label for="tags" class="control-label"><i class="fa fa-tag" aria-hidden="true"></i>
                                     <?php echo _l('tags'); ?></label>
                                 <input type="text" class="tagsinput" id="tags" name="tags"
-                                    value="<?php echo(isset($task) ? prep_tags_input(get_tags_in($task->id, 'task')) : ''); ?>"
+                                    value="<?php echo (isset($task) ? prep_tags_input(get_tags_in($task->id, 'task')) : ''); ?>"
                                     data-role="tagsinput">
                             </div>
                         </div>
-                    <?php }?>
 
                         <?php
-                            $CI = &get_instance();
-                            $CI->load->model('staff_model');
-                            $CI->load->model('clients_model');
-                            $CI->load->model('projects_model');
-                            $CI->load->model('contracts_model');
+                        $CI = &get_instance();
+                        $CI->load->model('staff_model');
+                        $CI->load->model('clients_model');
+                        $CI->load->model('projects_model');
+                        $CI->load->model('contracts_model');
 
-                            $staff = $CI->staff_model->get();
 
-                            $client_data = null;
-                            if ($rel_type == 'customer') {
-                                if ($rel_id > 0) {
-                                    //get client data
-                                    $client_data = $CI->clients_model->get($rel_id);
-                                }
+
+
+
+                        $staff = $CI->staff_model->get();
+
+                        $client_data = null;
+                        if ($rel_type == 'customer') {
+                            if ($rel_id > 0) {
+                                //get client data
+                                $client_data = $CI->clients_model->get($rel_id);
                             }
+                        }
 
-                            if ($rel_type == 'project') {
-                                if ($rel_id > 0) {
-                                    //get project data
-                                    $client_data = $CI->projects_model->get($rel_id);
-                                }
+                        if ($rel_type == 'project') {
+                            if ($rel_id > 0) {
+                                //get project data
+                                $client_data = $CI->projects_model->get($rel_id);
                             }
+                        }
 
-                            if ($rel_type == 'contract') {
-                                if ($rel_id > 0) {
-                                    //get contract data
-                                    $client_data = $CI->contracts_model->get($rel_id);
-                                }
+                        if ($rel_type == 'contract') {
+                            if ($rel_id > 0) {
+                                //get contract data
+                                $client_data = $CI->contracts_model->get($rel_id);
                             }
+                        }
 
-                            if (isset($task)) {
-                                $client_data = $task;
-                            }
+                        if (isset($task)) {
+                            $client_data = $task;
+                        }
 
                         ?>
 
-                        <div class="cutome_select <?php if (! in_array($rel_type, ['project', 'customer', 'contract'])) {
-                                                          echo 'hide';
-                                                  }
-                                                  ?>">
+                        <div class="cutome_select <?php if (!in_array($rel_type, ['project', 'customer', 'contract'])) echo 'hide'; ?>">
                             <div class="row ">
                                 <div class="col-md-12">
 
@@ -509,13 +507,13 @@
                             <div class="row">
                                 <div class="col-md-12">
 
-                                    <?php echo render_select('organic_social_id', $staff, ['staffid', ['firstname', 'lastname']], 'organic_social_id', $client_data->organic_social_id ?? '', []); ?>
+                                    <?php echo render_select('organic_social_id', $staff, ['staffid', ['firstname', 'lastname']], 'organic_social_id',  $client_data->organic_social_id ?? '', []); ?>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
 
-                                    <?php echo render_select('seo_lead_id', $staff, ['staffid', ['firstname', 'lastname']], 'seo_lead_id', $client_data->seo_lead_id ?? '', []); ?>
+                                    <?php echo render_select('seo_lead_id', $staff, ['staffid', ['firstname',  'lastname']], 'seo_lead_id', $client_data->seo_lead_id ?? '', []); ?>
                                 </div>
                             </div>
                             <div class="row">
@@ -539,7 +537,8 @@
                         </div>
 
 
-                    <?php $rel_id_custom_field = (isset($task) ? $task->id : false); ?>
+
+                        <?php $rel_id_custom_field = (isset($task) ? $task->id : false); ?>
                         <?php echo render_custom_fields('tasks', $rel_id_custom_field); ?>
                         <div class="form-group col-md-12" id="payment_status_wrapper" style="display:none; padding-left: 1px;">
                             <label class="control-label">Payment Status <span class="text-danger">*</span></label>
@@ -553,7 +552,36 @@
                                 </label>
                             </div>
                         </div>
+                        
+                        <!--<div class="form-group col-md-12" id="follow_sop_wrapper" style="display:none; padding-left: 1px;">-->
+                        <!--    <label class="control-label">-->
+                        <!--        Did You Follow SOP here?-->
+                        <!--         <a target="_blank" style="color: black;" href="https://hq.matyxcloud.com/admin/wiki/articles/show/135">-->
+                        <!--            <i class="fa-solid fa-circle-question" style="color:black;"></i>-->
+                        <!--         </a>-->
+                        <!--        </label>-->
+                        <!--    <div>-->
+                        <!--        <label class="radio-inline">-->
+                        <!--            <?php $follow_sop = isset($task) ? $task->follow_sop : 0; ?>-->
+                        <!--            <input type="radio" name="follow_sop" value="1" <?php echo $follow_sop == 1 ? 'checked' : ''; ?>> Yes-->
+                        <!--        </label>-->
+                        <!--        <label class="radio-inline">-->
+                        <!--            <input type="radio" name="follow_sop" value="0" <?php echo $follow_sop == 0 ? 'checked' : ''; ?>> No-->
+                        <!--        </label>-->
+                        <!--    </div>-->
+                        <!--</div>-->
 
+
+                        <!--<div class="form-group col-md-12" id="follow_sop_yes_question_wrapper" style="display:none; padding-left: 1px;">-->
+                            <?php 
+                                //echo render_input('link_to_contact_opp_in_ghl' , 'Link To Contact/Opp in GHL', isset($task) ? $task->link_to_contact_opp_in_ghl : '');
+
+                              //  echo render_date_input('date_contact_entered_in_ghl' , 'Date Contact Entered in GHL', isset($task) ? _d($task->date_contact_entered_in_ghl) : '');
+
+                                //echo render_input('screenshot_or_loom_url' , 'Screenshot and/or Loom URL', isset($task) ? $task->screenshot_or_loom_url : '');
+                            ?>
+                        <!--</div>-->
+                        
                         <div class="form-group col-md-12" id="follow_sop_wrapper" style="display:none; padding-left: 1px;">
                             <label class="control-label">
                                 Did you add the details to the Attribution Issue Sheet?
@@ -628,19 +656,19 @@
 
                         <!-- uncomment this jp -->
 
-                        <?php if (! $rel_id_custom_field) {?>
+                        <?php if (!$rel_id_custom_field) { ?>
                             <script>
                                 $(document).ready(function() {
                                     $('[data-fieldid="45"]').closest('.col-md-12').hide();
                                     $('[name="custom_fields[tasks][45]"]').closest('.col-md-12').hide();
                                 });
                             </script>
-                    <?php }?>
+                        <?php } ?>
                         <hr />
                         <p class="bold"><?php echo _l('task_add_edit_description'); ?></p>
                         <?php
-                            // onclick and onfocus used for convert ticket to task too
-                        echo render_textarea('description', '', (isset($task) ? $task->description : ''), ['rows' => 6, 'placeholder' => _l('task_add_description'), 'data-task-ae-editor' => true, ! is_mobile() ? 'onclick' : 'onfocus' => (! isset($task) || isset($task) && $task->description == '' ? 'init_editor(\'.tinymce-task\', {height:200, auto_focus: true});' : '')], [], 'no-mbot', 'tinymce-task'); ?>
+                        // onclick and onfocus used for convert ticket to task too
+                        echo render_textarea('description', '', (isset($task) ? $task->description : ''), ['rows' => 6, 'placeholder' => _l('task_add_description'), 'data-task-ae-editor' => true, !is_mobile() ? 'onclick' : 'onfocus' => (!isset($task) || isset($task) && $task->description == '' ? 'init_editor(\'.tinymce-task\', {height:200, auto_focus: true});' : '')], [], 'no-mbot', 'tinymce-task'); ?>
                     </div>
                 </div>
             </div>
@@ -661,9 +689,9 @@
         var _milestone_selected_data;
         _milestone_selected_data = undefined;
 
-        <?php if (get_option('new_task_auto_assign_current_member') == '1') {?>
+        <?php if (get_option('new_task_auto_assign_current_member') == '1') { ?>
             _current_member = "<?php echo get_staff_user_id(); ?>";
-        <?php }?>
+        <?php } ?>
         $(function() {
 
             $("body").off("change", "#rel_id");
@@ -683,7 +711,43 @@
             });
 
             custom_fields_hyperlink();
+            
+            // function shouldValidateSOPFields() {
+            //     let val10 = $('[name="custom_fields[tasks][10]"]').val();
+            //     let val1  = $('[name="custom_fields[tasks][1]"]').val();
+            //     let sopVal = $('input[name="follow_sop"]:checked').val();
 
+            //     if (val10 == 'Issue' && val1 == 'Attribution' && sopVal == '1') {
+            //         return true;
+            //     }
+            //     return false;
+            // }
+
+            // appValidateForm($('#task-form'), {
+            //     name: 'required',
+            //     startdate: 'required',
+            //     repeat_every_custom: {
+            //         min: 1
+            //     },
+            //     link_to_contact_opp_in_ghl: {
+            //         required: function () {
+            //             return shouldValidateSOPFields();
+            //         }
+            //     },
+
+            //     date_contact_entered_in_ghl: {
+            //         required: function () {
+            //             return shouldValidateSOPFields();
+            //         }
+            //     },
+
+            //     screenshot_or_loom_url: {
+            //         required: function () {
+            //             return shouldValidateSOPFields();
+            //         }
+            //     }
+            // }, task_form_handler);
+            
             function shouldValidateSOP(){
                 let val10  = $('[name="custom_fields[tasks][10]"]').val();
                 let val1   = $('[name="custom_fields[tasks][1]"]').val();
@@ -969,9 +1033,9 @@
                 }
             });
 
-            <?php if (! isset($task) && $rel_id != '') {?>
+            <?php if (!isset($task) && $rel_id != '') { ?>
                 _rel_id.change();
-            <?php }?>
+            <?php } ?>
 
             _rel_type.on('changed.bs.select', function(e, clickedIndex, isSelected, previousValue) {
                 if (previousValue == 'project') {
@@ -982,7 +1046,7 @@
                     $("#assignees").selectpicker('refresh')
                 }
             });
-
+            
             $('[data-fieldid="45"]').closest('.col-md-12').hide();
             $('[name="custom_fields[tasks][45]"]').closest('.col-md-12').hide();
 
@@ -999,7 +1063,52 @@
                     $('input[name="payment_status"]').prop('required', false);
                 }
             }
+            
+            // fucntion to show task type and department related field as a conditinal field
+            // function toggleFollowSOP(){
+            //     // console.log('ddd');
+                
+            //     let val10 = $('[name="custom_fields[tasks][10]"]').val();
+            //     let val1 = $('[name="custom_fields[tasks][1]"]').val();
+            //     if (val10 == 'Issue' && val1 == 'Attribution') {
+            //         $('#follow_sop_wrapper').show();
+            //     } else {
+            //         $('#follow_sop_wrapper').hide();
+            //     }
+            // }
 
+            // function toggleFollowSOPYesQuestion() {
+            //     let sopVal = $('input[name="follow_sop"]:checked').val();
+
+            //     if (sopVal == '1') {
+            //         $('#follow_sop_yes_question_wrapper').show();
+            //     } else {
+            //         $('#follow_sop_yes_question_wrapper').hide();
+            //     }
+            // }
+
+
+            // $(document).on('change', 'input[name="follow_sop"]', function () {
+            //     toggleFollowSOPYesQuestion();
+            //     $('#link_to_contact_opp_in_ghl').valid();
+            //     $('#date_contact_entered_in_ghl').valid();
+            //     $('#screenshot_or_loom_url').valid();
+            // });
+            
+
+            // fucntion to show task type and department related field as a conditinal field
+
+            // Also handle manual changes (fallback)
+            // $('[name="custom_fields[tasks][10]"], [name="custom_fields[tasks][1]"]').on('change', function() {
+            //     togglePaymentStatus();
+            //     toggleFollowSOP();
+            // });
+
+            // // Run once on page load
+            // togglePaymentStatus();
+            // toggleFollowSOP();
+            // toggleFollowSOPYesQuestion();
+            
             // fucntion to show task type and department related field as a conditinal field
             function toggleFollowSOP(){
                 // console.log('ddd');
@@ -1149,12 +1258,13 @@
                 }
 
             });
+
         });
 
-        <?php if (isset($_milestone_selected_data)) {?>
+        <?php if (isset($_milestone_selected_data)) { ?>
             _milestone_selected_data = '<?php echo json_encode($_milestone_selected_data); ?>';
             _milestone_selected_data = JSON.parse(_milestone_selected_data);
-        <?php }?>
+        <?php } ?>
 
         function task_rel_select() {
             var serverData = {};
@@ -1197,11 +1307,4 @@
             $duedate.datetimepicker('destroy');
             init_datepicker($duedate);
         }
-        
-       
-
-
-       
-
-
     </script>

@@ -21,12 +21,9 @@ $unlink_files = array(
     APPPATH . 'views/admin/tables/my_staff.php',
     APPPATH . 'views/admin/staff/my_manage.php',
     APPPATH . 'views/admin/clients/groups/my_tasks.php',
-
     APPPATH . 'views/admin/staff/my_timesheets.php',
     APPPATH . 'views/admin/tables/my_staff_timesheets.php',
     APPPATH . 'views/admin/tasks/my_filters.php',
-
-
 );
 
 foreach ($unlink_files as $file) {

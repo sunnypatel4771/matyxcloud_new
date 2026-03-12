@@ -48,7 +48,7 @@
                                     <option value="0">In Active</option>
                                 </select>
                             </div>
-
+                            
                             <div style="width: 15%; display: inline-block; margin-left: 10px; margin-bottom: 15px;">
                                 <select name="cus_roles_filter" id="cus_roles_filter" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('custom_roles'); ?>">
                                     <option value="">Select Role(s)</option>
@@ -57,16 +57,7 @@
                                     <?php } ?>
                                 </select>
                             </div>
-
-
-                            <div style="width: 15%; display: inline-block; margin-left: 10px; margin-bottom: 15px;">
-                                <select name="department_filter" id="department_filter" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('department'); ?>">
-                                    <option value="">Select Department</option>
-                                    <?php foreach ($departments as $role) { ?>
-                                        <option value="<?php echo $role['departmentid']; ?>"><?php echo $role['name']; ?></option>
-                                    <?php } ?>
-                                </select>
-                            </div>
+                            <!-- filter dropdowns  -->
 
                             <a href="#" data-toggle="modal" data-target="#staff_bulk_action" class="bulk-actions-btn table-btn hide" data-table=".table-staff">
                                 <?php echo _l('bulk_actions'); ?>
@@ -182,7 +173,6 @@
                                 _l('staff_dt_name'),
                                 _l('staff_dt_email'),
                                 _l('role'),
-                                _l('department'),
                                 _l('staff_dt_last_Login'),
                                 _l('staff_dt_active'),
                             ];
@@ -240,26 +230,20 @@
             var staff_table = $(".table-staff");
             dt_custom_view(val, staff_table);
         });
-
+        
         // cus_roles_filter
         $(document).on("change", "#cus_roles_filter", function() {
             var val = $(this).val();
             var staff_table = $(".table-staff");
             dt_custom_view(val, staff_table);
         });
-
-        // department_filter
-        $(document).on("change", "#department_filter", function() {
-            var val = $(this).val();
-            var staff_table = $(".table-staff");
-            dt_custom_view(val, staff_table);
-        });
+        
+        
 
         var staffServerParams = {
             role_filter: "[name='role_filter']",
             status_filter: "[name='status_filter']",
             cus_roles_filter: "[name='cus_roles_filter']",
-            department_filter: "[name='department_filter']",
         };
 
         // $(function() {

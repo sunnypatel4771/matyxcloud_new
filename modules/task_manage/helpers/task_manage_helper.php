@@ -1,6 +1,6 @@
 <?php
 
-function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
+function task_manage_task_render_custom_fields( $belongs_to ,  $rel_id = false )
 {
 
     // Is custom fields for items and in add/edit
@@ -31,7 +31,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
 
 
 
-    $CI = &get_instance();
+    $CI = & get_instance();
 
     $CI->db->where('active', 1);
 
@@ -56,6 +56,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
         if (!$items_add_edit_preview && !$items_applied) {
 
             $fields_html .= '<div class="row custom-fields-form-row">';
+
         }
 
 
@@ -65,6 +66,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
             if ($field['only_admin'] == 1 && !$is_admin) {
 
                 continue;
+
             }
 
 
@@ -78,6 +80,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
             if ($field['bs_column'] == '' || $field['bs_column'] == 0) {
 
                 $field['bs_column'] = 12;
+
             }
 
 
@@ -85,25 +88,27 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
             if (!$items_add_edit_preview && !$items_applied) {
 
                 $fields_html .= '<div class="col-md-' . $field['bs_column'] . '">';
+
             } elseif ($items_add_edit_preview) {
 
                 $fields_html .= '<td class="custom_field" data-id="' . $field['id'] . '">';
+
             } elseif ($items_applied) {
 
                 $fields_html .= '<td class="custom_field">';
+
             }
 
 
 
-            if (
-                $is_admin
+            if ($is_admin
 
                 && ($items_add_edit_preview == false && $items_applied == false)
 
-                && (!defined('CLIENTS_AREA') || hooks()->apply_filters('show_custom_fields_edit_link_on_clients_area', false))
-            ) {
+                && (!defined('CLIENTS_AREA') || hooks()->apply_filters('show_custom_fields_edit_link_on_clients_area', false))) {
 
                 $fields_html .= '<a href="' . admin_url('custom_fields/field/' . $field['id']) . '" tabindex="-1" target="_blank" class="custom-field-inline-edit-link"><i class="fa-regular fa-pen-to-square"></i></a>';
+
             }
 
 
@@ -113,6 +118,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
                 if (!is_array($rel_id)) {
 
                     $value = get_task_manage_task_custom_field_value($rel_id, $field['id'], ($items_pr ? 'items_pr' : $belongs_to), false);
+
                 } else {
 
                     if (is_custom_fields_smart_transfer_enabled()) {
@@ -162,10 +168,15 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
                             if (count($cfTransfer) == 1 && ((similarity($field['name'], $cfTransfer[0]['name']) * 100) >= CUSTOM_FIELD_TRANSFER_SIMILARITY)) {
 
                                 $value = get_task_manage_task_custom_field_value($transfer_rel_id, $cfTransfer[0]['id'], $transfer_belongs_to, false);
+
                             }
+
                         }
+
                     }
+
                 }
+
             } elseif ($field['default_value'] && $field['type'] != 'link') {
 
                 if (in_array($field['type'], ['date_picker_time', 'date_picker'])) {
@@ -173,11 +184,15 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
                     if ($timestamp = strtotime($field['default_value'])) {
 
                         $value = $field['type'] == 'date_picker' ? date('Y-m-d', $timestamp) : date('Y-m-d H:i', $timestamp);
+
                     }
+
                 } else {
 
                     $value = $field['default_value'];
+
                 }
+
             }
 
 
@@ -189,6 +204,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
             if ($field['required'] == 1) {
 
                 $_input_attrs['data-custom-field-required'] = true;
+
             }
 
 
@@ -196,6 +212,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
             if ($field['disalow_client_to_edit'] == 1 && is_client_logged_in()) {
 
                 $_input_attrs['disabled'] = true;
+
             }
 
 
@@ -213,6 +230,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
             if ($part_item_name != '') {
 
                 $cf_name = $part_item_name . '[custom_fields][items][' . $field['id'] . ']';
+
             }
 
 
@@ -220,6 +238,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
             if ($items_add_edit_preview) {
 
                 $cf_name = '';
+
             }
 
 
@@ -233,18 +252,23 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
                 $t = $field['type'] == 'input' ? 'text' : 'number';
 
                 $fields_html .= render_input($cf_name, $field_name, $value, $t, $_input_attrs);
+
             } elseif ($field['type'] == 'date_picker') {
 
                 $fields_html .= render_date_input($cf_name, $field_name, _d($value), $_input_attrs);
+
             } elseif ($field['type'] == 'date_picker_time') {
 
                 $fields_html .= render_datetime_input($cf_name, $field_name, _dt($value), $_input_attrs);
+
             } elseif ($field['type'] == 'textarea') {
 
                 $fields_html .= render_textarea($cf_name, $field_name, $value, $_input_attrs);
+
             } elseif ($field['type'] == 'colorpicker') {
 
                 $fields_html .= render_color_picker($cf_name, $field_name, $value, $_input_attrs);
+
             } elseif ($field['type'] == 'select' || $field['type'] == 'multiselect') {
 
                 $_select_attrs = [];
@@ -258,6 +282,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
                 if ($field['required'] == 1) {
 
                     $_select_attrs['data-custom-field-required'] = true;
+
                 }
 
 
@@ -265,6 +290,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
                 if ($field['disalow_client_to_edit'] == 1 && is_client_logged_in()) {
 
                     $_select_attrs['disabled'] = true;
+
                 }
 
 
@@ -280,6 +306,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
                     $_select_attrs['multiple'] = true;
 
                     $select_name .= '[]';
+
                 }
 
 
@@ -287,6 +314,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
                 foreach ($_select_attrs as $key => $val) {
 
                     $select_attrs .= $key . '=' . '"' . $val . '" ';
+
                 }
 
 
@@ -294,6 +322,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
                 if ($field['required'] == 1) {
 
                     $field_name = '<small class="req text-danger">* </small>' . $field_name;
+
                 }
 
 
@@ -302,7 +331,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
 
                 $fields_html .= '<label for="' . $cf_name . '" class="control-label">' . $field_name . '</label>';
 
-                $fields_html .= '<select ' . $select_attrs . ' name="' . $select_name . '" class="' . ($items_add_edit_preview == false ? 'select-placeholder ' : '') . 'selectpicker form-control' . ($field['type'] == 'multiselect' ? ' custom-field-multi-select' : '') . '" data-width="100%" data-none-selected-text="' . _l('dropdown_non_selected_tex') . '"  data-live-search="true">';
+                $fields_html .= '<select ' . $select_attrs . ' name="' . $select_name . '" class="' . ($items_add_edit_preview == false ? 'select-placeholder ': '') . 'selectpicker form-control' . ($field['type'] == 'multiselect' ? ' custom-field-multi-select' : '') . '" data-width="100%" data-none-selected-text="' . _l('dropdown_non_selected_tex') . '"  data-live-search="true">';
 
 
 
@@ -317,6 +346,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
                 if ($field['type'] == 'multiselect') {
 
                     $value = explode(',', $value);
+
                 }
 
 
@@ -334,7 +364,9 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
                             if ($option == $value) {
 
                                 $selected = ' selected';
+
                             }
+
                         } else {
 
                             foreach ($value as $v) {
@@ -344,26 +376,32 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
                                 if ($v == $option) {
 
                                     $selected = ' selected';
+
                                 }
+
                             }
+
                         }
 
 
 
                         $fields_html .= '<option value="' . $option . '"' . $selected . '' . set_select($cf_name, $option) . '>' . $option . '</option>';
+
                     }
+
                 }
 
                 $fields_html .= '</select>';
 
                 $fields_html .= '</div>';
+
             } elseif ($field['type'] == 'checkbox') {
 
                 $fields_html .= '<div class="form-group chk">';
 
 
 
-                $fields_html .= '<br /><label class="control-label' . ($field['display_inline'] == 0 ? ' no-mbot' : '') . '" for="' . $cf_name . '[]">' . $field_name . '</label>' . ($field['display_inline'] == 1 ? ' <br />' : '');
+                $fields_html .= '<br /><label class="control-label' . ($field['display_inline'] == 0 ? ' no-mbot': '') . '" for="' . $cf_name . '[]">' . $field_name . '</label>' . ($field['display_inline'] == 1 ? ' <br />': '');
 
 
 
@@ -396,7 +434,9 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
                         if ($v == $option) {
 
                             $checked = 'checked';
+
                         }
+
                     }
 
 
@@ -414,6 +454,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
                     if ($field['required'] == 1) {
 
                         $_chk_attrs['data-custom-field-required'] = true;
+
                     }
 
 
@@ -421,11 +462,13 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
                     if ($field['disalow_client_to_edit'] == 1 && is_client_logged_in()) {
 
                         $_chk_attrs['disabled'] = true;
+
                     }
 
                     foreach ($_chk_attrs as $key => $val) {
 
                         $chk_attrs .= $key . '=' . '"' . $val . '" ';
+
                     }
 
 
@@ -434,7 +477,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
 
 
 
-                    $fields_html .= '<div class="checkbox' . ($field['display_inline'] == 1 ? ' checkbox-inline' : '') . '">';
+                    $fields_html .= '<div class="checkbox' . ($field['display_inline'] == 1 ? ' checkbox-inline': '') . '">';
 
                     $fields_html .= '<input class="custom_field_checkbox" ' . $chk_attrs . ' ' . set_checkbox($cf_name . '[]', $option) . ' ' . $checked . ' value="' . $option . '" id="' . $input_id . '" type="checkbox" name="' . $cf_name . '[]">';
 
@@ -445,14 +488,17 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
                     $fields_html .= '<input type="hidden" name="' . $cf_name . '[]" value="cfk_hidden">';
 
                     $fields_html .= '</div>';
+
                 }
 
                 $fields_html .= '</div>';
+
             } elseif ($field['type'] == 'link') {
 
                 if (startsWith($value, 'http')) {
 
                     $value = '<a href="' . $value . '" target="_blank">' . $value . '</a>';
+
                 }
 
 
@@ -524,6 +570,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
                 $fields_html .= '</script>';
 
                 $fields_html .= '</div>';
+
             }
 
 
@@ -535,6 +582,7 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
             if ($field['type'] == 'checkbox' || $field['type'] == 'multiselect') {
 
                 $name .= '[]';
+
             }
 
 
@@ -544,13 +592,17 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
             if (!$items_add_edit_preview && !$items_applied) {
 
                 $fields_html .= '</div>';
+
             } elseif ($items_add_edit_preview) {
 
                 $fields_html .= '</td>';
+
             } elseif ($items_applied) {
 
                 $fields_html .= '</td>';
+
             }
+
         }
 
 
@@ -560,12 +612,15 @@ function task_manage_task_render_custom_fields($belongs_to,  $rel_id = false)
         if (!$items_add_edit_preview && !$items_applied) {
 
             $fields_html .= '</div>';
+
         }
+
     }
 
 
 
     return $fields_html;
+
 }
 
 
@@ -574,9 +629,9 @@ function get_task_manage_task_custom_field_value($rel_id, $field_id_or_slug, $fi
 
 {
 
-    $CI = &get_instance();
+    $CI = & get_instance();
 
-    $table_name = db_prefix() . "task_manage_custom_fields_values";
+    $table_name = db_prefix()."task_manage_custom_fields_values";
 
 
     $CI->db->select($table_name . '.value,' . db_prefix() . 'customfields.type');
@@ -588,9 +643,11 @@ function get_task_manage_task_custom_field_value($rel_id, $field_id_or_slug, $fi
     if (is_numeric($field_id_or_slug)) {
 
         $CI->db->where($table_name . '.fieldid', $field_id_or_slug);
+
     } else {
 
         $CI->db->where(db_prefix() . 'customfields.slug', $field_id_or_slug);
+
     }
 
 
@@ -611,22 +668,27 @@ function get_task_manage_task_custom_field_value($rel_id, $field_id_or_slug, $fi
             if ($row->type == 'date_picker') {
 
                 $result = _d($result);
+
             } elseif ($row->type == 'date_picker_time') {
 
                 $result = _dt($result);
+
             }
+
         }
+
     }
 
 
     return $result;
+
 }
 
 
-function task_manage_number_cast($variable = null)
+function task_manage_number_cast( $variable = null )
 {
 
-    if (empty($variable)) return 0;
+    if( empty( $variable ) ) return 0;
 
     $variable = trim($variable);
 
@@ -635,10 +697,11 @@ function task_manage_number_cast($variable = null)
     $variable = preg_replace("/[^0-9]/", "", $variable);
 
     return (is_numeric($variable)) ? $variable : 0;
+
 }
 
 
-function project_diagram_task_status_text($group_task, $group_style_ = "")
+function project_diagram_task_status_text( $group_task , $group_style_ = "")
 {
 
     $content = "<div class='project_diagram_tasks' title='$group_task->name' style='$group_style_'>";
@@ -646,12 +709,13 @@ function project_diagram_task_status_text($group_task, $group_style_ = "")
     //$content .= $group_task->id." | ".$group_task->name;
     $content .= $group_task->name;
 
-    if (!empty($group_task->project_status))
-        $content .= "<br /> <b>" . _l('task_status') . " : </b> " . $group_task->project_status;
+    if( !empty( $group_task->project_status ) )
+        $content .= "<br /> <b>". _l('task_status')." : </b> ".$group_task->project_status;
 
     $content .= "</div>";
 
     return $content;
+
 }
 
 
@@ -659,60 +723,62 @@ function project_diagram_task_status_text($group_task, $group_style_ = "")
 /**
  * @Version 1.0.5 pipeline
  */
-function task_manage_task_info($group_id)
+function task_manage_task_info( $group_id )
 {
 
     $CI = &get_instance();
 
-    if (!empty($CI->input->get('search')))
-        $CI->db->where("c.company like '%" . $CI->input->get('search') . "%' ", null, false);
+    if ( !empty( $CI->input->get('search') ) )
+        $CI->db->where("c.company like '%".$CI->input->get('search')."%' ",null,false);
 
-    if (!empty($CI->input->get('sort_by')) && !empty($CI->input->get('sort')))
-        $CI->db->order_by($CI->input->get('sort_by'), $CI->input->get('sort'));
+    if ( !empty( $CI->input->get('sort_by') ) && !empty( $CI->input->get('sort') ) )
+        $CI->db->order_by($CI->input->get('sort_by') , $CI->input->get('sort') );
 
 
     $tasks = $CI->db->select('t.id, t.name, t.startdate, t.duedate, t.status , p.name as project_name, p.clientid , c.company, p.id as project_id ')
-        ->from(db_prefix() . 'task_manage_tasks it')
-        ->join(db_prefix() . 'tasks t', 't.task_manage_task_id = it.id')
-        ->join(db_prefix() . 'projects p', 'p.id = t.rel_id')
-        ->join(db_prefix() . 'clients c', 'c.userid = p.clientid')
-        ->where('it.group_id', $group_id)
-        ->where('t.rel_type', 'project')
-        ->where('t.status != 5', null, false)
-        ->get()
-        ->result();
+                    ->from(db_prefix().'task_manage_tasks it')
+                    ->join(db_prefix().'tasks t','t.task_manage_task_id = it.id')
+                    ->join(db_prefix().'projects p','p.id = t.rel_id')
+                    ->join(db_prefix().'clients c','c.userid = p.clientid')
+                    ->where('it.group_id',$group_id)
+                    ->where('t.rel_type','project')
+                    ->where('t.status != 5',null,false)
+                    ->get()
+                    ->result();
 
 
     return $tasks;
+
 }
 
 
-function task_manage_group_task_info($group_id, $task_order_id)
+function task_manage_group_task_info( $group_id , $task_order_id )
 {
 
     $CI = &get_instance();
 
-    if (!empty($CI->input->get('search')))
-        $CI->db->where("c.company like '%" . $CI->input->get('search') . "%' ", null, false);
+    if ( !empty( $CI->input->get('search') ) )
+        $CI->db->where("c.company like '%".$CI->input->get('search')."%' ",null,false);
 
-    if (!empty($CI->input->get('sort_by')) && !empty($CI->input->get('sort')))
-        $CI->db->order_by($CI->input->get('sort_by'), $CI->input->get('sort'));
+    if ( !empty( $CI->input->get('sort_by') ) && !empty( $CI->input->get('sort') ) )
+        $CI->db->order_by($CI->input->get('sort_by') , $CI->input->get('sort') );
 
 
     $tasks = $CI->db->select('t.id, t.name, t.startdate, t.duedate, t.status , p.name as project_name, p.clientid , c.company, p.id as project_id ')
-        ->from(db_prefix() . 'task_manage_tasks it')
-        ->join(db_prefix() . 'tasks t', 't.task_manage_task_id = it.id')
-        ->join(db_prefix() . 'projects p', 'p.id = t.rel_id')
-        ->join(db_prefix() . 'clients c', 'c.userid = p.clientid')
-        ->where('it.group_id', $group_id)
-        ->where('it.task_order', $task_order_id)
-        ->where('t.rel_type', 'project')
-        ->where('t.status != 5', null, false)
-        ->get()
-        ->result();
+                    ->from(db_prefix().'task_manage_tasks it')
+                    ->join(db_prefix().'tasks t','t.task_manage_task_id = it.id')
+                    ->join(db_prefix().'projects p','p.id = t.rel_id')
+                    ->join(db_prefix().'clients c','c.userid = p.clientid')
+                    ->where('it.group_id',$group_id)
+                    ->where('it.task_order',$task_order_id)
+                    ->where('t.rel_type','project')
+                    ->where('t.status != 5',null,false)
+                    ->get()
+                    ->result();
 
 
     return $tasks;
+
 }
 
 
@@ -723,84 +789,95 @@ function task_manage_group_task_info($group_id, $task_order_id)
  * Project status kanban view
  *
  */
-function task_manage_project_info($status_id)
+function task_manage_project_info( $status_id )
 {
 
     $CI = &get_instance();
 
-    if (!empty($CI->input->get('search')))
-        $CI->db->where("c.company like '%" . $CI->input->get('search') . "%' ", null, false);
+    if ( !empty( $CI->input->get('search') ) )
+        $CI->db->where("c.company like '%".$CI->input->get('search')."%' ",null,false);
 
-    if (!empty($CI->input->get('?search')))
-        $CI->db->where("c.company like '%" . $CI->input->get('?search') . "%' ", null, false);
+    if ( !empty( $CI->input->get('?search') ) )
+        $CI->db->where("c.company like '%".$CI->input->get('?search')."%' ",null,false);
 
 
     $sort = '';
 
-    if (!empty($CI->input->get('sort_by')))
+    if ( !empty( $CI->input->get('sort_by') ) )
         $sort = $CI->input->get('sort_by');
 
-    if (!empty($CI->input->get('?sort_by')))
+    if ( !empty( $CI->input->get('?sort_by') ) )
         $sort = $CI->input->get('?sort_by');
 
 
-    if (!empty($sort) && !empty($CI->input->get('sort')))
-        $CI->db->order_by($sort, $CI->input->get('sort'));
+    if ( !empty( $sort ) && !empty( $CI->input->get('sort') ) )
+        $CI->db->order_by( $sort , $CI->input->get('sort') );
 
 
 
-    if (!empty($CI->input->get('filter_group'))) {
+    if ( !empty( $CI->input->get('filter_group') ) )
+    {
 
-        $where = " ( task_manage_groups like '%\"" . $CI->input->get('filter_group') . "\"%' ) ";
+        $where = " ( task_manage_groups like '%\"".$CI->input->get('filter_group')."\"%' ) ";
 
-        $CI->db->where($where, null, false);
+        $CI->db->where($where,null,false);
+
     }
 
 
-    if (!empty($CI->input->get('filter_staff'))) {
+    if ( !empty( $CI->input->get('filter_staff') ) )
+    {
 
-        $where = " p.id IN ( SELECT project_id FROM " . db_prefix() . "project_members WHERE staff_id = ( " . $CI->input->get('filter_staff') . " ) ) ";
+        $where = " p.id IN ( SELECT project_id FROM ".db_prefix()."project_members WHERE staff_id = ( ".$CI->input->get('filter_staff')." ) ) ";
 
-        $CI->db->where($where, null, false);
+        $CI->db->where($where,null,false);
+
     }
 
 
-    if (!empty($CI->input->get('from_date'))) {
+    if ( !empty( $CI->input->get('from_date') ) )
+    {
 
-        $from_date = to_sql_date($CI->input->get('from_date'));
+        $from_date = to_sql_date( $CI->input->get('from_date') );
 
         $where = " DATE(p.start_date) >= '$from_date' ";
 
-        $CI->db->where($where, null, false);
+        $CI->db->where($where,null,false);
+
     }
 
-    if (!empty($CI->input->get('to_date'))) {
+    if ( !empty( $CI->input->get('to_date') ) )
+    {
 
-        $to_date = to_sql_date($CI->input->get('to_date'));
+        $to_date = to_sql_date( $CI->input->get('to_date') );
 
         $where = " DATE(p.start_date) <= '$to_date' ";
 
-        $CI->db->where($where, null, false);
+        $CI->db->where($where,null,false);
+
     }
 
 
 
 
-    if (!has_permission('projects', '', 'view')) {
-        $CI->db->where('p.id IN (SELECT project_id FROM ' . db_prefix() . 'project_members WHERE staff_id=' . get_staff_user_id() . ')', null, false);
+    if ( !has_permission('projects', '', 'view')  )
+    {
+        $CI->db->where('p.id IN (SELECT project_id FROM ' . db_prefix() . 'project_members WHERE staff_id=' . get_staff_user_id() . ')',null,false);
     }
 
     $projects = $CI->db->select('p.start_date, p.deadline, p.status , p.name as project_name, p.clientid , c.company, p.id as project_id ')
-        ->from(db_prefix() . 'projects p')
-        ->join(db_prefix() . 'clients c', 'c.userid = p.clientid')
-        ->where('p.status', $status_id)
-        ->where('p.status != 4')
-        ->where('task_manage_groups is not null', null, false)
-        ->get()
-        ->result();
+                        ->from(db_prefix().'projects p')
+                        ->join(db_prefix().'clients c','c.userid = p.clientid')
+                        ->where('p.status',$status_id)
+                        ->where('p.status != 4')
+                        ->where('task_manage_groups is not null',null,false)
+                        ->get()
+                        ->result();
 
     return $projects;
+
 }
+
 
 function which_type_assign_to_task($id = null)
 {

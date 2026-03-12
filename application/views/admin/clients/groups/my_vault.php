@@ -597,7 +597,7 @@
             });
 
         });
-
+        
         $(function () {
 
             var $modal = $('#entryModal');
@@ -627,7 +627,6 @@
             });
 
         });
-
 
     </script>
 <?php }?>

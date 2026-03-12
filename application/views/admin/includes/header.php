@@ -128,7 +128,7 @@
                         <?php if (is_staff_member()) { ?>
                         <li class="header-newsfeed">
                             <a href="#" class="open_newsfeed mobile">
-                                <?php echo _l('whats_on_your_mind'); ?> advdsv
+                                <?php echo _l('whats_on_your_mind'); ?>
                             </a>
                         </li>
                         <?php } ?>

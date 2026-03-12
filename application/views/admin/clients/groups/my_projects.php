@@ -37,7 +37,6 @@
 ?>
 
 <!-- project_status_note -->
-<!-- project_status_note -->
 <div class="modal fade" id="project-comment-modal" tabindex="-1" role="dialog" aria-labelledby="project-comment-modal"
     aria-hidden="true">
     <div class="modal-dialog">
@@ -76,31 +75,4 @@
         </div>
     </div>
 </div>
-<!--<div class="modal fade" id="project_status_note" tabindex="-1" role="dialog" aria-labelledby="project_status_noteLabel" aria-hidden="true">-->
-<!--    <div class="modal-dialog" role="document">-->
-<!--        <div class="modal-content">-->
-<!--            <div class="modal-header">-->
-<!--                <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-<!--                    <span aria-hidden="true">&times;</span>-->
-<!--                </button>-->
-<!--                <h5 class="modal-title" id="project_status_noteLabel">Project Status Note</h5>-->
-<!--            </div>-->
-<!--            <form id="project_status_note_form">-->
-<!--                <div class="modal-body">-->
-<!--                    <div class="form-group">-->
-<!--                        <input type="hidden" id="project_id" name="project_id">-->
-<!--                        <input type="hidden" id="custom_field_id" name="custom_field_id">-->
-
-<!--                        <label for="status_note">Status Note</label>-->
-<!--                        <textarea class="form-control status_notes" id="status_note" rows="3"></textarea>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="modal-footer">-->
-<!--                    <button type="button" class="btn btn-primary" id="save_status_note">Save</button>-->
-<!--                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
-<!--                </div>-->
-<!--            </form>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
 

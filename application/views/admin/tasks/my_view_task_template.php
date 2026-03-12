@@ -27,7 +27,40 @@ $task_custom_field_id = isset($task_custom_field['id']) ? $task_custom_field['id
         }
         echo '<span class="tw-ml-5">' . format_task_status($task->status) . '</span>';
         ?>
-        
+        <!-- add onoffswitch switch on and off based on is_poked  -->
+        <?php if (staff_can('edit', 'tasks')) { ?>
+            <div style="margin-left: 1.25rem;">
+                <label
+                    for="myonoffswitch"
+                    id="knifeSwitchLabel"
+                    style="display: inline-flex; align-items: center; cursor: pointer; font-size: 24px; color: <?= $task->is_poked == 1 ? 'crimson' : '#ccc'; ?>; transform: <?= $task->is_poked == 1 ? 'rotate(45deg)' : 'none'; ?>; transition: color 0.3s, transform 0.3s;">
+                    <input
+                        type="checkbox"
+                        name="onoffswitch"
+                        class="onoffswitch-checkbox"
+                        id="myonoffswitch"
+                        data-task_id="<?= e($task->id); ?>"
+                        <?= $task->is_poked == 1 ? 'checked' : ''; ?>
+                        style="display: none;">
+
+
+                    <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                        width="32px" height="32px" viewBox="0 0 512 512" xml:space="preserve" <?= $task->is_poked == 1 ? 'fill="#c6393d" stroke="#c6393d"' : ''; ?>>
+
+                        <g>
+                            <path class="st0" d="M487.347,0.004C425.284,53.191,365.44,68.707,365.44,68.707L144.534,289.629l-32.25-32.219l-24.156,24.156
+		l41.094,41.109L24.659,427.207c-7.469,7.484-7.469,19.594,0,27.047L76.8,506.395c7.469,7.469,19.578,7.469,27.047,0
+		l104.547-104.547l44.891,44.875l24.172-24.156l-35.422-35.422c32.844-32.859,111.375-111.375,154.438-154.438
+		C451.878,177.301,511.722,121.895,487.347,0.004z M385.128,211.816l-4.781,4.781L226.94,370.02l-31.313-31.281l176.031-176.016
+		l-8.063-8.047l-176.031,176l-25.922-25.938L377.472,88.895c14.266-4.516,50.688-17.844,92.344-46.656
+		C473.8,123.363,430.565,166.488,385.128,211.816z" />
+                        </g>
+                    </svg>
+
+
+                </label>
+            </div>
+        <?php } ?>
     </h4>
 
     <?php if ($task->is_public == 0) { ?>
@@ -118,12 +151,11 @@ $task_custom_field_id = isset($task_custom_field['id']) ? $task_custom_field['id
                         }
                         echo '</div>';
                     }
-                    
-                      if($task->rel_type == 'customer'){
+
+                    if($task->rel_type == 'customer'){
                         echo '<div><span class="tw-font-medium">' . _l('task_customer_related') . ':</span> <a href="' . e($task_rel_value['link']) . '" target="_blank">' . e($task_rel_value['name']) . '</a></div>';
-                    }else{
-                        echo '<div><span class="tw-font-medium">' . _l('task_customer_related') . ':</span>'.get_client_name($task->rel_type,$task->rel_id).'</div>';
                     }
+
                     echo '</div>';
                     echo '</div>';
                 } ?>
@@ -391,10 +423,6 @@ $task_custom_field_id = isset($task_custom_field['id']) ? $task_custom_field['id
                             </span>
                         </a>
                     </div>
-
-                    
-
-
                     <div class="col-md-12">
                         <div class="form-group">
                             <label class="control-label">
@@ -810,41 +838,7 @@ $task_custom_field_id = isset($task_custom_field['id']) ? $task_custom_field['id
         </div>
     </div>
     <div class="col-md-4 task-single-col-right">
-        <div class="pull-right mbot10 task-single-menu task-menu-options" style="display:flex;">
-                    <!-- add onoffswitch switch on and off based on is_poked  -->
-         <?php if (staff_can('edit', 'tasks')) { ?>
-        <div style="margin-right: 1.25rem;">
-            <label
-                for="myonoffswitch"
-                id="knifeSwitchLabel"
-                style="display: inline-flex; align-items: center; cursor: pointer; font-size: 24px; color: <?= $task->is_poked == 1 ? 'crimson' : '#ccc'; ?>; transform: <?= $task->is_poked == 1 ? 'rotate(45deg)' : 'none'; ?>; transition: color 0.3s, transform 0.3s;">
-                <input
-                    type="checkbox"
-                    name="onoffswitch"
-                    class="onoffswitch-checkbox"
-                    id="myonoffswitch"
-                    data-task_id="<?= e($task->id); ?>"
-                    <?= $task->is_poked == 1 ? 'checked' : ''; ?>
-                    style="display: none;">
-                 
-
-                    <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-	 width="25px" height="25px" viewBox="0 0 512 512"  xml:space="preserve"  <?= $task->is_poked == 1 ? 'fill="#c6393d" stroke="#c6393d"' : ''; ?>> 
-
-<g>
-	<path class="st0" d="M487.347,0.004C425.284,53.191,365.44,68.707,365.44,68.707L144.534,289.629l-32.25-32.219l-24.156,24.156
-		l41.094,41.109L24.659,427.207c-7.469,7.484-7.469,19.594,0,27.047L76.8,506.395c7.469,7.469,19.578,7.469,27.047,0
-		l104.547-104.547l44.891,44.875l24.172-24.156l-35.422-35.422c32.844-32.859,111.375-111.375,154.438-154.438
-		C451.878,177.301,511.722,121.895,487.347,0.004z M385.128,211.816l-4.781,4.781L226.94,370.02l-31.313-31.281l176.031-176.016
-		l-8.063-8.047l-176.031,176l-25.922-25.938L377.472,88.895c14.266-4.516,50.688-17.844,92.344-46.656
-		C473.8,123.363,430.565,166.488,385.128,211.816z"/>
-</g>
-</svg>
-
-           
-            </label>
-        </div>
-        <?php } ?>
+        <div class="pull-right mbot10 task-single-menu task-menu-options">
             <div class="content-menu hide">
                 <ul>
                     <?php if (staff_can('edit', 'tasks')) { ?>
@@ -908,8 +902,6 @@ $task_custom_field_id = isset($task_custom_field['id']) ? $task_custom_field['id
                     <i class="fa-regular fa-circle"></i>
                 </a>
             <?php } ?>
-    
-            
         </div>
         <h4 class="task-info-heading tw-font-semibold tw-text-base tw-mb-0 tw-text-neutral-800">
             <i
@@ -1011,7 +1003,8 @@ $task_custom_field_id = isset($task_custom_field['id']) ? $task_custom_field['id
         </div>
         <!-- new data added -->
 
-        <div class="task-info task-info-due-date task-single-inline-wrap>
+        <div class="task-info task-info-due-date task-single-inline-wrap<?= ! $task->duedate && staff_cant('tasks', 'edit') ? ' hide' : ''; ?>"
+            <?= ! $task->duedate ? ' style="opacity:0.5"' : ''; ?>>
             <h5 class="tw-inline-flex tw-items-center tw-space-x-1.5">
                 <div
                     class="tw-shrink-0<?= $task->status != 5 ? ' tw-grow' : ''; ?>">
@@ -1090,11 +1083,12 @@ $task_custom_field_id = isset($task_custom_field['id']) ? $task_custom_field['id
                             <b>(<?= $task->billed == 1 ? _l('task_billed_yes') : _l('task_billed_no') ?>)</b>
                         <?php } ?>
                     </span>
-
+                    
                     <span class="tw-text-neutral-800">
                         <?php $task_billable = $task->billable; ?>
                         <input type="checkbox" id="task_is_billable" data-task-id="<?php echo $task->id; ?>" <?php echo $task_billable == 1 ? 'checked' : ''; ?>>
                     </span>
+                    
                 </h5>
                 <?php if ($task->rel_type == 'project' && $task->project_data->billing_type == 1) { ?>
                     <br />
@@ -1162,7 +1156,7 @@ $task_custom_field_id = isset($task_custom_field['id']) ? $task_custom_field['id
                 </h5>
             </div>
         <?php } ?>
-        
+
         <!-- cam_id and optimizer_id -->
         <div class="task-info">
             <h5 class="task-info-custom-field tw-inline-flex tw-items-center tw-space-x-1.5 task-info-custom-field-cam_id">
@@ -1173,7 +1167,6 @@ $task_custom_field_id = isset($task_custom_field['id']) ? $task_custom_field['id
                 </span>
             </h5>
         </div>
-        
         <div class="task-info">
             <h5 class="task-info-custom-field tw-inline-flex tw-items-center tw-space-x-1.5 task-info-custom-field-optimizer_id">
                 <i class="fa-regular fa-circle fa-fw fa-lg task-info-icon"></i>
@@ -1234,11 +1227,11 @@ $task_custom_field_id = isset($task_custom_field['id']) ? $task_custom_field['id
             </h5>
 
         </div>
-
+        
         <div class="task-info task-single-inline-wrap">
             <h5 class="tw-inline-flex tw-items-center tw-space-x-1.5">
                 <i class="fa-regular fa-circle fa-fw fa-lg task-info-icon"></i>
-                Did you Add Attribution Issue? :
+                Did you Follow SOP? :
                 <span class="tw-text-neutral-800">
                     <?php 
                     echo isset($task->follow_sop) ? ($task->follow_sop == 1 ? 'Yes' : 'No') : 'N/A';
@@ -1286,23 +1279,6 @@ $task_custom_field_id = isset($task_custom_field['id']) ? $task_custom_field['id
             </div>
         <?php }
         ?>
-
-        <div class="task-info task-single-inline-wrap">
-            <h5 class="tw-inline-flex tw-items-center tw-space-x-1.5">
-                <i class="fa-regular fa-circle fa-fw fa-lg task-info-icon"></i>
-                Did you Add Automation Issue? :
-                <span class="tw-text-neutral-800">
-                    <?php 
-                    echo isset($task->did_add_automation_issue) ? ($task->did_add_automation_issue == 1 ? 'Yes' : 'No') : 'N/A';
-                    ?>
-                </span>
-            </h5>
-        </div>
-
-        
-
-
-
 
         <?php if (staff_can('create', 'tasks') || staff_can('edit', 'tasks')) { ?>
             <div id="inputTagsWrapper" class="taskSingleTasks task-info-tags-edit tw-ml-0.5 tw-mt-2">
@@ -1753,11 +1729,11 @@ $task_custom_field_id = isset($task_custom_field['id']) ? $task_custom_field['id
                 });
                 $('svg #_x32_').removeAttr('fill');
                 $('svg #_x32_').removeAttr('stroke');
-            }           
+            }
         });
-        
 
-        $('.onoffswitch-checkbox').on('change', function () {
+
+        $('.onoffswitch-checkbox').on('change', function() {
             $.ajax({
                 url: admin_url + "task_customize/update_is_poked",
                 type: "POST",
@@ -1771,8 +1747,8 @@ $task_custom_field_id = isset($task_custom_field['id']) ? $task_custom_field['id
                 }
             });
         });
-
-
+        
+        
         $(document).off('change', '#task_is_billable');
 
         $(document).on('change', '#task_is_billable', function () {
@@ -1804,6 +1780,7 @@ $task_custom_field_id = isset($task_custom_field['id']) ? $task_custom_field['id
             });
 
         });
+
 
     });
 </script>

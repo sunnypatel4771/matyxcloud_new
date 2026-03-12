@@ -292,26 +292,26 @@
                         // $site_sheet_url_automation = $projectResourceMap['site_sheet_url_automation'] ?? '';
                         $pre_attribution_checklist_automation = $projectResourceMap['pre_attribution_checklist_automation'] ?? '';
                         ?>
-                        <!-- <div class="form-group">
-                            <label for="page_copy_doc_url_automation">Page Copy Doc URL</label>
-                            <div class="input-group">
-                                <input type="text" name="page_copy_doc_url_automation" id="page_copy_doc_url_automation" value="<?php echo $page_copy_doc_url_automation; ?>"
-                                    class="form-control" disabled>
-                                <span class="input-group-btn">
-                                    <a href="javascript:void(0);" class="btn btn-default"> <i class="fa fa-globe search-icon custom_icon_size"></i></a>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="site_sheet_url_automation">Sitemap Sheet URL</label>
-                            <div class="input-group">
-                                <input type="text" name="site_sheet_url_automation" id="site_sheet_url_automation" value="<?php echo $site_sheet_url_automation; ?>"
-                                    class="form-control" disabled>
-                                <span class="input-group-btn">
-                                    <a href="javascript:void(0);" class="btn btn-default"> <i class="fa fa-globe search-icon custom_icon_size"></i></a>
-                                </span>
-                            </div>
-                        </div> -->
+                        <!--<div class="form-group">-->
+                        <!--    <label for="page_copy_doc_url_automation">Page Copy Doc URL</label>-->
+                        <!--    <div class="input-group">-->
+                        <!--        <input type="text" name="page_copy_doc_url_automation" id="page_copy_doc_url_automation" value="<?php echo $page_copy_doc_url_automation; ?>"-->
+                        <!--            class="form-control" disabled>-->
+                        <!--        <span class="input-group-btn">-->
+                        <!--            <a href="javascript:void(0);" class="btn btn-default"> <i class="fa fa-globe search-icon custom_icon_size"></i></a>-->
+                        <!--        </span>-->
+                        <!--    </div>-->
+                        <!--</div>-->
+                        <!--<div class="form-group">-->
+                        <!--    <label for="site_sheet_url_automation">Sitemap Sheet URL</label>-->
+                        <!--    <div class="input-group">-->
+                        <!--        <input type="text" name="site_sheet_url_automation" id="site_sheet_url_automation" value="<?php echo $site_sheet_url_automation; ?>"-->
+                        <!--            class="form-control" disabled>-->
+                        <!--        <span class="input-group-btn">-->
+                        <!--            <a href="javascript:void(0);" class="btn btn-default"> <i class="fa fa-globe search-icon custom_icon_size"></i></a>-->
+                        <!--        </span>-->
+                        <!--    </div>-->
+                        <!--</div>-->
                         <div class="form-group">
                             <label for="pre_attribution_checklist_automation">Pre-Attribution Checklist</label>
                             <div class="input-group">

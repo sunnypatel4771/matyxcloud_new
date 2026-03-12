@@ -255,6 +255,101 @@ return App_table::find('projects')
                             id="project_launch_eta"
                             class="form-control project_launch_eta datepicker pointer tw-text-neutral-800" data-project_id="' . $aRow['id'] . '"
                         data-field_id="" style="width: 100%;">';
+                } else if ($customFieldColumn['id'] == STOPLIGHT_REPORT && staff_can('edit',  'projects')) {
+                    // for stoplight report render select picker jp
+
+                    $canChangeStatus = staff_can('edit', 'projects');
+                    $outputStatus   = '';
+
+                    $options       = explode(',', $customFieldColumn['options']);
+                    $option_value  = trim((string) ($aRow[$customFieldColumn['name']] ?? ''));
+                    $options_new = [];
+
+                    foreach ($options as $value) {
+                        $value = trim($value);
+
+                        if ($value === 'ROADBLOCKS') {
+                            $color = '#c41010';
+                        } elseif ($value === 'POTENTIAL RISKS') {
+                            $color = '#fcf82d';
+                        } else {
+                            $color = '#1acf29';
+                        }
+
+                        $options_new[] = [
+                            'name'  => $value,
+                            'color' => $color,
+                        ];
+                    }
+
+                    $status_selected_data = [
+                        'name'  => 'Nothing Selected',
+                        'color' => '#9ca3af', // neutral gray
+                    ];
+                    foreach ($options_new as $value) {
+                        if ($value['name'] === $option_value) {
+                            $status_selected_data = $value;
+                            break;
+                        }
+                    }
+
+                    $color = $status_selected_data['color'];
+                    $name  = $status_selected_data['name'];
+                    if ($canChangeStatus) {
+
+                        $outputStatus .= '<div class="dropdown inline-block table-export-exclude">';
+
+                        $outputStatus .= '<a href="#" 
+                            class="dropdown-toggle label tw-flex tw-items-center tw-gap-1 tw-flex-nowrap hover:tw-opacity-80 tw-align-middle"
+                            style="
+                                color:' . $color . ';
+                                border:1px solid ' . adjust_hex_brightness($color, 0.4) . ';
+                                background:' . adjust_hex_brightness($color, 0.04) . ';
+                            "
+                            data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false">';
+
+                        $outputStatus .= e($name);
+                        $outputStatus .= '<i class="chevron tw-shrink-0"></i>';
+                        $outputStatus .= '</a>';
+
+                        $outputStatus .= '<ul class="dropdown-menu" aria-labelledby="tableProjectsStatus-' . $aRow['id'] . '">';
+
+                        foreach ($options_new as $projectChangeStatus) {
+                            if ($option_value != $projectChangeStatus['name']) {
+                                $outputStatus .=
+                                    '<li>
+                                <a href="#"
+                                class="change-custom-field"
+                                data-project-id="' . (int) $aRow['id'] . '"
+                                data-field-id="' . (int) $customFieldColumn['id'] . '"
+                                data-value="' . e($projectChangeStatus['name']) . '">
+                                    ' . e($projectChangeStatus['name']) . '
+                                </a>
+                            </li>';
+                            }
+                        }
+
+                        $outputStatus .= '</ul>';
+                        $outputStatus .= '</div>';
+                    } else {
+
+                        $outputStatus .= '
+                            <span class="label"
+                                style="
+                                    color:' . $color . ';
+                                    border:1px solid ' . adjust_hex_brightness($color, 0.4) . ';
+                                    background:' . adjust_hex_brightness($color, 0.04) . ';
+                                ">
+                                ' . e($name) . '
+                            </span>';
+                    }
+
+                    $row[] = $outputStatus;
+
+                    // for stoplight report render select picker 
+
                 }else {
                     $row[] = (strpos($customFieldColumn['name'], 'date_picker_') !== false ? _d($aRow[$customFieldColumn['name']]) : $aRow[$customFieldColumn['name']]);
                 }

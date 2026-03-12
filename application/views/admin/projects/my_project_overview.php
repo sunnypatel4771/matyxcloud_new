@@ -1,35 +1,4 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
-
-<style>
-    .panel-heading {
-        background-color: #fff;
-        border-bottom: 1px solid #eee;
-        padding: 10px 15px;
-    }
-
-    .rotate-icon {
-        transition: transform 0.25s ease;
-        color: #6c757d;
-        font-size: 14px;
-    }
-
-    .rotate-icon.rotate {
-        transform: rotate(90deg);
-    }
-
-    .panel-title span {
-        color: #495057;
-        font-weight: 500;
-    }
-
-    .panel-title:hover span {
-        color: #007bff;
-    }
-
-    .custom_icon_size {
-        font-size: 15px !important;
-    }
-</style>
 <div class="row">
     <div class="col-md-6 project-overview-left">
         <div class="panel_s">
@@ -49,64 +18,65 @@
                         <?php hooks()->do_action('admin_area_after_project_progress') ?>
                         <hr class="hr-panel-separator" />
                     </div>
+
                     <?php if (count($project->shared_vault_entries) > 0) { ?>
-                        <?php $this->load->view('admin/clients/vault_confirm_password'); ?>
-                        <div class="col-md-12">
-                            <p class="tw-font-medium">
-                                <a href="#" onclick="slideToggle('#project_vault_entries'); return false;"
-                                    class="tw-inline-flex tw-items-center tw-space-x-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="tw-w-5 tw-h-5">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
-                                    </svg>
-                                    <span>
-                                        <?php echo _l('project_shared_vault_entry_login_details'); ?>
-                                    </span>
-                                </a>
-                            </p>
-                            <div id="project_vault_entries"
-                                class="hide tw-mb-4 tw-bg-neutral-50 tw-px-4 tw-py-2 tw-rounded-md">
-                                <?php foreach ($project->shared_vault_entries as $vault_entry) { ?>
-                                    <div class="tw-my-3">
-                                        <div class="row" id="<?php echo 'vaultEntry-' . $vault_entry['id']; ?>">
-                                            <div class="col-md-6">
-                                                <p class="mtop5">
-                                                    <b><?php echo _l('server_address'); ?>:
-                                                    </b><?php echo e($vault_entry['server_address']); ?>
-                                                </p>
-                                                <p class="tw-mb-0">
-                                                    <b><?php echo _l('port'); ?>:
-                                                    </b><?php echo e(! empty($vault_entry['port']) ? $vault_entry['port'] : _l('no_port_provided')); ?>
-                                                </p>
-                                                <p class="tw-mb-0">
-                                                    <b><?php echo _l('vault_username'); ?>:
-                                                    </b><?php echo e($vault_entry['username']); ?>
-                                                </p>
-                                                <p class="no-margin">
-                                                    <b><?php echo _l('vault_password'); ?>: </b><span
-                                                        class="vault-password-fake">
-                                                        <?php echo str_repeat('&bull;', 10); ?> </span><span
-                                                        class="vault-password-encrypted"></span> <a href="#"
-                                                        class="vault-view-password mleft10" data-toggle="tooltip"
-                                                        data-title="<?php echo _l('view_password'); ?>"
-                                                        onclick="vault_re_enter_password(<?php echo e($vault_entry['id']); ?>,this); return false;"><i
-                                                            class="fa fa-lock" aria-hidden="true"></i></a>
-                                                </p>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <?php if (! empty($vault_entry['description'])) { ?>
-                                                    <p class="tw-mb-0">
-                                                        <b><?php echo _l('vault_description'); ?>:
-                                                        </b><br /><?php echo process_text_content_for_display($vault_entry['description']); ?>
-                                                    </p>
-                                                <?php } ?>
-                                            </div>
-                                        </div>
+                    <?php $this->load->view('admin/clients/vault_confirm_password'); ?>
+                    <div class="col-md-12">
+                        <p class="tw-font-medium">
+                            <a href="#" onclick="slideToggle('#project_vault_entries'); return false;"
+                                class="tw-inline-flex tw-items-center tw-space-x-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="tw-w-5 tw-h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
+                                </svg>
+                                <span>
+                                    <?php echo _l('project_shared_vault_entry_login_details'); ?>
+                                </span>
+                            </a>
+                        </p>
+                        <div id="project_vault_entries"
+                            class="hide tw-mb-4 tw-bg-neutral-50 tw-px-4 tw-py-2 tw-rounded-md">
+                            <?php foreach ($project->shared_vault_entries as $vault_entry) { ?>
+                            <div class="tw-my-3">
+                                <div class="row" id="<?php echo 'vaultEntry-' . $vault_entry['id']; ?>">
+                                    <div class="col-md-6">
+                                        <p class="mtop5">
+                                            <b><?php echo _l('server_address'); ?>:
+                                            </b><?php echo e($vault_entry['server_address']); ?>
+                                        </p>
+                                        <p class="tw-mb-0">
+                                            <b><?php echo _l('port'); ?>:
+                                            </b><?php echo e(!empty($vault_entry['port']) ? $vault_entry['port'] : _l('no_port_provided')); ?>
+                                        </p>
+                                        <p class="tw-mb-0">
+                                            <b><?php echo _l('vault_username'); ?>:
+                                            </b><?php echo e($vault_entry['username']); ?>
+                                        </p>
+                                        <p class="no-margin">
+                                            <b><?php echo _l('vault_password'); ?>: </b><span
+                                                class="vault-password-fake">
+                                                <?php echo str_repeat('&bull;', 10); ?> </span><span
+                                                class="vault-password-encrypted"></span> <a href="#"
+                                                class="vault-view-password mleft10" data-toggle="tooltip"
+                                                data-title="<?php echo _l('view_password'); ?>"
+                                                onclick="vault_re_enter_password(<?php echo e($vault_entry['id']); ?>,this); return false;"><i
+                                                    class="fa fa-lock" aria-hidden="true"></i></a>
+                                        </p>
                                     </div>
-                                <?php } ?>
+                                    <div class="col-md-6">
+                                        <?php if (!empty($vault_entry['description'])) { ?>
+                                        <p class="tw-mb-0">
+                                            <b><?php echo _l('vault_description'); ?>:
+                                            </b><br /><?php echo process_text_content_for_display($vault_entry['description']); ?>
+                                        </p>
+                                        <?php } ?>
+                                    </div>
+                                </div>
                             </div>
+                            <?php } ?>
                         </div>
+                    </div>
                     <?php } ?>
 
                     <div class="col-md-12">
@@ -133,13 +103,13 @@
                                 </dd>
                             </div>
 
-                            <?php if (staff_can('edit', 'projects')) { ?>
-                                <div class="sm:tw-col-span-1 project-overview-billing">
-                                    <dt class="tw-text-sm tw-font-medium tw-text-neutral-500">
-                                        <?php echo _l('project_billing_type'); ?>
-                                    </dt>
-                                    <dd class="tw-mt-1 tw-text-sm tw-text-neutral-900">
-                                        <?php
+                            <?php if (staff_can('edit',  'projects')) { ?>
+                            <div class="sm:tw-col-span-1 project-overview-billing">
+                                <dt class="tw-text-sm tw-font-medium tw-text-neutral-500">
+                                    <?php echo _l('project_billing_type'); ?>
+                                </dt>
+                                <dd class="tw-mt-1 tw-text-sm tw-text-neutral-900">
+                                    <?php
                                         if ($project->billing_type == 1) {
                                             $type_name = 'project_billing_type_fixed_cost';
                                         } elseif ($project->billing_type == 2) {
@@ -148,29 +118,28 @@
                                             $type_name = 'project_billing_type_project_task_hours';
                                         }
                                         echo _l($type_name);
-                                        ?>
-                                    </dd>
-                                </div>
-                                <?php if ($project->billing_type == 1 || $project->billing_type == 2) { ?>
-                                    <div class="sm:tw-col-span-1 project-overview-amount">
-                                        <?php if ($project->billing_type == 1) { ?>
-                                            <dt class="tw-text-sm tw-font-medium tw-text-neutral-500">
-                                                <?php echo _l('project_total_cost'); ?>
-                                            </dt>
-                                            <dd class="tw-mt-1 tw-text-sm tw-text-neutral-900">
-                                                <?php echo e(app_format_money($project->project_cost, $currency)); ?>
-                                            </dd>
-                                        <?php } else { ?>
-                                            <dt class="tw-text-sm tw-font-medium tw-text-neutral-500">
-                                                <?php echo _l('project_rate_per_hour'); ?>
-                                            </dt>
-                                            <dd class="tw-mt-1 tw-text-sm tw-text-neutral-900">
-                                                <?php echo e(app_format_money($project->project_rate_per_hour, $currency)); ?>
-                                            </dd>
-                                        <?php } ?>
-                                    </div>
-                            <?php }
-                            } ?>
+                                    ?>
+                                </dd>
+                            </div>
+                            <?php if ($project->billing_type == 1 || $project->billing_type == 2) { ?>
+                            <div class="sm:tw-col-span-1 project-overview-amount">
+                                <?php if ($project->billing_type == 1) { ?>
+                                <dt class="tw-text-sm tw-font-medium tw-text-neutral-500">
+                                    <?php echo _l('project_total_cost'); ?>
+                                </dt>
+                                <dd class="tw-mt-1 tw-text-sm tw-text-neutral-900">
+                                    <?php echo e(app_format_money($project->project_cost, $currency)); ?>
+                                </dd>
+                                <?php  } else { ?>
+                                <dt class="tw-text-sm tw-font-medium tw-text-neutral-500">
+                                    <?php echo _l('project_rate_per_hour'); ?>
+                                </dt>
+                                <dd class="tw-mt-1 tw-text-sm tw-text-neutral-900">
+                                    <?php echo e(app_format_money($project->project_rate_per_hour, $currency)); ?>
+                                </dd>
+                                <?php } ?>
+                            </div>
+                            <?php } } ?>
 
                             <div class="sm:tw-col-span-1 project-overview-status">
                                 <dt class="tw-text-sm tw-font-medium tw-text-neutral-500">
@@ -207,37 +176,37 @@
                                 </dd>
                             </div>
                             <?php if ($project->deadline) { ?>
-                                <div class="sm:tw-col-span-1 project-overview-deadline">
-                                    <dt class="tw-text-sm tw-font-medium tw-text-neutral-500">
-                                        <?php echo _l('project_deadline'); ?>
-                                    </dt>
-                                    <dd class="tw-mt-1 tw-text-sm tw-text-neutral-900">
-                                        <?php echo e(_d($project->deadline)); ?>
-                                    </dd>
-                                </div>
+                            <div class="sm:tw-col-span-1 project-overview-deadline">
+                                <dt class="tw-text-sm tw-font-medium tw-text-neutral-500">
+                                    <?php echo _l('project_deadline'); ?>
+                                </dt>
+                                <dd class="tw-mt-1 tw-text-sm tw-text-neutral-900">
+                                    <?php echo e(_d($project->deadline)); ?>
+                                </dd>
+                            </div>
                             <?php } ?>
 
                             <?php if ($project->date_finished) { ?>
-                                <div class="sm:tw-col-span-1 project-overview-date-finished">
-                                    <dt class="tw-text-sm tw-font-medium tw-text-neutral-500">
-                                        <?php echo _l('project_completed_date'); ?>
-                                    </dt>
-                                    <dd class="tw-mt-1 tw-text-sm text-success">
-                                        <?php echo e(_dt($project->date_finished)); ?>
-                                    </dd>
-                                </div>
+                            <div class="sm:tw-col-span-1 project-overview-date-finished">
+                                <dt class="tw-text-sm tw-font-medium tw-text-neutral-500">
+                                    <?php echo _l('project_completed_date'); ?>
+                                </dt>
+                                <dd class="tw-mt-1 tw-text-sm text-success">
+                                    <?php echo e(_dt($project->date_finished)); ?>
+                                </dd>
+                            </div>
                             <?php } ?>
 
                             <?php if ($project->estimated_hours && $project->estimated_hours != '0') { ?>
-                                <div class="sm:tw-col-span-1 project-overview-estimated-hours">
-                                    <dt class="tw-text-sm tw-font-medium tw-text-neutral-500">
-                                        <?php echo _l('estimated_hours'); ?>
-                                    </dt>
-                                    <dd
-                                        class="tw-mt-1 tw-text-sm                                                                  <?php echo hours_to_seconds_format($project->estimated_hours) < (int) $project_total_logged_time ? 'text-warning' : 'text-neutral-900'; ?>">
-                                        <?php echo e(str_replace('.', ':', $project->estimated_hours)); ?>
-                                    </dd>
-                                </div>
+                            <div class="sm:tw-col-span-1 project-overview-estimated-hours">
+                                <dt class="tw-text-sm tw-font-medium tw-text-neutral-500">
+                                    <?php echo _l('estimated_hours'); ?>
+                                </dt>
+                                <dd
+                                    class="tw-mt-1 tw-text-sm <?php echo hours_to_seconds_format($project->estimated_hours) < (int)$project_total_logged_time ? 'text-warning' : 'text-neutral-900'; ?>">
+                                    <?php echo e(str_replace('.', ':', $project->estimated_hours)); ?>
+                                </dd>
+                            </div>
                             <?php } ?>
 
                             <div class="sm:tw-col-span-1 project-overview-total-logged-hours">
@@ -252,33 +221,33 @@
 
                             <?php $custom_fields = get_custom_fields('projects');
                             if (count($custom_fields) > 0) { ?>
-                                <?php foreach ($custom_fields as $field) { ?>
-                                    <?php $value = get_custom_field_value($project->id, $field['id'], 'projects');
-                                    if ($value == '') {
-                                        continue;
-                                    } ?>
-                                    <div class="sm:tw-col-span-1">
-                                        <dt class="tw-text-sm tw-font-medium tw-text-neutral-500">
-                                            <?php echo e(ucfirst($field['name'])); ?>
-                                        </dt>
-                                        <dd class="tw-mt-1 tw-text-sm tw-text-neutral-900">
-                                            <?php echo $value; ?>
-                                        </dd>
-                                    </div>
-                                <?php } ?>
+                            <?php foreach ($custom_fields as $field) { ?>
+                            <?php $value = get_custom_field_value($project->id, $field['id'], 'projects');
+                            if ($value == '') {
+                                continue;
+                            } ?>
+                            <div class="sm:tw-col-span-1">
+                                <dt class="tw-text-sm tw-font-medium tw-text-neutral-500">
+                                    <?php echo e(ucfirst($field['name'])); ?>
+                                </dt>
+                                <dd class="tw-mt-1 tw-text-sm tw-text-neutral-900">
+                                    <?php echo $value; ?>
+                                </dd>
+                            </div>
+                            <?php } ?>
                             <?php } ?>
 
                             <?php $tags = get_tags_in($project->id, 'project'); ?>
                             <?php if (count($tags) > 0) { ?>
-                                <div class="sm:tw-col-span-1 project-overview-tags">
-                                    <dt class="tw-text-sm tw-font-medium tw-text-neutral-500">
-                                        <?php echo _l('tags'); ?>
-                                    </dt>
-                                    <dd class="tags-read-only-custom tw-mt-1 tw-text-sm tw-text-neutral-900">
-                                        <input type="text" class="tagsinput read-only" id="tags" name="tags"
-                                            value="<?php echo prep_tags_input($tags); ?>" data-role="tagsinput">
-                                    </dd>
-                                </div>
+                            <div class="sm:tw-col-span-1 project-overview-tags">
+                                <dt class="tw-text-sm tw-font-medium tw-text-neutral-500">
+                                    <?php echo _l('tags'); ?>
+                                </dt>
+                                <dd class="tags-read-only-custom tw-mt-1 tw-text-sm tw-text-neutral-900">
+                                    <input type="text" class="tagsinput read-only" id="tags" name="tags"
+                                        value="<?php echo prep_tags_input($tags); ?>" data-role="tagsinput">
+                                </dd>
+                            </div>
                             <?php } ?>
 
                             <div class="sm:tw-col-span-1 project-overview-cam">
@@ -331,9 +300,9 @@
                                 </dt>
                                 <dd class="tw-mt-1 tw-space-y-5 tw-text-sm tw-text-neutral-900">
                                     <?php if (empty($project->description)) { ?>
-                                        <p class="text-muted tw-mb-0">
-                                            <?php echo _l('no_description_project'); ?>
-                                        </p>
+                                    <p class="text-muted tw-mb-0">
+                                        <?php echo _l('no_description_project'); ?>
+                                    </p>
                                     <?php } ?>
                                     <?php echo check_for_links($project->description); ?>
                                 </dd>
@@ -345,6 +314,7 @@
         </div>
         <?php hooks()->do_action('admin_project_overview_end_of_project_overview_left', $project) ?>
     </div>
+    
     <div class="col-md-6 project-overview-right">
         <div class="row">
             <div class="col-md-<?php echo ($project->deadline ? 6 : 12); ?> project-progress-bars">
@@ -357,7 +327,7 @@
                                 <!-- Box 1 -->
                                 <?php
                                 $getProjectResourceData = $this->db->get_where(db_prefix() . 'project_resource_data', ['project_id' => $project->id])->result();
-                                $projectResourceMap     = [];
+                                $projectResourceMap = [];
                                 foreach ($getProjectResourceData as $resource) {
                                     $projectResourceMap[$resource->slug] = $resource->url;
                                 }
@@ -631,26 +601,26 @@
                                     </div>
                                     <div id="automation_resources" class="panel-collapse collapse">
                                         <div class="panel-body">
-                                            <!-- <div class="form-group">
-                                                <label for="page_copy_doc_url_automation">Page Copy Doc URL</label>
-                                                <div class="input-group">
-                                                    <input type="text" name="page_copy_doc_url_automation" id="page_copy_doc_url_automation" value="<?php echo isset($projectResourceMap['page_copy_doc_url_automation']) ? $projectResourceMap['page_copy_doc_url_automation'] : ''; ?>"
-                                                        class="form-control" disabled>
-                                                    <span class="input-group-btn">
-                                                        <a href="javascript:void(0);" class="btn btn-default"> <i class="fa fa-globe search-icon custom_icon_size"></i></a>
-                                                    </span>
-                                                </div>
-                                            </div> -->
-                                            <!-- <div class="form-group">
-                                                <label for="site_sheet_url_automation">Sitemap Sheet URL</label>
-                                                <div class="input-group">
-                                                    <input type="text" name="site_sheet_url_automation" id="site_sheet_url_automation" value="<?php echo isset($projectResourceMap['site_sheet_url_automation']) ? $projectResourceMap['site_sheet_url_automation'] : ''; ?>"
-                                                        class="form-control" disabled>
-                                                    <span class="input-group-btn">
-                                                        <a href="javascript:void(0);" class="btn btn-default"> <i class="fa fa-globe search-icon custom_icon_size"></i></a>
-                                                    </span>
-                                                </div>
-                                            </div> -->
+                                            <!--<div class="form-group">-->
+                                            <!--    <label for="page_copy_doc_url_automation">Page Copy Doc URL</label>-->
+                                            <!--    <div class="input-group">-->
+                                            <!--        <input type="text" name="page_copy_doc_url_automation" id="page_copy_doc_url_automation" value="<?php echo isset($projectResourceMap['page_copy_doc_url_automation']) ? $projectResourceMap['page_copy_doc_url_automation'] : ''; ?>"-->
+                                            <!--            class="form-control" disabled>-->
+                                            <!--        <span class="input-group-btn">-->
+                                            <!--            <a href="javascript:void(0);" class="btn btn-default"> <i class="fa fa-globe search-icon custom_icon_size"></i></a>-->
+                                            <!--        </span>-->
+                                            <!--    </div>-->
+                                            <!--</div>-->
+                                            <!--<div class="form-group">-->
+                                            <!--    <label for="site_sheet_url_automation">Sitemap Sheet URL</label>-->
+                                            <!--    <div class="input-group">-->
+                                            <!--        <input type="text" name="site_sheet_url_automation" id="site_sheet_url_automation" value="<?php echo isset($projectResourceMap['site_sheet_url_automation']) ? $projectResourceMap['site_sheet_url_automation'] : ''; ?>"-->
+                                            <!--            class="form-control" disabled>-->
+                                            <!--        <span class="input-group-btn">-->
+                                            <!--            <a href="javascript:void(0);" class="btn btn-default"> <i class="fa fa-globe search-icon custom_icon_size"></i></a>-->
+                                            <!--        </span>-->
+                                            <!--    </div>-->
+                                            <!--</div>-->
                                             <div class="form-group">
                                                 <!-- pre_attribution_checklist_automation -->
                                                 <label for="pre_attribution_checklist_automation">Pre-Attribution Checklist</label>
@@ -672,54 +642,54 @@
             </div>
         </div>
     </div>
-
-    <div class="col-md-6 project-overview-right">
+    
+     <div class="col-md-6 project-overview-right">
         <div class="row">
             <div class="col-md-12">
-
+                
                 <div class="panel_s">
                     <h4 style="margin-left: 15px;">Vault</h4>
-                    <?php
+                    <?php 
                     $clientid = isset($project->clientid) ? $project->clientid : '';
                     ?>
-                    <?php
-                    if ($clientid != '') { ?>
-                        <button class="btn btn-primary mbot15 pull-right" data-toggle="modal" data-target="#entryModal" style="margin-right: 15px; margin-bottom: 15px;">
-                            <i class="fa-regular fa-plus tw-mr-1"></i> <?php echo _l('new_vault_entry'); ?>
-                        </button>
-                        <div class="modal fade" id="entryModal" tabindex="-1" role="dialog">
-                            <div class="modal-dialog" role="document">
-                                <?php echo form_open(admin_url('clients/vault_entry_create/' . $clientid), ['data-create-url' => admin_url('clients/vault_entry_create/' . $clientid), 'data-update-url' => admin_url('clients/vault_entry_update')]); ?>
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                                aria-hidden="true">&times;</span></button>
-                                        <h4 class="modal-title"><?php echo _l('vault_entry'); ?></h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
-                                        <input type="text" class="fake-autofill-field" name="fakeusernameremembered" value='' tabindex="-1" />
-                                        <input type="password" class="fake-autofill-field" name="fakepasswordremembered" value=''
-                                            tabindex="-1" />
-                                        <?php echo render_input('server_address', 'server_address'); ?>
-                                        <input type="hidden" name="roboform" value="0">
-                                        <div class="checkbox checkbox-info">
-                                            <input type="checkbox" id="roboform" value="1">
-                                            <label for="roboform">Roboform</label>
+                    <?php 
+                        if ($clientid != '') { ?>
+                            <button class="btn btn-primary mbot15 pull-right" data-toggle="modal" data-target="#entryModal" style="margin-right: 15px;">
+                                <i class="fa-regular fa-plus tw-mr-1"></i> <?php echo _l('new_vault_entry'); ?>
+                            </button>    
+                            <div class="modal fade" id="entryModal" tabindex="-1" role="dialog">
+                                <div class="modal-dialog" role="document">
+                                    <?php echo form_open(admin_url('clients/vault_entry_create/' . $clientid), ['data-create-url' => admin_url('clients/vault_entry_create/' . $clientid), 'data-update-url' => admin_url('clients/vault_entry_update')]); ?>
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                                    aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title"><?php echo _l('vault_entry'); ?></h4>
                                         </div>
-                                        <?php echo render_input('port', 'port', '', 'number'); ?>
-                                        <?php echo render_input('username', 'vault_username'); ?>
-                                        <?php echo render_input('password', 'vault_password', '', 'password'); ?>
-                                        <div id="vault_password_change_notice" class="help-block text-muted vault_password_change_notice hide">
-                                            <span class="text-muted tw-text-sm"><?php echo _l('password_change_fill_notice'); ?></span>
-                                        </div>
-                                        <?php echo render_textarea('description', 'vault_description'); ?>
+                                        <div class="modal-body">
+                                            <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
+                                            <input type="text" class="fake-autofill-field" name="fakeusernameremembered" value='' tabindex="-1" />
+                                            <input type="password" class="fake-autofill-field" name="fakepasswordremembered" value=''
+                                                tabindex="-1" />
+                                            <?php echo render_input('server_address', 'server_address'); ?>
+                                            <input type="hidden" name="roboform" value="0">
+                                            <div class="checkbox checkbox-info">
+                                                <input type="checkbox" id="roboform" value="1">
+                                                <label for="roboform">Roboform</label>
+                                            </div>
+                                            <?php echo render_input('port', 'port', '', 'number'); ?>
+                                            <?php echo render_input('username', 'vault_username'); ?>
+                                            <?php echo render_input('password', 'vault_password', '', 'password'); ?>
+                                            <div id="vault_password_change_notice" class="help-block text-muted vault_password_change_notice hide">
+                                                <span class="text-muted tw-text-sm"><?php echo _l('password_change_fill_notice'); ?></span>
+                                            </div>
+                                            <?php echo render_textarea('description', 'vault_description'); ?>
 
 
-                                        <!-- new field for category with multiple select -->
-                                        <input type="hidden" name="vault_category" id="vault_category">
+                                            <!-- new field for category with multiple select -->
+                                            <input type="hidden" name="vault_category" id="vault_category">
 
-                                        <div class="form-group" app-field-wrapper="vault_category_multi">
+                                            <div class="form-group" app-field-wrapper="vault_category_multi">
                                             <label for="vault_category_multi" class="control-label">Vault Category</label>
                                             <div class="dropdown bootstrap-select show-tick bs3" style="width: 100%;">
                                                 <select id="vault_category_multi" class="selectpicker" multiple="1" data-width="100%" data-none-selected-text="Nothing selected" data-live-search="true" tabindex="-98">
@@ -737,101 +707,102 @@
                                             </div>
                                         </div>
 
-                                        <div id="vault_fields_wrapper">
+                                            <div id="vault_fields_wrapper">
 
-                                            <div class="form-group vault-field" data-id="1" style="display:none;">
-                                                <label>Domain Registrar</label>
-                                                <input type="text" name="domain_registrar" class="form-control">
+                                                <div class="form-group vault-field" data-id="1" style="display:none;">
+                                                    <label>Domain Registrar</label>
+                                                    <input type="text" name="domain_registrar" class="form-control">
+                                                </div>
+
+                                                <div class="form-group vault-field" data-id="2" style="display:none;">
+                                                    <label>DNS</label>
+                                                    <input type="text" name="dns" class="form-control">
+                                                </div>
+
+                                                <div class="form-group vault-field" data-id="3" style="display:none;">
+                                                    <label>Hosting</label>
+                                                    <input type="text" name="hosting" class="form-control">
+                                                </div>
+
+                                                <div class="form-group vault-field" data-id="4" style="display:none;">
+                                                    <label>Website Login</label>
+                                                    <input type="text" name="website_login" class="form-control">
+                                                </div>
+
+                                                <div class="form-group vault-field" data-id="5" style="display:none;">
+                                                    <label>GA4 / GSC</label>
+                                                    <input type="text" name="ga4_gsc" class="form-control">
+                                                </div>
+
+                                                <div class="form-group vault-field" data-id="6" style="display:none;">
+                                                    <label>Google Business Profile</label>
+                                                    <input type="text" name="google_business_profile" class="form-control">
+                                                </div>
+
+                                                <div class="form-group vault-field" data-id="7" style="display:none;">
+                                                    <label>Google Ads</label>
+                                                    <input type="text" name="google_ads" class="form-control">
+                                                </div>
+
+                                                <div class="form-group vault-field" data-id="8" style="display:none;">
+                                                    <label>Meta</label>
+                                                    <input type="text" name="meta" class="form-control">
+                                                </div>
+
+                                                <div class="form-group vault-field" data-id="9" style="display:none;">
+                                                    <label>Other</label>
+                                                    <input type="text" name="other" class="form-control">
+                                                </div>
+
                                             </div>
+                                            <!-- new field for category with multiple select -->
+                                            
+                                            <?php 
+                                                $CI = &get_instance();
+                                                $CI->load->model('contracts_model');
+                                                $contracts = $CI->contracts_model->get('', ['client' => $clientid]);
+                                            ?>
+                                            <!-- select contract -->
 
-                                            <div class="form-group vault-field" data-id="2" style="display:none;">
-                                                <label>DNS</label>
-                                                <input type="text" name="dns" class="form-control">
+                                            <?php
+                                                echo render_select('contract', $contracts, ['id', 'subject'], 'contract');
+                                            ?>
+
+                                            <!-- select contract -->
+                                            <hr />
+                                            <div class="radio radio-info">
+                                                <input type="radio" name="visibility" value="1" id="only_creator_visible_all" checked>
+                                                <label for="only_creator_visible_all"><?php echo _l('vault_entry_visible_to_all'); ?></label>
                                             </div>
-
-                                            <div class="form-group vault-field" data-id="3" style="display:none;">
-                                                <label>Hosting</label>
-                                                <input type="text" name="hosting" class="form-control">
+                                            <div class="radio radio-info">
+                                                <input type="radio" name="visibility" value="2" id="only_creator_visible_administrators">
+                                                <label
+                                                    for="only_creator_visible_administrators"><?php echo _l('vault_entry_visible_administrators'); ?></label>
                                             </div>
-
-                                            <div class="form-group vault-field" data-id="4" style="display:none;">
-                                                <label>Website Login</label>
-                                                <input type="text" name="website_login" class="form-control">
+                                            <div class="radio radio-info">
+                                                <input type="radio" name="visibility" value="3" id="only_creator_visible_me">
+                                                <label for="only_creator_visible_me"><?php echo _l('vault_entry_visible_creator'); ?></label>
                                             </div>
-
-                                            <div class="form-group vault-field" data-id="5" style="display:none;">
-                                                <label>GA4 / GSC</label>
-                                                <input type="text" name="ga4_gsc" class="form-control">
+                                            <hr />
+                                            <div class="checkbox checkbox-info">
+                                                <input type="checkbox" id="share_in_projects" name="share_in_projects" checked value="1">
+                                                <label for="share_in_projects"><?php echo _l('vault_entry_share_on_projects'); ?></label>
                                             </div>
-
-                                            <div class="form-group vault-field" data-id="6" style="display:none;">
-                                                <label>Google Business Profile</label>
-                                                <input type="text" name="google_business_profile" class="form-control">
-                                            </div>
-
-                                            <div class="form-group vault-field" data-id="7" style="display:none;">
-                                                <label>Google Ads</label>
-                                                <input type="text" name="google_ads" class="form-control">
-                                            </div>
-
-                                            <div class="form-group vault-field" data-id="8" style="display:none;">
-                                                <label>Meta</label>
-                                                <input type="text" name="meta" class="form-control">
-                                            </div>
-
-                                            <div class="form-group vault-field" data-id="9" style="display:none;">
-                                                <label>Other</label>
-                                                <input type="text" name="other" class="form-control">
-                                            </div>
-
                                         </div>
-                                        <!-- new field for category with multiple select -->
-                                        <?php
-                                        $CI = &get_instance();
-                                        $CI->load->model('contracts_model');
-                                        $contracts = $CI->contracts_model->get('', ['client' => $clientid]);
-                                        ?>
-                                        <!-- select contract -->
-
-                                        <?php
-                                        echo render_select('contract', $contracts, ['id', 'subject'], 'contract');
-                                        ?>
-
-                                        <!-- select contract -->
-                                        <hr />
-                                        <div class="radio radio-info">
-                                            <input type="radio" name="visibility" value="1" id="only_creator_visible_all" checked>
-                                            <label for="only_creator_visible_all"><?php echo _l('vault_entry_visible_to_all'); ?></label>
-                                        </div>
-                                        <div class="radio radio-info">
-                                            <input type="radio" name="visibility" value="2" id="only_creator_visible_administrators">
-                                            <label
-                                                for="only_creator_visible_administrators"><?php echo _l('vault_entry_visible_administrators'); ?></label>
-                                        </div>
-                                        <div class="radio radio-info">
-                                            <input type="radio" name="visibility" value="3" id="only_creator_visible_me">
-                                            <label for="only_creator_visible_me"><?php echo _l('vault_entry_visible_creator'); ?></label>
-                                        </div>
-                                        <hr />
-                                        <div class="checkbox checkbox-info">
-                                            <input type="checkbox" id="share_in_projects" name="share_in_projects" checked value="1">
-                                            <label for="share_in_projects"><?php echo _l('vault_entry_share_on_projects'); ?></label>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _l('close'); ?></button>
+                                            <button type="submit" class="btn btn-primary"><?php echo _l('submit'); ?></button>
                                         </div>
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _l('close'); ?></button>
-                                        <button type="submit" class="btn btn-primary"><?php echo _l('submit'); ?></button>
-                                    </div>
+                                    <!-- /.modal-content -->
+                                    <?php echo form_close(); ?>
                                 </div>
-                                <!-- /.modal-content -->
-                                <?php echo form_close(); ?>
+                                <!-- /.modal-dialog -->
                             </div>
-                            <!-- /.modal-dialog -->
-                        </div>
-                    <?php  }
-                    ?>
-                    <div class="tw-mb-4 tw-bg-neutral-50 tw-px-4 tw-py-2 tw-rounded-md" style="margin-top: 55px;">
-                        <?php foreach ($project->shared_vault_entries as $vault_entry) { ?>
+                        <?php  }
+                        ?>
+                    <div class="tw-mb-4 tw-bg-neutral-50 tw-px-4 tw-py-2 tw-rounded-md"  style="margin-top: 55px;">
+                        <?php foreach ($project->shared_vault_entries as $vault_entry) {?>
                             <div class="tw-my-3">
                                 <div class="row" id="<?php echo 'vaultEntry-' . $vault_entry['id']; ?>">
                                     <div class="col-md-6">
@@ -859,50 +830,23 @@
                                         </p>
                                     </div>
                                     <div class="col-md-6">
-                                        <?php if (! empty($vault_entry['description'])) { ?>
+                                        <?php if (! empty($vault_entry['description'])) {?>
                                             <p class="tw-mb-0">
                                                 <b><?php echo _l('vault_description'); ?>:
                                                 </b><br /><?php echo process_text_content_for_display($vault_entry['description']); ?>
                                             </p>
-                                        <?php } ?>
+                                        <?php }?>
                                     </div>
                                 </div>
                             </div>
                             <hr />
-                        <?php } ?>
+                        <?php }?>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-</div>
-
-<!-- Vault Entry Edit Popup -->
-<div class="modal fade" id="vaultEditModal" tabindex="-1" role="dialog" aria-labelledby="vaultEditModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="vaultEditModalLabel"><?php echo _l('edit_field_value'); ?></h4>
-            </div>
-            <div class="modal-body">
-
-                <!-- Field container (input or textarea will be injected here) -->
-                <div id="vaultEditFieldContainer"></div>
-
-                <input type="hidden" id="vaultEditField">
-                <input type="hidden" id="vaultEditId">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">
-                    <?php echo _l('cancel'); ?>
-                </button>
-                <button type="button" class="btn btn-primary" id="vaultApplyEdit">
-                    <?php echo _l('apply'); ?>
-                </button>
-            </div>
-        </div>
-    </div>
+    
 </div>
 
 <!-- $('#project_active_days').modal('show'); -->
@@ -933,13 +877,13 @@
                             <thead>
                                 <tr>
                                     <th class="tw-text-sm tw-bg-neutral-50">
-                                        <?php echo _l('project_overview_start_time'); ?>
+                                        <?= _l('project_overview_start_time'); ?>
                                     </th>
                                     <th class="tw-text-sm tw-bg-neutral-50">
-                                        <?php echo _l('project_overview_end_time'); ?>
+                                        <?= _l('project_overview_end_time'); ?>
                                     </th>
                                     <th class="tw-text-sm tw-bg-neutral-50">
-                                        <?php echo _l('project_overview_action'); ?>
+                                        <?= _l('project_overview_action'); ?>
                                     </th>
                                 </tr>
                             </thead>
@@ -989,211 +933,211 @@
 </div>
 
 <?php if (isset($project_overview_chart)) { ?>
-    <script>
-        var project_overview_chart = <?php echo json_encode($project_overview_chart); ?>;
-    </script>
+<script>
+var project_overview_chart = <?php echo json_encode($project_overview_chart); ?>;
+</script>
 <?php } ?>
 
-
-<?php
+<?php 
 hooks()->add_action('app_admin_footer', 'task_customize_hook_app_admin_footer_for_vault_in_project_overview');
-function task_customize_hook_app_admin_footer_for_vault_in_project_overview()
-{
+function task_customize_hook_app_admin_footer_for_vault_in_project_overview(){
     // $viewuri = $_SERVER['REQUEST_URI'];
     // if (strpos($viewuri, 'group=project_overview') !== false) {
     $CI = &get_instance();
 
-    if ($CI->uri->segment(2) == 'projects' && $CI->uri->segment(3) == 'view' && (!isset($_GET['group']) || $_GET['group'] == 'project_overview')) {
+    if ($CI->uri->segment(2) == 'projects' && $CI->uri->segment(3) == 'view' && ( !isset($_GET['group']) || $_GET['group'] == 'project_overview')) {
+    
+     ?>
+<script>
+    var $entryModal = $('#entryModal');
+        $(function() {
 
-?>
-        <script>
-            var $entryModal = $('#entryModal');
-            $(function() {
-
-                appValidateForm($entryModal.find('form'), {
-                    server_address: 'required',
-                    vault_category: 'required',
+            appValidateForm($entryModal.find('form'), {
+                server_address: 'required',
+                vault_category: 'required',
+            });
+            setTimeout(function() {
+                $($entryModal.find('form')).trigger('reinitialize.areYouSure');
+            }, 1000)
+            $entryModal.on('hidden.bs.modal', function() {
+                var $form = $entryModal.find('form');
+                $form.attr('action', $form.data('create-url'));
+                $form.find('input[type="text"]').val('');
+                $form.find('input[type="radio"]:first').prop('checked', true);
+                $form.find('textarea').val('');
+                $('#vault_password_change_notice').addClass('hide');
+                $form.find('#password').rules('add', {
+                    required: true
                 });
-                setTimeout(function() {
-                    $($entryModal.find('form')).trigger('reinitialize.areYouSure');
-                }, 1000)
-                $entryModal.on('hidden.bs.modal', function() {
-                    var $form = $entryModal.find('form');
-                    $form.attr('action', $form.data('create-url'));
-                    $form.find('input[type="text"]').val('');
-                    $form.find('input[type="radio"]:first').prop('checked', true);
-                    $form.find('textarea').val('');
-                    $('#vault_password_change_notice').addClass('hide');
-                    $form.find('#password').rules('add', {
-                        required: true
-                    });
-                    $form.find('#password').parents().find('.req').removeClass('hide');
-                    $form.find('#share_in_projects').prop('checked', true);
-                    $('#vault_category_multi').val('').change();
+                $form.find('#password').parents().find('.req').removeClass('hide');
+                $form.find('#share_in_projects').prop('checked', true);
+                $('#vault_category_multi').val('').change();
+                $('#vault_category').val('');
+                toggleVaultFields([]);
+            });
+        });
+
+
+        function syncVaultCategory()
+        {
+            var selected = $('#vault_category_multi').val();
+
+            if(selected && selected.length){
+                $('#vault_category').val(selected.join(','));
+            }else{
+                $('#vault_category').val('');
+            }
+        }
+
+        function edit_vault_entry(id) {
+            $.get(admin_url + 'clients/get_vault_entry/' + id, function(response) {
+
+                var $form = $entryModal.find('form');
+
+                $form.attr('action', $form.data('update-url') + '/' + id);
+                $form.find('#server_address').val(response.server_address);
+                $form.find('#port').val(response.port);
+                $form.find('#username').val(response.username);
+                $form.find('#description').val(response.description);
+
+                $form.find('#password').rules('remove');
+                $form.find('#password').parents().find('.req').addClass('hide');
+
+                $form.find('input[value="' + response.visibility + '"]').prop('checked', true);
+                $form.find('#share_in_projects').prop('checked', (response.share_in_projects == 1 ? true : false));
+
+                $('#vault_password_change_notice').removeClass('hide');
+
+                if (response.roboform == 1) {
+                    $('#roboform').prop('checked', true);
+                    $('input[name="roboform"]').val(1);
+                } else {
+                    $('#roboform').prop('checked', false);
+                    $('input[name="roboform"]').val(0);
+                }
+
+                // ====================================================
+                // ⭐ RESTORE VAULT CATEGORY MULTI SELECT
+                // ====================================================
+                if(response.vault_category){
+
+                    var categories = response.vault_category.split(',');
+
+                    // set bootstrap select value
+                    $('#vault_category_multi').selectpicker('val', categories);
+
+                    // sync hidden input
+                    $('#vault_category').val(response.vault_category);
+
+                    // show only selected fields
+                    toggleVaultFields(categories);
+
+                }else{
+
+                    $('#vault_category_multi').selectpicker('deselectAll');
                     $('#vault_category').val('');
                     toggleVaultFields([]);
+
+                }
+
+                // ====================================================
+                // ⭐ AUTO FILL DYNAMIC FIELDS (clean scalable way)
+                // ====================================================
+                $('#vault_fields_wrapper input').each(function(){
+
+                    var name = $(this).attr('name');
+
+                    if(response[name] !== undefined){
+                        $(this).val(response[name]);
+                    }
+
                 });
-            });
+
+                $entryModal.modal('show');
+
+            }, 'json');
+        }
 
 
-            function syncVaultCategory() {
-                var selected = $('#vault_category_multi').val();
-
-                if (selected && selected.length) {
-                    $('#vault_category').val(selected.join(','));
+        $(function() {
+            $('#roboform').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('input[name="roboform"]').val(1);
                 } else {
-                    $('#vault_category').val('');
+                    $('input[name="roboform"]').val(0);
                 }
+            });
+        });
+
+        // new field for category with multiple select
+        function toggleVaultFields(values)
+        {
+            // hide all first
+            $(".vault-field").hide();
+
+            if(!values || values.length === 0){
+                return;
             }
 
-            function edit_vault_entry(id) {
-                $.get(admin_url + 'clients/get_vault_entry/' + id, function(response) {
+            // show selected fields only
+            $.each(values, function(i,val){
+                $('.vault-field[data-id="'+val+'"]').show();
+            });
+        }
 
-                    var $form = $entryModal.find('form');
-
-                    $form.attr('action', $form.data('update-url') + '/' + id);
-                    $form.find('#server_address').val(response.server_address);
-                    $form.find('#port').val(response.port);
-                    $form.find('#username').val(response.username);
-                    $form.find('#description').val(response.description);
-
-                    $form.find('#password').rules('remove');
-                    $form.find('#password').parents().find('.req').addClass('hide');
-
-                    $form.find('input[value="' + response.visibility + '"]').prop('checked', true);
-                    $form.find('#share_in_projects').prop('checked', (response.share_in_projects == 1 ? true : false));
-
-                    $('#vault_password_change_notice').removeClass('hide');
-
-                    if (response.roboform == 1) {
-                        $('#roboform').prop('checked', true);
-                        $('input[name="roboform"]').val(1);
-                    } else {
-                        $('#roboform').prop('checked', false);
-                        $('input[name="roboform"]').val(0);
-                    }
-
-                    // ====================================================
-                    // ⭐ RESTORE VAULT CATEGORY MULTI SELECT
-                    // ====================================================
-                    if (response.vault_category) {
-
-                        var categories = response.vault_category.split(',');
-
-                        // set bootstrap select value
-                        $('#vault_category_multi').selectpicker('val', categories);
-
-                        // sync hidden input
-                        $('#vault_category').val(response.vault_category);
-
-                        // show only selected fields
-                        toggleVaultFields(categories);
-
-                    } else {
-
-                        $('#vault_category_multi').selectpicker('deselectAll');
-                        $('#vault_category').val('');
-                        toggleVaultFields([]);
-
-                    }
-
-                    // ====================================================
-                    // ⭐ AUTO FILL DYNAMIC FIELDS (clean scalable way)
-                    // ====================================================
-                    $('#vault_fields_wrapper input').each(function() {
-
-                        var name = $(this).attr('name');
-
-                        if (response[name] !== undefined) {
-                            $(this).val(response[name]);
-                        }
-
-                    });
-
-                    $entryModal.modal('show');
-
-                }, 'json');
-            }
-
-
-            $(function() {
-                $('#roboform').on('change', function() {
-                    if ($(this).is(':checked')) {
-                        $('input[name="roboform"]').val(1);
-                    } else {
-                        $('input[name="roboform"]').val(0);
-                    }
-                });
+        $(function(){
+            var $vaultSelect = $('#vault_category_multi');
+            $vaultSelect.on('changed.bs.select', function(){
+                var selected = $(this).val();
+                syncVaultCategory();
+                toggleVaultFields(selected);
             });
 
-            // new field for category with multiple select
-            function toggleVaultFields(values) {
-                // hide all first
-                $(".vault-field").hide();
+            $vaultSelect.on('change', function(){
+                var selected = $(this).val();
+                toggleVaultFields(selected);
 
-                if (!values || values.length === 0) {
-                    return;
+            });
+
+            $('#entryModal').on('shown.bs.modal', function(){
+                var selected = $vaultSelect.val();
+                toggleVaultFields(selected);
+
+            });
+
+        });
+        
+        $(function () {
+
+            var $modal = $('#entryModal');
+            var $form  = $modal.find('form');
+
+            // When modal is fully hidden
+            $modal.on('hidden.bs.modal', function () {
+
+                // 1. Reset native form fields
+                if ($form.length) {
+                    $form[0].reset();
                 }
 
-                // show selected fields only
-                $.each(values, function(i, val) {
-                    $('.vault-field[data-id="' + val + '"]').show();
-                });
-            }
+                // 2. Clear validation errors (Perfex uses jquery validation)
+                if ($form.data('validator')) {
+                    $form.validate().resetForm();
+                }
 
-            $(function() {
-                var $vaultSelect = $('#vault_category_multi');
-                $vaultSelect.on('changed.bs.select', function() {
-                    var selected = $(this).val();
-                    syncVaultCategory();
-                    toggleVaultFields(selected);
-                });
+                // 3. Remove error classes added by Perfex
+                $form.find('.has-error').removeClass('has-error');
+                $form.find('.text-danger').remove();
 
-                $vaultSelect.on('change', function() {
-                    var selected = $(this).val();
-                    toggleVaultFields(selected);
-
-                });
-
-                $('#entryModal').on('shown.bs.modal', function() {
-                    var selected = $vaultSelect.val();
-                    toggleVaultFields(selected);
-
-                });
+                // 4. IMPORTANT: reset Perfex dirty-form tracking
+                $form.trigger('change');
+                window.onbeforeunload = null;
 
             });
 
-            $(function() {
-
-                var $modal = $('#entryModal');
-                var $form = $modal.find('form');
-
-                // When modal is fully hidden
-                $modal.on('hidden.bs.modal', function() {
-
-                    // 1. Reset native form fields
-                    if ($form.length) {
-                        $form[0].reset();
-                    }
-
-                    // 2. Clear validation errors (Perfex uses jquery validation)
-                    if ($form.data('validator')) {
-                        $form.validate().resetForm();
-                    }
-
-                    // 3. Remove error classes added by Perfex
-                    $form.find('.has-error').removeClass('has-error');
-                    $form.find('.text-danger').remove();
-
-                    // 4. IMPORTANT: reset Perfex dirty-form tracking
-                    $form.trigger('change');
-                    window.onbeforeunload = null;
-
-                });
-
-            });
-        </script>
-<?php
+        });
+</script>    
+<?php 
     }
 }
 ?>

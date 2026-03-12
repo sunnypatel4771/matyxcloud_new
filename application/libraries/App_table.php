@@ -231,19 +231,17 @@ class App_table
                 !array_key_exists($field['type'], $rulesMap);
         })->map(function ($field) use ($rulesMap, $isAdmin) {
             $options = collect(explode(',', $field['options']))
-                ->map(fn($option) => trim($option))
+                ->map(fn ($option) => trim($option))
                 ->filter()
-                ->map(fn($option) => ['value' => $option, 'label' => $option]);
+                ->map(fn ($option) => ['value' => $option, 'label' => $option]);
 
             $rule = App_table_filter::new(
                 $field['slug'],
                 $rulesMap[$field['type']]
             )->label($field['name']);
 
-
-
             if (!$isAdmin && $field['only_admin'] == '1') {
-                $rule->isVisible(fn() => false);
+                $rule->isVisible(fn () => false);
             }
 
             if (!empty($options->all())) {
@@ -279,7 +277,7 @@ class App_table
                     }
 
                     $whereValueSql = $this->toSql($value, $operator, $operatorSql, $valueSqlColumn, $ruleInstance);
-                }
+                }   
 
                 return $prefix . $this->customFieldWhereSql($whereValueSql, $table, $field['fieldto'], $field['id']);
             });
@@ -394,7 +392,7 @@ class App_table
     protected function castRules($filters, $table)
     {
         foreach ($filters as $key => $filter) {
-            if (!isset($filter['builder']['rules'])) {
+            if(!isset($filter['builder']['rules'])) {
                 $filters[$key]['builder']['rules'] = [];
                 $filter['builder']['rules'] = [];
             }
@@ -424,7 +422,7 @@ class App_table
         $value = $rule['value'];
 
         if (is_array($value)) {
-            $value = array_map(fn($v) => $this->ci->db->escape_str($v), $value);
+            $value = array_map(fn ($v) => $this->ci->db->escape_str($v), $value);
         } else {
             $value = $this->ci->db->escape_str($value);
         }

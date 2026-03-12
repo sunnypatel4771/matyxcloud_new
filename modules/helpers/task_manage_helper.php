@@ -877,32 +877,3 @@ function task_manage_project_info( $status_id )
     return $projects;
 
 }
-
-function which_type_assign_to_task($id = null)
-{
-    $data = [
-        '1' => _l('cam_id'),
-        '2' => _l('optimizer_id'),
-        '3' => _l('organic_social_id'),
-        '4' => _l('seo_lead_id'),
-        '5' => _l('sale_rep_id'),
-        '6' => _l('content_id'),
-        '7' => _l('web_lead_id'),
-    ];
-
-    // 🔹 If ID is provided → return name
-    if ($id !== null) {
-        return isset($data[$id]) ? $data[$id] : '';
-    }
-
-    // 🔹 If no ID → return list for dropdown
-    $result = [];
-    foreach ($data as $key => $value) {
-        $result[] = [
-            'id'   => $key,
-            'name' => $value,
-        ];
-    }
-
-    return $result;
-}

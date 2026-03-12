@@ -105,7 +105,6 @@ return App_table::find('related_tasks')
         $rResult = $result['rResult'];
 
         foreach ($rResult as $aRow) {
-            
             $row = [];
 
             $row[] = '<div class="checkbox"><input type="checkbox" value="' . $aRow['id'] . '"><label></label></div>';

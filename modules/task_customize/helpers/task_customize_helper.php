@@ -1,12 +1,13 @@
 <?php
 
+
 function get_milestone_data($milestone_id)
 {
     if (is_numeric($milestone_id)) {
         $CI = &get_instance();
         $CI->db->where('id', $milestone_id);
         $data = $CI->db->get(db_prefix() . 'milestones')->result_array();
-        if (! empty($data)) {
+        if (!empty($data)) {
             $name = isset($data[0]['name']) ? $data[0]['name'] : '';
             return $name;
         }
@@ -42,7 +43,6 @@ function get_task_latest_completed_time($task_id)
     } else {
         return '';
     }
-
 }
 
 function init_relation_tasks_table_change($table_attributes = [], $filtersWrapperId = 'vueApp', $filtersDetached = false)
@@ -109,12 +109,12 @@ function init_relation_tasks_table_change($table_attributes = [], $filtersWrappe
     $table_name = '.table-' . $name;
 
     $CI->load->view('admin/tasks/filters', [
-        'tasks_table'        => $tasks_table,
+        'tasks_table' => $tasks_table,
         'filters_wrapper_id' => $filtersWrapperId,
-        'detached'           => $filtersDetached,
+        'detached' => $filtersDetached,
     ]);
 
-    if (staff_can('create', 'tasks')) {
+    if (staff_can('create',  'tasks')) {
         $disabled   = '';
         $table_name = addslashes($table_name);
         if ($table_attributes['data-new-rel-type'] == 'customer' && is_numeric($table_attributes['data-new-rel-id'])) {
@@ -240,7 +240,7 @@ function task_custom_field($task_id)
         $CI->db->where(db_prefix() . 'customfieldsvalues.fieldto', 'tasks');
         $CI->db->where(db_prefix() . 'customfieldsvalues.relid ', $task_id);
         $task_custom_data = $CI->db->get(db_prefix() . 'customfields')->result_array();
-        if (! empty($task_custom_data) && isset($task_custom_data[0]) && ! empty($task_custom_data[0])) {
+        if (!empty($task_custom_data) && isset($task_custom_data[0]) && !empty($task_custom_data[0])) {
             $task_custom_data = $task_custom_data[0];
             return $task_custom_data;
         }
@@ -304,12 +304,13 @@ function update_custom_field_value($task_id, $value, $field_id)
     } else {
         $CI->db->insert(db_prefix() . 'customfieldsvalues', [
             'fieldto' => 'tasks',
-            'relid'   => $task_id,
+            'relid' => $task_id,
             'fieldid' => $field_id,
-            'value'   => $value,
+            'value' => $value
         ]);
     }
 }
+
 
 function my_tasks_rel_name_select_query()
 {
@@ -322,11 +323,11 @@ function my_tasks_rel_name_select_query()
         WHEN "lead" THEN (SELECT CASE ' . db_prefix() . 'leads.email WHEN "" THEN ' . db_prefix() . 'leads.name ELSE CONCAT(' . db_prefix() . 'leads.name, " - ", ' . db_prefix() . 'leads.email) END FROM ' . db_prefix() . 'leads WHERE ' . db_prefix() . 'leads.id=' . db_prefix() . 'tasks.rel_id)
         WHEN "customer" THEN (SELECT CASE company WHEN "" THEN (SELECT CONCAT(firstname, " ", lastname) FROM ' . db_prefix() . 'contacts WHERE userid = ' . db_prefix() . 'clients.userid and is_primary = 1) ELSE company END FROM ' . db_prefix() . 'clients WHERE ' . db_prefix() . 'clients.userid=' . db_prefix() . 'tasks.rel_id)
          WHEN "project" THEN (
-            SELECT
+            SELECT 
                 CONCAT(
-                    (SELECT CASE company WHEN ""
-                        THEN (SELECT CONCAT(firstname, " ", lastname) FROM ' . db_prefix() . 'contacts WHERE userid = ' . db_prefix() . 'clients.userid AND is_primary = 1)
-                        ELSE company END
+                    (SELECT CASE company WHEN "" 
+                        THEN (SELECT CONCAT(firstname, " ", lastname) FROM ' . db_prefix() . 'contacts WHERE userid = ' . db_prefix() . 'clients.userid AND is_primary = 1) 
+                        ELSE company END 
                     FROM ' . db_prefix() . 'clients WHERE userid = ' . db_prefix() . 'projects.clientid),
                     " - ",
                     CONCAT("#", ' . db_prefix() . 'projects.id, " - ", ' . db_prefix() . 'projects.name)
@@ -337,7 +338,6 @@ function my_tasks_rel_name_select_query()
          CONCAT(' . db_prefix() . 'expenses_categories.name, \' (\',' . db_prefix() . 'expenses.expense_name,\')\') END FROM ' . db_prefix() . 'expenses JOIN ' . db_prefix() . 'expenses_categories ON ' . db_prefix() . 'expenses_categories.id = ' . db_prefix() . 'expenses.category WHERE ' . db_prefix() . 'expenses.id=' . db_prefix() . 'tasks.rel_id)
         ELSE NULL
         END)';
-
 }
 
 function init_customer_relation_tasks_table($table_attributes = [], $filtersWrapperId = 'vueApp')
@@ -404,11 +404,11 @@ function init_customer_relation_tasks_table($table_attributes = [], $filtersWrap
     $table_name = '.table-' . $name;
 
     $CI->load->view('admin/tasks/filters', [
-        'tasks_table'        => $tasks_table,
+        'tasks_table' => $tasks_table,
         'filters_wrapper_id' => $filtersWrapperId,
     ]);
 
-    if (staff_can('create', 'tasks')) {
+    if (staff_can('create',  'tasks')) {
         $disabled   = '';
         $table_name = addslashes($table_name);
         if ($table_attributes['data-new-rel-type'] == 'customer' && is_numeric($table_attributes['data-new-rel-id'])) {
@@ -462,6 +462,7 @@ function init_customer_relation_tasks_table($table_attributes = [], $filtersWrap
     $table_attributes['id'] = 'related_tasks';
 
     $table .= render_datatable($table_data, $name, ['number-index-1'], $table_attributes);
+
 
     return $table;
 }
@@ -563,14 +564,14 @@ function my_get_relation_values($relation, $type)
             $name      = $relation['category_name'];
             $addedfrom = $relation['addedfrom'];
 
-            if (! empty($relation['expense_name'])) {
+            if (!empty($relation['expense_name'])) {
                 $name .= ' (' . $relation['expense_name'] . ')';
             }
         } else {
             $id        = $relation->expenseid;
             $name      = $relation->category_name;
             $addedfrom = $relation->addedfrom;
-            if (! empty($relation->expense_name)) {
+            if (!empty($relation->expense_name)) {
                 $name .= ' (' . $relation->expense_name . ')';
             }
         }
@@ -594,13 +595,13 @@ function my_get_relation_values($relation, $type)
         if (is_array($relation)) {
             $id        = $relation['id'];
             $addedfrom = $relation['addedfrom'];
-            if (! empty($relation['subject'])) {
+            if (!empty($relation['subject'])) {
                 $name .= ' - ' . $relation['subject'];
             }
         } else {
             $id        = $relation->id;
             $addedfrom = $relation->addedfrom;
-            if (! empty($relation->subject)) {
+            if (!empty($relation->subject)) {
                 $name .= ' - ' . $relation->subject;
             }
         }
@@ -637,6 +638,7 @@ function my_get_relation_values($relation, $type)
 
         $name = get_company_name($clientId) . ' - #' . $id . ' - ' . $name;
 
+
         $link = admin_url('projects/view/' . $id);
     }
 
@@ -660,13 +662,14 @@ function get_comments_count($task_id)
         $CI->db->where('taskid', $task_id);
         $CI->db->from(db_prefix() . 'task_comments');
         $data = $CI->db->get()->result_array();
-        if (! empty($data) && isset($data[0]) && ! empty($data[0])) {
+        if (!empty($data) && isset($data[0]) && !empty($data[0])) {
             $total_comments = $data[0]['total_comments'];
             return $total_comments;
         }
     }
     return 0;
 }
+
 
 /**
  * General function for all datatables, performs search,additional select,join,where,orders
@@ -681,8 +684,8 @@ function get_comments_count($task_id)
  */
 function task_data_tables_init($aColumns, $sIndexColumn, $sTable, $join = [], $where = [], $additionalSelect = [], $sGroupBy = '', $searchAs = [])
 {
-    $CI   = &get_instance();
-    $data = $CI->input->post();
+    $CI          = &get_instance();
+    $data      = $CI->input->post();
 
     /*
      * Paging
@@ -727,7 +730,7 @@ function task_data_tables_init($aColumns, $sIndexColumn, $sTable, $join = [], $w
             $type       = $data['order'][$key]['type'] ?? null;
 
             // Security
-            if (! in_array($dir, ['ASC', 'DESC'])) {
+            if (!in_array($dir, ['ASC', 'DESC'])) {
                 $dir = 'ASC';
             }
 
@@ -852,7 +855,7 @@ function task_data_tables_init($aColumns, $sIndexColumn, $sTable, $join = [], $w
         foreach ($aColumns as $i => $column) {
             if (isset($data['columns'][$i]) && $data['columns'][$i]['searchable'] == 'true') {
                 $search_value = $data['columns'][$i]['search']['value'];
-                $columnName   = $column;
+                $columnName = $column;
 
                 if (strpos($columnName, ' as ') !== false) {
                     $columnName = strbefore($columnName, ' as');
@@ -961,6 +964,7 @@ function task_data_tables_init($aColumns, $sIndexColumn, $sTable, $join = [], $w
     ];
 }
 
+
 function get_client_name($rel_type, $rel_id)
 {
     if ($rel_type == 'project') {
@@ -978,7 +982,6 @@ function get_client_name($rel_type, $rel_id)
     } else {
         return '';
     }
-
 }
 
 function custom_get_relation_data($type, $customer_id, $rel_id = '', $extra = [])
@@ -994,7 +997,7 @@ function custom_get_relation_data($type, $customer_id, $rel_id = '', $extra = []
     if ($type == 'customer' || $type == 'customers') {
         $where_clients = '';
 
-        if ($q && ! $rel_id) {
+        if ($q && !$rel_id) {
             $where_clients .= '(company LIKE "%' . $CI->db->escape_like_str($q) . '%" ESCAPE \'!\' OR CONCAT(firstname, " ", lastname) LIKE "%' . $CI->db->escape_like_str($q) . '%" ESCAPE \'!\' OR email LIKE "%' . $CI->db->escape_like_str($q) . '%" ESCAPE \'!\') AND ' . db_prefix() . 'clients.active = 1';
         }
 
@@ -1118,6 +1121,7 @@ function custom_get_relation_data($type, $customer_id, $rel_id = '', $extra = []
 
     return $data;
 }
+
 
 function init_relation_tasks_table_for_client_task($table_attributes = [], $filtersWrapperId = 'vueApp')
 {

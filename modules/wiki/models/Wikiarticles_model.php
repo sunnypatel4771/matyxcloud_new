@@ -215,13 +215,16 @@ class Wikiarticles_model extends App_Model
         if(isset($filters['is_bookmark']) && $filters['is_bookmark'] == 1){
             $sql .= " and TBLStaffArticle.id IS NOT NULL ";
         }
+        // $sql .= "
+        //     ORDER BY 
+        //         TBLArticles.updated_at DESC 
+        // ";
         $sql .= "
             ORDER BY
             LOWER(TBLArticles.title) ASC
         ";
         $rs = $this->db->query($sql);
         $data = $rs->result_array();
-        
         return array_values($data);
     }
 

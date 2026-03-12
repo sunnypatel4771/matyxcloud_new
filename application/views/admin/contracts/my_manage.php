@@ -12,7 +12,6 @@
                             <?php echo _l('new_contract'); ?>
                         </a>
                     <?php } ?>
-
                     <a href="<?php echo admin_url('wiki/articles/show/183'); ?>" 
                     target="_blank" 
                     class="ml-2" style="margin-left: 5px;">
@@ -21,6 +20,16 @@
                             height="30" 
                             alt="Help">
                     </a>
+                    <!--<div id="vueApp" class="tw-inline pull-right tw-ml-0 sm:tw-ml-1.5">-->
+                    <!--    <app-filters-->
+                    <!--        id="<?php echo $table->id(); ?>"-->
+                    <!--        view="<?php echo $table->viewName(); ?>"-->
+                    <!--        :saved-filters="<?php echo $table->filtersJs(); ?>"-->
+                    <!--        :available-rules="<?php echo $table->rulesJs(); ?>">-->
+                    <!--    </app-filters>-->
+                    <!--    <input type="hidden" name="type" value="main-contracts">-->
+                    <!--</div>-->
+                    
                     <div id="vueApp" class="tw-inline pull-right tw-ml-0 sm:tw-ml-1.5">
                         <?php
 

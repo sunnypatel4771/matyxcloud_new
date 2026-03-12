@@ -123,8 +123,6 @@
 
                         <!-- select contract -->
 
-
-
                         <hr />
                         <div class="radio radio-info">
                             <input type="radio" name="visibility" value="1" id="only_creator_visible_all" checked>
@@ -377,8 +375,7 @@
             });
 
         });
-
-
+        
         $(function () {
 
             var $modal = $('#entryModal');
@@ -408,7 +405,6 @@
             });
 
         });
-
 </script>
 <?php
 }

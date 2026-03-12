@@ -6,14 +6,16 @@ $has_permission_delete = staff_can('delete',  'staff');
 
 $custom_fields = get_custom_fields('staff', [
     'show_on_table' => 1,
-    ]);
+]);
+
 $aColumns = [
+    '1', // bulk actions
     'firstname',
     'email',
     db_prefix() . 'roles.name',
     'last_login',
     'active',
-    ];
+];
 $sIndexColumn = 'staffid';
 $sTable       = db_prefix() . 'staff';
 $join         = ['LEFT JOIN ' . db_prefix() . 'roles ON ' . db_prefix() . 'roles.roleid = ' . db_prefix() . 'staff.role'];
@@ -27,18 +29,27 @@ foreach ($custom_fields as $field) {
     array_push($join, 'LEFT JOIN ' . db_prefix() . 'customfieldsvalues as ctable_' . $i . ' ON ' . db_prefix() . 'staff.staffid = ctable_' . $i . '.relid AND ctable_' . $i . '.fieldto="' . $field['fieldto'] . '" AND ctable_' . $i . '.fieldid=' . $field['id']);
     $i++;
 }
-            // Fix for big queries. Some hosting have max_join_limit
+// Fix for big queries. Some hosting have max_join_limit
 if (count($custom_fields) > 4) {
     @$this->ci->db->query('SET SQL_BIG_SELECTS=1');
 }
 
 $where = hooks()->apply_filters('staff_table_sql_where', []);
 
+$role_filter = $this->ci->input->post('role_filter');
+if ($role_filter && $role_filter != '') {
+    $where[] = 'AND ' . db_prefix() . 'roles.roleid = ' . $role_filter;
+}
+
+$status_filter = $this->ci->input->post('status_filter');
+if ($status_filter != '') {
+    $where[] = 'AND ' . db_prefix() . 'staff.active = ' . $status_filter;
+}
 $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
     'profile_image',
     'lastname',
     'staffid',
-    ]);
+]);
 
 $output  = $result['output'];
 $rResult = $result['rResult'];
@@ -50,6 +61,13 @@ foreach ($rResult as $aRow) {
             $_data = $aRow[strafter($aColumns[$i], 'as ')];
         } else {
             $_data = $aRow[$aColumns[$i]];
+        }
+
+        if ($aColumns[$i] === '1') {
+            $_data = '<div class="checkbox">
+                        <input type="checkbox" class="row-select" value="' . $aRow['staffid'] . '">
+                        <label></label>
+                      </div>';
         }
         if ($aColumns[$i] == 'last_login') {
             if ($_data != null) {
@@ -73,7 +91,7 @@ foreach ($rResult as $aRow) {
         } elseif ($aColumns[$i] == 'firstname') {
             $_data = '<a href="' . admin_url('staff/profile/' . $aRow['staffid']) . '">' . staff_profile_image($aRow['staffid'], [
                 'staff-profile-image-small',
-                ]) . '</a>';
+            ]) . '</a>';
             $_data .= ' <a href="' . admin_url('staff/member/' . $aRow['staffid']) . '">' . e($aRow['firstname'] . ' ' . $aRow['lastname']) . '</a>';
 
             $_data .= '<div class="row-options">';

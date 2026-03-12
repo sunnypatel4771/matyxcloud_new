@@ -18,7 +18,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 *
 */
 // define('APP_BASE_URL', 'https://hq.matyxcloud.com/');
-define('APP_BASE_URL', 'http://localhost/matyxcloud');
+define('APP_BASE_URL', 'http://localhost/matyxcloud_new');
 
 /*
 * --------------------------------------------------------------------------
