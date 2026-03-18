@@ -15,7 +15,7 @@ class Task_customize extends AdminController
     {
         hooks()->do_action('before_do_bulk_action_for_tasks');
         $total_deleted = 0;
-        
+
         if ($this->input->post()) {
             $status    = $this->input->post('status');
             $ids       = $this->input->post('ids');
@@ -118,7 +118,7 @@ class Task_customize extends AdminController
             }
         }
     }
-    
+
     public function update_custom_field_value()
     {
         $post  = $_POST;
@@ -158,30 +158,30 @@ class Task_customize extends AdminController
             }
         }
     }
-    
-    
-     public function add_comments(){
+
+
+    public function add_comments()
+    {
         $data = $this->input->post();
-        if(!empty($data)){
+        if (!empty($data)) {
             $data['content'] = html_purify($this->input->post('comment', false));
-            if($data['content'] == ''){
+            if ($data['content'] == '') {
                 echo json_encode(array('status' => false, 'message' => "Comment Not Added"));
                 return;
             }
-      
-            if($this->tasks_model->add_task_comment($data)){
+
+            if ($this->tasks_model->add_task_comment($data)) {
                 echo json_encode(array('status' => true, 'message' => "Comment Added Successfully"));
-            }else{
+            } else {
                 echo json_encode(array('status' => false, 'message' => "Comment Not Added"));
             }
-
-        }else{
+        } else {
             echo json_encode(array('status' => false, 'message' => "Comment Not Added"));
         }
     }
-    
-    
-     //get_task_comments function
+
+
+    //get_task_comments function
     public function get_task_comments()
     {
         $task_id = $this->input->post('task_id');
@@ -204,7 +204,7 @@ class Task_customize extends AdminController
                     $comments_html .= '<div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">';
                 }
                 $comments = '';
-            
+
 
                 foreach ($task->comments as $comment) {
                     $comments .= '<div id="comment_' . $comment['id'] . '" data-commentid="' . $comment['id'] . '" data-task-attachment-id="' . $comment['file_id'] . '" class="tc-content tw-group/comment task-comment' . (strtotime($comment['dateadded']) >= strtotime('-16 hours') ? ' highlight-bg' : '') . '" style="background: aliceblue;padding: 8px;margin: 10px;">';
@@ -240,7 +240,7 @@ class Task_customize extends AdminController
                   <button type="button" class="btn btn-primary pull-right" onclick="save_edited_comment(' . $comment['id'] . ',' . $task->id . ')">' . _l('submit') . '</button>
                   <button type="button" class="btn btn-default pull-right mright5" onclick="cancel_edit_comment(' . $comment['id'] . ')">' . _l('cancel') . '</button>
                   </div>';
-                   
+
                     $comments .= '<div class="comment-content mtop10">' . app_happy_text(check_for_links($comment['content'])) . '</div>';
                     $comments .= '</div>';
                     if ($i >= 0 && $i != $len - 1) {
@@ -250,13 +250,13 @@ class Task_customize extends AdminController
                     $comments .= '</div>';
                     $i++;
                 }
-               
+
                 $comments_html .= $comments;
                 if ($len > 3) {
                     $comments_html .= '</div>'; // Close the scroll wrapper
                 }
                 $comments_html .= '</div>';
-            }else{
+            } else {
                 $comments_html = '<div id="task-comments" class="mtop10">';
                 $comments_html .= '<div class="tc-content tw-group/comment task-comment">';
                 $comments_html .= '<div class="media-body comment-wrapper">';
@@ -272,141 +272,138 @@ class Task_customize extends AdminController
             echo json_encode(array('status' => false, 'message' => "Comments Not Found"));
         }
     }
-    
-     public function recurring_tasks(){
+
+    public function recurring_tasks()
+    {
         //load view file
         $data['tasks_table'] = App_table::find('tasks');
         $data['bulk_actions'] = true;
         $this->load->view('recurring_tasks', $data);
-       
     }
-    
-    public function task_customize_task_status_changed($status,$task_id){
-    $CI = &get_instance();
-    // $status = isset($data['status']) ? $data['status'] : '';
-    // $task_id = isset($data['task_id']) ? $data['task_id'] : '';
-    // echo $status;die;
-    if ($status != '' && $task_id != '') {
-        
-        if ($status == Tasks_model::STATUS_COMPLETE) {
-            $CI->db->select('id,addedfrom,recurring_type,repeat_every,last_recurring_date,startdate,duedate,recurring ,is_recurring_from');
-            $CI->db->where('id', $task_id);
-            $recurring_tasks = $CI->db->get(db_prefix() . 'tasks')->result_array();
-            if (!empty($recurring_tasks)) {
-                foreach ($recurring_tasks as $task) {
-                    if ((isset($task['is_recurring_from']) && $task['is_recurring_from'] != '') || (isset($task['recurring']) && $task['recurring'] == 1)) {
-                        $last_recurring_date = $task['last_recurring_date'];
-                        $type                = $task['recurring_type'];
-                        $repeat_every        = $task['repeat_every'];
-                        $task_date           = $task['startdate'];
 
-                        if (isset($task['is_recurring_from']) && $task['is_recurring_from'] != NULL) {
-                            $task_setail = get_task_detail($task['is_recurring_from']);
-                            $last_recurring_task_id = isset($task_setail[0]['id']) ? $task_setail[0]['id'] : '';
-                            $last_recurring_date = isset($task_setail[0]['last_recurring_date']) ? $task_setail[0]['last_recurring_date'] : '';
-                            $type                = isset($task_setail[0]['recurring_type']) ? $task_setail[0]['recurring_type'] : '';
-                            $repeat_every        = isset($task_setail[0]['repeat_every']) ? $task_setail[0]['repeat_every'] : '';
-                            $task_date           = isset($task_setail[0]['startdate']) ? $task_setail[0]['startdate'] : '';
-                            if (isset($task_setail[0]['total_cycles']) && isset($task_setail[0]['cycles']) && $task_setail[0]['total_cycles'] == $task_setail[0]['cycles']) {
-                                continue;
+    public function task_customize_task_status_changed($status, $task_id)
+    {
+        $CI = &get_instance();
+        // $status = isset($data['status']) ? $data['status'] : '';
+        // $task_id = isset($data['task_id']) ? $data['task_id'] : '';
+        // echo $status;die;
+        if ($status != '' && $task_id != '') {
+
+            if ($status == Tasks_model::STATUS_COMPLETE) {
+                $CI->db->select('id,addedfrom,recurring_type,repeat_every,last_recurring_date,startdate,duedate,recurring ,is_recurring_from');
+                $CI->db->where('id', $task_id);
+                $recurring_tasks = $CI->db->get(db_prefix() . 'tasks')->result_array();
+                if (!empty($recurring_tasks)) {
+                    foreach ($recurring_tasks as $task) {
+                        if ((isset($task['is_recurring_from']) && $task['is_recurring_from'] != '') || (isset($task['recurring']) && $task['recurring'] == 1)) {
+                            $last_recurring_date = $task['last_recurring_date'];
+                            $type                = $task['recurring_type'];
+                            $repeat_every        = $task['repeat_every'];
+                            $task_date           = $task['startdate'];
+
+                            if (isset($task['is_recurring_from']) && $task['is_recurring_from'] != NULL) {
+                                $task_setail = get_task_detail($task['is_recurring_from']);
+                                $last_recurring_task_id = isset($task_setail[0]['id']) ? $task_setail[0]['id'] : '';
+                                $last_recurring_date = isset($task_setail[0]['last_recurring_date']) ? $task_setail[0]['last_recurring_date'] : '';
+                                $type                = isset($task_setail[0]['recurring_type']) ? $task_setail[0]['recurring_type'] : '';
+                                $repeat_every        = isset($task_setail[0]['repeat_every']) ? $task_setail[0]['repeat_every'] : '';
+                                $task_date           = isset($task_setail[0]['startdate']) ? $task_setail[0]['startdate'] : '';
+                                if (isset($task_setail[0]['total_cycles']) && isset($task_setail[0]['cycles']) && $task_setail[0]['total_cycles'] == $task_setail[0]['cycles']) {
+                                    continue;
+                                }
                             }
-                        }
-                        if ($task['recurring'] == 1) {
-                            if (isset($task[0]['total_cycles']) && isset($task[0]['cycles']) && $task[0]['total_cycles'] == $task[0]['cycles']) {
-                                continue;
+                            if ($task['recurring'] == 1) {
+                                if (isset($task[0]['total_cycles']) && isset($task[0]['cycles']) && $task[0]['total_cycles'] == $task[0]['cycles']) {
+                                    continue;
+                                }
                             }
-                        }
 
-                        $date = new DateTime(date('Y-m-d'));
-                        // Check if is first recurring
-                        if (!$last_recurring_date) {
-                            $last_recurring_date = date('Y-m-d', strtotime($task_date));
-                        } else {
-                            $last_recurring_date = date('Y-m-d', strtotime($last_recurring_date));
-                        }
+                            $date = new DateTime(date('Y-m-d'));
+                            // Check if is first recurring
+                            if (!$last_recurring_date) {
+                                $last_recurring_date = date('Y-m-d', strtotime($task_date));
+                            } else {
+                                $last_recurring_date = date('Y-m-d', strtotime($last_recurring_date));
+                            }
 
-                        $re_create_at = date('Y-m-d', strtotime('+' . $repeat_every . ' ' . strtoupper($type), strtotime($last_recurring_date)));
+                            $re_create_at = date('Y-m-d', strtotime('+' . $repeat_every . ' ' . strtoupper($type), strtotime($last_recurring_date)));
 
-                        $task_id = $task['id'];
-                        if (isset($last_recurring_task_id) && $last_recurring_task_id != '') {
-                            $task_id = $last_recurring_task_id;
-                        }else{
-                            $task_id = $task['id'];
-                        }
-                        $copy_task_data['copy_task_followers']       = 'true';
-                        $copy_task_data['copy_task_checklist_items'] = 'true';
-                        $copy_task_data['copy_from']                 = $task_id;
-
-                        $overwrite_params = [
-                            'startdate'           => $re_create_at,
-                            'status'              => ASSIGN_STATUS,
-                            'recurring_type'      => null,
-                            'repeat_every'        => 0,
-                            'cycles'              => 0,
-                            'recurring'           => 0,
-                            'custom_recurring'    => 0,
-                            'last_recurring_date' => null,
-                            'is_recurring_from'   => $task_id,
-                        ];
-
-                        if (!empty($task['duedate'])) {
-                            $dStart                      = new DateTime($task['startdate']);
-                            $dEnd                        = new DateTime($task['duedate']);
-                            $dDiff                       = $dStart->diff($dEnd);
-                            $overwrite_params['duedate'] = date('Y-m-d', strtotime('+' . $dDiff->days . ' days', strtotime($re_create_at)));
-                        }
-                        $newTaskID = $CI->tasks_model->copy($copy_task_data, $overwrite_params);
-
-                        if ($newTaskID) {
                             $task_id = $task['id'];
                             if (isset($last_recurring_task_id) && $last_recurring_task_id != '') {
                                 $task_id = $last_recurring_task_id;
-                            }else{
+                            } else {
                                 $task_id = $task['id'];
                             }
-                            $CI->db->where('id', $task_id);
-                            $CI->db->update(db_prefix() . 'tasks', [
-                                'last_recurring_date' => $re_create_at,
-                            ]);
+                            $copy_task_data['copy_task_followers']       = 'true';
+                            $copy_task_data['copy_task_checklist_items'] = 'true';
+                            $copy_task_data['copy_from']                 = $task_id;
 
-                            $CI->db->where('id', $task_id);
-                            $CI->db->set('total_cycles', 'total_cycles+1', false);
-                            $CI->db->update(db_prefix() . 'tasks');
+                            $overwrite_params = [
+                                'startdate'           => $re_create_at,
+                                'status'              => ASSIGN_STATUS,
+                                'recurring_type'      => null,
+                                'repeat_every'        => 0,
+                                'cycles'              => 0,
+                                'recurring'           => 0,
+                                'custom_recurring'    => 0,
+                                'last_recurring_date' => null,
+                                'is_recurring_from'   => $task_id,
+                            ];
 
-                            $CI->db->where('taskid', $task_id);
-                            $assigned = $CI->db->get(db_prefix() . 'task_assigned')->result_array();
-                            foreach ($assigned as $assignee) {
-                                $assigneeId = $CI->tasks_model->add_task_assignees([
-                                    'taskid'   => $newTaskID,
-                                    'assignee' => $assignee['staffid'],
-                                ], true);
+                            if (!empty($task['duedate'])) {
+                                $dStart                      = new DateTime($task['startdate']);
+                                $dEnd                        = new DateTime($task['duedate']);
+                                $dDiff                       = $dStart->diff($dEnd);
+                                $overwrite_params['duedate'] = date('Y-m-d', strtotime('+' . $dDiff->days . ' days', strtotime($re_create_at)));
+                            }
+                            $newTaskID = $CI->tasks_model->copy($copy_task_data, $overwrite_params);
 
-                                if ($assigneeId) {
-                                    $CI->db->where('id', $assigneeId);
-                                    $CI->db->update(db_prefix() . 'task_assigned', ['assigned_from' => $task['addedfrom']]);
+                            if ($newTaskID) {
+                                $task_id = $task['id'];
+                                if (isset($last_recurring_task_id) && $last_recurring_task_id != '') {
+                                    $task_id = $last_recurring_task_id;
+                                } else {
+                                    $task_id = $task['id'];
+                                }
+                                $CI->db->where('id', $task_id);
+                                $CI->db->update(db_prefix() . 'tasks', [
+                                    'last_recurring_date' => $re_create_at,
+                                ]);
+
+                                $CI->db->where('id', $task_id);
+                                $CI->db->set('total_cycles', 'total_cycles+1', false);
+                                $CI->db->update(db_prefix() . 'tasks');
+
+                                $CI->db->where('taskid', $task_id);
+                                $assigned = $CI->db->get(db_prefix() . 'task_assigned')->result_array();
+                                foreach ($assigned as $assignee) {
+                                    $assigneeId = $CI->tasks_model->add_task_assignees([
+                                        'taskid'   => $newTaskID,
+                                        'assignee' => $assignee['staffid'],
+                                    ], true);
+
+                                    if ($assigneeId) {
+                                        $CI->db->where('id', $assigneeId);
+                                        $CI->db->update(db_prefix() . 'task_assigned', ['assigned_from' => $task['addedfrom']]);
+                                    }
                                 }
                             }
                         }
-
                     }
-
                 }
+            }
 
+            if ($status == ASSIGN_STATUS) {
+                $CI->db->where('relid', $task_id);
+                $CI->db->where('fieldid', WORK_PLANNED);
+                $CI->db->where('fieldto', 'tasks');
+                $CI->db->delete(db_prefix() . 'customfieldsvalues');
             }
         }
-        
-        if($status == ASSIGN_STATUS){
-            $CI->db->where('relid', $task_id);
-            $CI->db->where('fieldid', WORK_PLANNED);
-            $CI->db->where('fieldto', 'tasks');
-            $CI->db->delete(db_prefix() . 'customfieldsvalues');
-            
-        }
     }
-}
 
 
-   public function project_mark_as($status, $project_id)
+    public function project_mark_as($status, $project_id)
     {
         $CI = &get_instance();
         $CI->db->where('id', $project_id);
@@ -420,7 +417,7 @@ class Task_customize extends AdminController
 
         //- remove and apply space in value
         $value = str_replace('-', ' ', $value);
-        
+
         // Check if custom field value exists
         $CI->db->where('relid', $project_id);
         $CI->db->where('fieldid', $custom_field_id);
@@ -444,7 +441,7 @@ class Task_customize extends AdminController
                 'value' => $value
             ]);
         }
-        
+
         // Get custom field details
         $CI->db->where('id', $custom_field_id);
         $CI->db->where('fieldto', 'projects');
@@ -470,7 +467,7 @@ class Task_customize extends AdminController
         $CI = &get_instance();
         $value = $CI->input->post('value');
         $value = implode(',', $value);
-    
+
         // Check if custom field value exists
         $CI->db->where('relid', $project_id);
         $CI->db->where('fieldid', $custom_field_id);
@@ -494,7 +491,7 @@ class Task_customize extends AdminController
                 'value' => $value
             ]);
         }
-        
+
         // Get custom field details
         $CI->db->where('id', $custom_field_id);
         $CI->db->where('fieldto', 'projects');
@@ -514,27 +511,30 @@ class Task_customize extends AdminController
 
         echo json_encode(array('success' => true, 'message' => 'Project custom field updated successfully'));
     }
-    
-       public function project_custom_fields(){
+
+    public function project_custom_fields()
+    {
         $service = $this->input->get('service');
         $data['service'] = $service;
         $this->load->view('project_custom_fields', $data);
     }
-    
-     public function project_type(){
+
+    public function project_type()
+    {
         $type = $this->input->get('type');
         $data['type'] = $type;
         $data['table'] = App_table::find('projects');
         $this->load->view('project_type', $data);
     }
-    
-       public function add_project_comments(){
+
+    public function add_project_comments()
+    {
         $post_data = $this->input->post();
         $CI = &get_instance();
-        if(!empty($post_data)){
+        if (!empty($post_data)) {
 
             $data['content'] = html_purify($this->input->post('comment', false));
-            if($data['content'] == ''){
+            if ($data['content'] == '') {
                 echo json_encode(array('status' => false, 'message' => "Comment Not Added"));
                 return;
             }
@@ -542,7 +542,7 @@ class Task_customize extends AdminController
             $data['staffid'] = get_staff_user_id();
             $data['contact_id'] = 0;
             $data['dateadded'] = date('Y-m-d H:i:s');
-           
+
 
             //insert in tblprojects_notes
             $CI->db->insert(db_prefix() . 'projects_notes_custome', [
@@ -553,19 +553,18 @@ class Task_customize extends AdminController
                 'dateadded' => $data['dateadded']
             ]);
             $insert_id = $CI->db->insert_id();
-            if($insert_id){
+            if ($insert_id) {
                 echo json_encode(array('status' => true, 'message' => "Comment Added Successfully"));
-            }else{
+            } else {
                 echo json_encode(array('status' => false, 'message' => "Comment Not Added"));
             }
-
-        }else{
+        } else {
             echo json_encode(array('status' => false, 'message' => "Comment Not Added"));
         }
     }
-    
-    
-     //get_project_comments function
+
+
+    //get_project_comments function
     // public function get_project_comments()
     // {
     //     $project_id = $this->input->post('project_id');
@@ -580,7 +579,7 @@ class Task_customize extends AdminController
     //         //mke query for project comments
     //         $project = $this->db->query('SELECT * FROM ' . db_prefix() . 'projects_notes_custome WHERE project_id = ' . $project_id . ' ORDER BY id DESC')->result_array();
     //         $comments_html = '';
-           
+
     //         if (!empty($project)) {
     //             $comments = $project;
     //             $len                        = count($project);
@@ -590,7 +589,7 @@ class Task_customize extends AdminController
     //                 $comments_html .= '<div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">';
     //             }
     //             $comments = '';
-            
+
 
     //             foreach ($project as $comment) {   
     //                 $comments .= '<div id="comment_' . $comment['id'] . '" data-commentid="' . $comment['id'] . '" class="tc-content tw-group/comment project-comment' . (strtotime($comment['dateadded']) >= strtotime('-16 hours') ? ' highlight-bg' : '') . '" style="background: aliceblue;padding: 8px;margin: 10px;">';
@@ -603,7 +602,7 @@ class Task_customize extends AdminController
     //                 } elseif ($comment['contact_id'] != 0) {
     //                     $comments .= '<img src="' . e(contact_profile_image_url($comment['contact_id'])) . '" class="client-profile-image-small media-object img-circle pull-left mright10">';
     //                 }
-               
+
 
     //                 $comments .= '<div class="media-body comment-wrapper">';
     //                 $comments .= '<div class="mleft40">';
@@ -619,7 +618,7 @@ class Task_customize extends AdminController
     //               <button type="button" class="btn btn-primary pull-right" onclick="save_edited_comment(' . $comment['id'] . ',' . $project->id . ')">' . _l('submit') . '</button>
     //               <button type="button" class="btn btn-default pull-right mright5" onclick="cancel_edit_comment(' . $comment['id'] . ')">' . _l('cancel') . '</button>
     //               </div>';
-                   
+
     //                 $comments .= '<div class="comment-content mtop10">' . app_happy_text(check_for_links($comment['content'])) . '</div>';
     //                 $comments .= '</div>';
     //                 if ($i >= 0 && $i != $len - 1) {
@@ -629,7 +628,7 @@ class Task_customize extends AdminController
     //                 $comments .= '</div>';
     //                 $i++;
     //             }
-               
+
     //             $comments_html .= $comments;
     //             if ($len > 3) {
     //                 $comments_html .= '</div>'; // Close the scroll wrapper
@@ -651,8 +650,8 @@ class Task_customize extends AdminController
     //         echo json_encode(array('status' => false, 'message' => "Comments Not Found"));
     //     }
     // }
-    
-         //get_project_comments function
+
+    //get_project_comments function
     public function get_project_comments()
     {
         $project_id = $this->input->post('project_id');
@@ -667,7 +666,7 @@ class Task_customize extends AdminController
             //mke query for project comments
             $project = $this->db->query('SELECT * FROM ' . db_prefix() . 'projects_notes_custome WHERE project_id = ' . $project_id . ' ORDER BY id DESC')->result_array();
             $comments_html = '';
-           
+
             if (!empty($project)) {
                 $comments = $project;
                 $len                        = count($project);
@@ -677,9 +676,9 @@ class Task_customize extends AdminController
                     $comments_html .= '<div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">';
                 }
                 $comments = '';
-            
 
-                foreach ($project as $comment) {   
+
+                foreach ($project as $comment) {
                     $comments .= '<div id="comment_' . $comment['id'] . '" data-commentid="' . $comment['id'] . '" class="tc-content tw-group/comment project-comment' . (strtotime($comment['dateadded']) >= strtotime('-16 hours') ? ' highlight-bg' : '') . '" style="background: aliceblue;padding: 8px;margin: 10px;">';
                     $comments .= '<a data-project-comment-href-id="' . $comment['id'] . '" href="' . admin_url('projects/view/' . $project_id) . '#comment_' . $comment['id'] . '" class="project-date-as-comment-id"><span class="tw-text-sm"><span class="text-has-action inline-block" data-toggle="tooltip" data-title="' . e(_dt($comment['dateadded'])) . '">' . e(time_ago($comment['dateadded'])) . '</span></span></a>';
                     if ($comment['staffid'] != 0) {
@@ -690,7 +689,7 @@ class Task_customize extends AdminController
                     } elseif ($comment['contact_id'] != 0) {
                         $comments .= '<img src="' . e(contact_profile_image_url($comment['contact_id'])) . '" class="client-profile-image-small media-object img-circle pull-left mright10">';
                     }
-               
+
 
                     $comments .= '<div class="media-body comment-wrapper">';
                     $comments .= '<div class="mleft40">';
@@ -706,7 +705,7 @@ class Task_customize extends AdminController
                   <button type="button" class="btn btn-primary pull-right" onclick="save_edited_comment(' . $comment['id'] . ',' . $project_id . ')">' . _l('submit') . '</button>
                   <button type="button" class="btn btn-default pull-right mright5" onclick="cancel_edit_comment(' . $comment['id'] . ')">' . _l('cancel') . '</button>
                   </div>';
-                   
+
                     $comments .= '<div class="comment-content mtop10">' . app_happy_text(check_for_links($comment['content'])) . '</div>';
                     $comments .= '</div>';
                     if ($i >= 0 && $i != $len - 1) {
@@ -716,13 +715,13 @@ class Task_customize extends AdminController
                     $comments .= '</div>';
                     $i++;
                 }
-               
+
                 $comments_html .= $comments;
                 if ($len > 3) {
                     $comments_html .= '</div>'; // Close the scroll wrapper
                 }
                 $comments_html .= '</div>';
-            }else{
+            } else {
                 $comments_html = '<div id="project-comments" class="mtop10">';
                 $comments_html .= '<div class="tc-content tw-group/comment project-comment">';
                 $comments_html .= '<div class="media-body comment-wrapper">';
@@ -738,37 +737,41 @@ class Task_customize extends AdminController
             echo json_encode(array('status' => false, 'message' => "Comments Not Found"));
         }
     }
-    
-     public function update_is_poked(){
+
+    public function update_is_poked()
+    {
         $task_id = $this->input->post('task_id');
         $is_poked = $this->input->post('is_poked');
-       
+
         $CI = &get_instance();
         $CI->db->where('id', $task_id);
         $CI->db->update(db_prefix() . 'tasks', ['is_poked' => $is_poked]);
     }
-    
-    
-     // get_project_details
-    public function get_project_details($project_id){
+
+
+    // get_project_details
+    public function get_project_details($project_id)
+    {
         $CI = &get_instance();
         $project = $CI->db->where('id', $project_id)->get(db_prefix() . 'projects')->row();
         echo json_encode($project);
     }
 
-    public function get_customer_details($customer_id){
+    public function get_customer_details($customer_id)
+    {
         $CI = &get_instance();
         $customer = $CI->db->where('userid', $customer_id)->get(db_prefix() . 'clients')->row();
         echo json_encode($customer);
     }
 
-    public function get_contract_details($contract_id){
+    public function get_contract_details($contract_id)
+    {
         $CI = &get_instance();
         $contract = $CI->db->where('id', $contract_id)->get(db_prefix() . 'contracts')->row();
         echo json_encode($contract);
     }
-    
-    
+
+
     public function project_change_custom_notes_field_value($project_id, $custom_field_id)
     {
         $CI = &get_instance();
@@ -800,7 +803,7 @@ class Task_customize extends AdminController
                 'value' => $value
             ]);
         }
-        
+
         // Get custom field details
         $CI->db->where('id', $custom_field_id);
         $CI->db->where('fieldto', 'projects');
@@ -820,9 +823,9 @@ class Task_customize extends AdminController
 
         echo json_encode(array('success' => true, 'message' => 'Project custom field updated successfully'));
     }
-    
-    
-       public function toggle_project_timer()
+
+
+    public function toggle_project_timer()
     {
         $project_id = $this->input->post('project_id');
 
@@ -849,16 +852,16 @@ class Task_customize extends AdminController
         }
         echo json_encode(['message' => $message, 'status' => $status]);
     }
-    
-    
-    
+
+
+
     //view_active_days
     public function view_active_days()
     {
         $project_id = $this->input->post('project_id');
         $CI = &get_instance();
         $project = $CI->db->where('project_id', $project_id)->get(db_prefix() . 'project_timer')->result_array();
-      
+
         $table_data = '';
         foreach ($project as $timer) {
             $table_data .= '<tr>';
@@ -873,7 +876,7 @@ class Task_customize extends AdminController
         $response = [
             'table_data' => $table_data,
             'day_count' => get_active_days($project_id),
-             'status' => true
+            'status' => true
         ];
         echo json_encode($response);
     }
@@ -890,7 +893,7 @@ class Task_customize extends AdminController
         $project_id = $this->input->post('project_id');
 
         //check start time not small that pause time
-        if($start_time > $pause_time){
+        if ($start_time > $pause_time) {
             echo json_encode(array('success' => false, 'message' => 'Start time should be less than pause time'));
             return;
         }
@@ -900,19 +903,19 @@ class Task_customize extends AdminController
         $CI->db->where('start_time <', $pause_time);
         $CI->db->where('pause_time >', $start_time);
         $exists = $CI->db->get(db_prefix() . 'project_timer')->row();
-        if($exists){
+        if ($exists) {
             echo json_encode(array('success' => false, 'message' => 'Time slot already exists'));
             return;
         }
 
 
-        if($timer_id > 0){
+        if ($timer_id > 0) {
             $CI->db->where('id', $timer_id);
             $CI->db->update(db_prefix() . 'project_timer', [
                 'start_time' => $start_time,
                 'pause_time' => $pause_time
             ]);
-        } else{
+        } else {
             $CI->db->insert(db_prefix() . 'project_timer', [
                 'project_id' => $project_id,
                 'start_time' => $start_time,
@@ -930,7 +933,7 @@ class Task_customize extends AdminController
         $timer_id = $this->input->post('timer_id');
         $CI->db->where('id', $timer_id);
         $timer = $CI->db->get(db_prefix() . 'project_timer')->row();
-        if($timer){
+        if ($timer) {
             $date = DateTime::createFromFormat('Y-m-d H:i:s', $timer->start_time);
             $start_time = $date->format('m-d-Y h:i A');
             $date = DateTime::createFromFormat('Y-m-d H:i:s', $timer->pause_time);
@@ -959,7 +962,7 @@ class Task_customize extends AdminController
         $CI->db->delete(db_prefix() . 'project_timer');
         echo json_encode(array('status' => true, 'message' => 'Project timer deleted successfully'));
     }
-    
+
     public function contract_bulk_action()
     {
         $CI = &get_instance();
@@ -1046,12 +1049,12 @@ class Task_customize extends AdminController
             'message' => $message
         ]);
     }
-    
+
     public function get_relation_data()
     {
         $CI = &get_instance();
         $CI->load->model('misc_custom_model');
-        
+
         if ($this->input->post()) {
             $type = $this->input->post('type');
             $customer_id = $this->input->post('customer_id');
@@ -1067,7 +1070,7 @@ class Task_customize extends AdminController
             die;
         }
     }
-    
+
     public function update_vault_field()
     {
         $id = $this->input->post('id');
@@ -1093,7 +1096,7 @@ class Task_customize extends AdminController
             echo json_encode(['success' => false]);
         }
     }
-    
+
     public function update_project_resource_field()
     {
         $project_id  = $this->input->post('project_id');
@@ -1124,7 +1127,7 @@ class Task_customize extends AdminController
             echo json_encode(['status' => true]);
         }
     }
-    
+
     public function copy_vault_password($id)
     {
         if (!has_permission('vault', '', 'view')) {
@@ -1144,8 +1147,8 @@ class Task_customize extends AdminController
             'password' => $password
         ]);
     }
-    
-    
+
+
     public function staff_bulk_action()
     {
         $res['status'] = 0;
@@ -1253,7 +1256,7 @@ class Task_customize extends AdminController
         echo json_encode($res);
         exit;
     }
-    
+
     public function project_tab_task_process()
     {
 
@@ -1313,7 +1316,6 @@ class Task_customize extends AdminController
                                     if ($process_current_order < $group_task->task_order) {
                                         $process_current_order = $group_task->task_order;
                                     }
-
                                 }
 
                                 $task_group_data[$group_id]['task_data'][$group_task->task_order][] = $group_task;
@@ -1325,7 +1327,7 @@ class Task_customize extends AdminController
 
                 $data['task_group_data'] = $task_group_data;
             }
-           
+
             $diagram_content = $this->load->view('task_manage/v_project_view_task', $data, true);
             echo json_encode(["content" => $diagram_content]);
         }
@@ -1381,7 +1383,7 @@ class Task_customize extends AdminController
                     $html = $this->load->view(
                         'task_customize/project_vault_entries',
                         $data,
-                        true// return as string
+                        true // return as string
                     );
 
                     echo json_encode([
@@ -1399,7 +1401,7 @@ class Task_customize extends AdminController
             die;
         }
     }
-    
+
     public function customer_tasks_bulk_action()
     {
         $res['status'] = 0;
@@ -1450,7 +1452,6 @@ class Task_customize extends AdminController
                             }
                         }
                     }
-
                 }
                 $res['status'] = 1;
                 $res['msg']    = 'Bulk Action Completed Successfully';
@@ -1458,8 +1459,9 @@ class Task_customize extends AdminController
         }
         echo json_encode($res);
     }
-    
-    public function show_vault(){
+
+    public function show_vault()
+    {
         $this->load->view('vault');
     }
 
@@ -1469,7 +1471,7 @@ class Task_customize extends AdminController
             $this->app->get_table_data(module_views_path('task_customize', 'tables/vault_table'));
         }
     }
-    
+
     public function update_billable_status()
     {
         if (!$this->input->is_ajax_request()) {
@@ -1498,16 +1500,16 @@ class Task_customize extends AdminController
         }
 
         $this->db->where('id', $task_id);
-        $updated = $this->db->update(db_prefix().'tasks', [
+        $updated = $this->db->update(db_prefix() . 'tasks', [
             'billable' => $billable
         ]);
 
         echo json_encode([
             'success' => $updated ? true : false
         ]);
-   }
-   
-   
+    }
+
+
     public function update_customer_management()
     {
         $client_id = $this->input->post('client_id');
@@ -1533,17 +1535,4 @@ class Task_customize extends AdminController
 
         redirect(admin_url('clients/client/' . $client_id . '?group=customer_management'));
     }
-    
-    
 }
-
-
-
-
-
-
-
-
-
-
-
