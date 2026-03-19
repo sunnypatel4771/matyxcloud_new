@@ -45,6 +45,17 @@ $status_filter = $this->ci->input->post('status_filter');
 if ($status_filter != '') {
     $where[] = 'AND ' . db_prefix() . 'staff.active = ' . $status_filter;
 }
+
+$cus_roles_filter = $this->ci->input->post('cus_roles_filter');
+// if ($cus_roles_filter != '') {
+//     $where[] = 'AND ctable_0.value = "' . $cus_roles_filter . '"';
+// }
+
+if ($cus_roles_filter != '') {
+    $this->ci->db->escape_like_str($cus_roles_filter);
+    $where[] = 'AND ctable_0.value LIKE "%' . $cus_roles_filter . '%"';
+}
+
 $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
     'profile_image',
     'lastname',

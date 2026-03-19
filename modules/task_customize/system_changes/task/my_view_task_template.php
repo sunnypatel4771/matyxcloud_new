@@ -801,6 +801,41 @@ $task_custom_field_id = isset($task_custom_field['id']) ? $task_custom_field['id
                 ?>
             </div>
         </div>
+        <hr />
+        <?php
+        $CI->db->select('tbltask_log.*, CONCAT(tblstaff.firstname, " ", tblstaff.lastname) as staff_name');
+        $CI->db->from(db_prefix() . 'task_log');
+        $CI->db->join(db_prefix() . 'staff', db_prefix() . 'staff.staffid = ' . db_prefix() . 'task_log.staff_id', 'left');
+        $CI->db->where('task_id', $task->id);
+        $CI->db->order_by('date', 'DESC');
+        $task_activity_logs = $CI->db->get()->result_array();
+        ?>
+        <a href="#" id="taskActivitySlide" onclick="slideToggle('.tasks-activity'); return false;">
+            <h4 class="mbot20 tw-font-semibold tw-text-base">
+                Task Activity
+            </h4>
+        </a>
+        <div class="tasks-activity inline-block full-width" <?= count($task_activity_logs) == 0 ? ' style="display:none"' : ''; ?>>
+            <div id="task-activity" class="mtop10">
+                <?php
+                if (count($task_activity_logs) > 0) {
+                    foreach ($task_activity_logs as $log) {
+                        echo '<div class="tc-content task-activity-item' . (strtotime($log['date']) >= strtotime('-16 hours') ? '' : '') . '">';
+                        echo '<span class="tw-text-sm text-muted">';
+                        echo '<span class="text-has-action inline-block" data-toggle="tooltip" data-title="' . e(_dt($log['date'])) . '">';
+                        echo e(time_ago($log['date']));
+                        echo '</span>:</span><br />';
+                        echo '<span class="tw-font-medium">' . e($log['staff_name']) . '</span> - ';
+                        echo '<span>' . e($log['description']) . '</span>';
+                        echo '</div>';
+                        echo '<hr class="task-info-separator" />';
+                    }
+                } else {
+                    echo '<p class="text-muted">No activity logged for this task yet.</p>';
+                }
+                ?>
+            </div>
+        </div>
     </div>
     <div class="col-md-4 task-single-col-right">
         <div class="pull-right mbot10 task-single-menu task-menu-options">
@@ -1048,6 +1083,12 @@ $task_custom_field_id = isset($task_custom_field['id']) ? $task_custom_field['id
                             <b>(<?= $task->billed == 1 ? _l('task_billed_yes') : _l('task_billed_no') ?>)</b>
                         <?php } ?>
                     </span>
+                    
+                    <span class="tw-text-neutral-800">
+                        <?php $task_billable = $task->billable; ?>
+                        <input type="checkbox" id="task_is_billable" data-task-id="<?php echo $task->id; ?>" <?php echo $task_billable == 1 ? 'checked' : ''; ?>>
+                    </span>
+                    
                 </h5>
                 <?php if ($task->rel_type == 'project' && $task->project_data->billing_type == 1) { ?>
                     <br />
@@ -1091,6 +1132,14 @@ $task_custom_field_id = isset($task_custom_field['id']) ? $task_custom_field['id
                 </h5>
             </div>
         <?php } ?>
+        <div class="task-info task-info-completed-time">
+            <h5 class="tw-inline-flex tw-items-center tw-space-x-1.5">
+                <i class="fa-regular fa-calendar fa-fw fa-lg task-info-icon"></i><?= _l('completed_time'); ?>
+                <span class="tw-text-neutral-800">
+                    <?php echo get_task_latest_completed_time($task->id); ?>
+                </span>
+            </h5>
+        </div>
         <?php foreach (get_custom_fields('tasks') as $field) { ?>
             <?php $value = get_custom_field_value($task->id, $field['id'], 'tasks');
             if ($value == '') {
@@ -1178,6 +1227,58 @@ $task_custom_field_id = isset($task_custom_field['id']) ? $task_custom_field['id
             </h5>
 
         </div>
+        
+        <div class="task-info task-single-inline-wrap">
+            <h5 class="tw-inline-flex tw-items-center tw-space-x-1.5">
+                <i class="fa-regular fa-circle fa-fw fa-lg task-info-icon"></i>
+                Did you Follow SOP? :
+                <span class="tw-text-neutral-800">
+                    <?php 
+                    echo isset($task->follow_sop) ? ($task->follow_sop == 1 ? 'Yes' : 'No') : 'N/A';
+                    ?>
+                </span>
+            </h5>
+        </div>
+
+        <?php 
+        if (isset($task->follow_sop) && $task->follow_sop == 1) { ?>
+            <div class="task-info task-single-inline-wrap">
+                <h5 class="tw-inline-flex tw-items-center tw-space-x-1.5">
+                    <i class="fa-regular fa-circle fa-fw fa-lg task-info-icon"></i>
+                    Link To Contact/Opp in GHL :
+                    <span class="tw-text-neutral-800">
+                        <?php 
+                        echo isset($task->link_to_contact_opp_in_ghl) ? $task->link_to_contact_opp_in_ghl : 'N/A';
+                        ?>
+                    </span>
+                </h5>
+            </div>
+
+            <div class="task-info task-single-inline-wrap">
+                <h5 class="tw-inline-flex tw-items-center tw-space-x-1.5">
+                    <i class="fa-regular fa-circle fa-fw fa-lg task-info-icon"></i>
+                    Date Contact Entered in GHL :
+                    <span class="tw-text-neutral-800">
+                        <?php 
+                        echo isset($task->date_contact_entered_in_ghl) ? $task->date_contact_entered_in_ghl : 'N/A';
+                        ?>
+                    </span>
+                </h5>
+            </div>
+
+            <div class="task-info task-single-inline-wrap">
+                <h5 class="tw-inline-flex tw-items-center tw-space-x-1.5">
+                    <i class="fa-regular fa-circle fa-fw fa-lg task-info-icon"></i>
+                    Screenshot and/or Loom URL :
+                    <span class="tw-text-neutral-800">
+                        <?php 
+                        echo isset($task->screenshot_or_loom_url) ? $task->screenshot_or_loom_url : 'N/A';
+                        ?>
+                    </span>
+                </h5>
+            </div>
+        <?php }
+        ?>
 
         <?php if (staff_can('create', 'tasks') || staff_can('edit', 'tasks')) { ?>
             <div id="inputTagsWrapper" class="taskSingleTasks task-info-tags-edit tw-ml-0.5 tw-mt-2">
@@ -1645,6 +1746,39 @@ $task_custom_field_id = isset($task_custom_field['id']) ? $task_custom_field['id
                     reload_tasks_tables();
                 }
             });
+        });
+        
+        
+        $(document).off('change', '#task_is_billable');
+
+        $(document).on('change', '#task_is_billable', function () {
+
+            var task_id = $(this).data('task-id');
+            var billable = $(this).is(':checked') ? 1 : 0;
+
+            $.ajax({
+                url: admin_url + 'task_customize/update_billable_status',
+                type: 'POST',
+                data: {
+                    task_id: task_id,
+                    billable: billable
+                },
+                success: function (response) {
+
+                    response = JSON.parse(response);
+
+                    if (response.success) {
+                        alert_float('success', 'Billable status updated successfully');
+                    } else {
+                        alert_float('danger', 'Something went wrong');
+                    }
+
+                },
+                error: function () {
+                    alert_float('danger', 'Ajax request failed');
+                }
+            });
+
         });
 
 

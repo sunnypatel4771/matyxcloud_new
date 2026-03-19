@@ -20,14 +20,42 @@
                         <i class="fa-regular fa-user tw-mr-1"></i>
                         <?php echo _l('customer_contacts'); ?>
                     </a>
+                    <a href="<?php echo admin_url('wiki/articles/show/181'); ?>" 
+                    target="_blank" 
+                    class="ml-2" style="margin-left: 5px;">
+                    <img src="<?php echo base_url('assets/images/help-icon-1.png'); ?>" 
+                            width="30" 
+                            height="30" 
+                            alt="Help">
+                    </a>
                     <div class="visible-xs">
                         <div class="clearfix"></div>
                     </div>
                     <div id="vueApp" class="tw-inline pull-right tw-ml-0 sm:tw-ml-1.5">
+                        <?php
+
+                        $filter_array = $table->filters();
+
+                        // Make sure it is array
+                        if (!is_array($filter_array)) {
+                            $filter_array = [];
+                        }
+
+                        // Sort only clients
+                        if ($table->id() === 'clients') {
+                            usort($filter_array, function($a, $b) {
+                                return strcasecmp($a['name'], $b['name']);
+                            });
+                        }
+
+                        // Convert back to JS format properly
+                        $sorted_filter_data = \app\services\utilities\Js::from($filter_array);
+
+                        ?>
                         <app-filters
                             id="<?php echo $table->id(); ?>"
                             view="<?php echo $table->viewName(); ?>"
-                            :saved-filters="<?php echo $table->filtersJs(); ?>"
+                            :saved-filters="<?php echo $sorted_filter_data; ?>"
                             :available-rules="<?php echo $table->rulesJs(); ?>">
                         </app-filters>
                     </div>

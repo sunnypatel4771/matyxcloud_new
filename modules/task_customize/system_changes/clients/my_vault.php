@@ -597,6 +597,36 @@
             });
 
         });
+        
+        $(function () {
+
+            var $modal = $('#entryModal');
+            var $form  = $modal.find('form');
+
+            // When modal is fully hidden
+            $modal.on('hidden.bs.modal', function () {
+
+                // 1. Reset native form fields
+                if ($form.length) {
+                    $form[0].reset();
+                }
+
+                // 2. Clear validation errors (Perfex uses jquery validation)
+                if ($form.data('validator')) {
+                    $form.validate().resetForm();
+                }
+
+                // 3. Remove error classes added by Perfex
+                $form.find('.has-error').removeClass('has-error');
+                $form.find('.text-danger').remove();
+
+                // 4. IMPORTANT: reset Perfex dirty-form tracking
+                $form.trigger('change');
+                window.onbeforeunload = null;
+
+            });
+
+        });
 
     </script>
 <?php }?>

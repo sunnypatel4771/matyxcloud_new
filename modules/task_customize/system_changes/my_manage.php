@@ -23,6 +23,14 @@
                     <i class="fa-solid fa-grip-vertical"></i>
                     <?php }; ?>
                 </a>
+                <a href="<?php echo admin_url('wiki/articles/show/187'); ?>" 
+                target="_blank" 
+                class="ml-2" style="margin-left: 5px;">
+                <img src="<?php echo base_url('assets/images/help-icon-1.png'); ?>" 
+                        width="30" 
+                        height="30" 
+                        alt="Help">
+                </a>
             </div>
             <div class="col-md-4">
                 <?php if ($this->session->has_userdata('tasks_kanban_view') && $this->session->userdata('tasks_kanban_view') == 'true') { ?>

@@ -17,6 +17,10 @@
                         $CI->load->model('departments_model');
                         $roles = $CI->roles_model->get();
                         $departments = $CI->departments_model->get();
+                        $cus_roles = get_custom_fields('staff');
+                        if (!empty($cus_roles) && isset($cus_roles[0]['options']) && !empty($cus_roles[0]['options'])) {
+                            $cus_roles = explode(',', $cus_roles[0]['options']);
+                        }
                         ?>
 
 
@@ -44,6 +48,15 @@
                                     <option value="0">In Active</option>
                                 </select>
                             </div>
+                            
+                            <div style="width: 15%; display: inline-block; margin-left: 10px; margin-bottom: 15px;">
+                                <select name="cus_roles_filter" id="cus_roles_filter" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('custom_roles'); ?>">
+                                    <option value="">Select Role(s)</option>
+                                    <?php foreach ($cus_roles as $role) { ?>
+                                        <option value="<?php echo $role; ?>"><?php echo $role; ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
                             <!-- filter dropdowns  -->
 
                             <a href="#" data-toggle="modal" data-target="#staff_bulk_action" class="bulk-actions-btn table-btn hide" data-table=".table-staff">
@@ -65,9 +78,63 @@
 
                                             <div class="row">
                                                 <!-- for selecting role -->
+                                                <?php
+                                                // $staff_roles = [
+                                                //     ['1' => 'Standard Worker'],
+                                                //     ['1' => 'CAM Director'],
+                                                //     ['1' => 'Paid Ads Director'],
+                                                //     ['1' => 'SEO Director'],
+                                                //     ['1' => 'Content Director'],
+                                                //     ['1' => 'Content Manager'],
+                                                //     ['1' => 'Web Director'],
+                                                //     ['1' => 'Web Development Manager'],
+                                                //     ['1' => 'Web Support Manager'],
+
+                                                // ];
+
+
+                                                $CI = &get_instance();
+                                                $CI->load->model('custom_fields_model');
+                                                $staff_roles = $CI->custom_fields_model->get(STAFF_ROLES);
+                                                $staff_roles_option = [];
+                                                if (isset($staff_roles->options) && $staff_roles->options != '') {
+                                                    $staff_roles_option = explode(',', $staff_roles->options);
+                                                }
+
+                                                ?>
+                                                <!-- <div class="col-md-12" style="width: 100%;">
+                                                    <select name="role" id="role" class="selectpicker" style="width: 100%;">
+                                                        <option value=""></option>
+                                                        <?php
+                                                        foreach ($staff_roles_option as $key => $value) { ?>
+                                                            <option value="<?php echo $value; ?>"><?php echo $value; ?></option>
+                                                        <?php }
+                                                        ?>
+                                                    </select>
+                                                </div> -->
+
                                                 <div class="col-md-12">
-                                                    <?php echo render_select('role', $roles, ['roleid', 'name'], 'role'); ?>
+                                                    <div class="form-group">
+                                                        <label for="role"><?php echo _l('role'); ?>(s)</label>
+
+                                                        <select name="role"
+                                                            id="role"
+                                                            class="selectpicker"
+                                                            data-width="100%"
+                                                            data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" multiple>
+
+                                                            <option value=""></option>
+
+                                                            <?php foreach ($staff_roles_option as $value) { ?>
+                                                                <option value="<?php echo $value; ?>">
+                                                                    <?php echo $value; ?>
+                                                                </option>
+                                                            <?php } ?>
+
+                                                        </select>
+                                                    </div>
                                                 </div>
+
 
                                                 <!-- for selecting department -->
                                                 <div class="col-md-12">
@@ -78,8 +145,8 @@
                                                 <div class="col-md-12">
                                                     <?php
                                                     $status = [
-                                                        ['id' => 1, 'name' => _l('active')],
-                                                        ['id' => 0, 'name' => _l('inactive')],
+                                                        ['id' => 'active', 'name' => _l('active')],
+                                                        ['id' => 'inactive', 'name' => _l('inactive')],
                                                     ];
                                                     echo render_select('status', $status, ['id', 'name'], 'Status');
                                                     ?>
@@ -163,10 +230,20 @@
             var staff_table = $(".table-staff");
             dt_custom_view(val, staff_table);
         });
+        
+        // cus_roles_filter
+        $(document).on("change", "#cus_roles_filter", function() {
+            var val = $(this).val();
+            var staff_table = $(".table-staff");
+            dt_custom_view(val, staff_table);
+        });
+        
+        
 
         var staffServerParams = {
             role_filter: "[name='role_filter']",
             status_filter: "[name='status_filter']",
+            cus_roles_filter: "[name='cus_roles_filter']",
         };
 
         // $(function() {
@@ -226,6 +303,8 @@
                         $('select[name="department"]').val('').selectpicker('refresh');
                         $('select[name="status"]').val('').selectpicker('refresh');
                         alert_float('success', data.msg);
+                        $('.table-staff').DataTable().ajax.reload(null, false);
+
                     }
                 });
 

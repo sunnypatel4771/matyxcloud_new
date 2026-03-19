@@ -17,6 +17,14 @@
                             data-title="<?php echo _l('project_gant'); ?>" class="btn btn-default btn-with-tooltip">
                             <i class="fa fa-align-left" aria-hidden="true"></i>
                         </a>
+                        <a href="<?php echo admin_url('wiki/articles/show/174'); ?>" 
+                        target="_blank" 
+                        class="ml-2" style="margin-left: 5px;">
+                        <img src="<?php echo base_url('assets/images/help-icon-1.png'); ?>" 
+                                width="30" 
+                                height="30" 
+                                alt="Help">
+                        </a>
                         <div class="tw-inline pull-right">
                             <app-filters
                                 id="<?php echo $table->id(); ?>"
@@ -183,6 +191,14 @@
             }
         });
     }
+    
+    $(document).on("change", ".cam_meeting_date", function() {
+        var project_id = $(this).data("project_id");
+        var value = $(this).val();
+        // var custom_field_id = 51;
+        var custom_field_id = 93;
+        project_change_custom_notes_field_value(project_id, custom_field_id, value);
+    });
 </script>
 </body>
 

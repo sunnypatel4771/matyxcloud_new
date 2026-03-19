@@ -92,6 +92,7 @@
                                     <i class="fa fa-comment"></i>
                                 </a>
                                 
+                                <?php if (staff_can('edit', 'projects')) { ?>
                                 <div class="tw-ml-2 play_pause_section">
                                     <?php if ($project->status != '4' && $project->status != '5') {
                                         $this->db->where('project_id', $project->id);
@@ -111,6 +112,7 @@
                                         }
                                     } ?>
                                 </div>
+                                <?php } ?>
                             </div>
                         </div>
                         <div class="col-md-5 text-right tw-space-x-1">
@@ -284,6 +286,46 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
+<div class="modal fade" id="project-comment-modal" tabindex="-1" role="dialog" aria-labelledby="project-comment-modal"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <?php echo form_open(admin_url('task_customize/add_project_comments'), ['id' => 'project-comment-form']); ?>
+            <div class="modal-header">
+                <h4 class="modal-title">Add Comments</h4>
+            </div>
+            <div class="modal-body">
+
+
+
+
+
+                <div class="form-group">
+                    <textarea name="comment" id="comment" class="form-control" rows="5"></textarea>
+                </div>
+                <input type="hidden" name="projectid" id="project_id_comment">
+                <!-- add section for project comment history  -->
+                <div class="project-comment-history">
+                    <div class="project-comment-history-header">
+                        <h4>Comments History</h4>
+                    </div>
+                    <div class="project-comment-history-body">
+
+                    </div>
+                </div>
+                <!-- end project comment history section  -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                    data-dismiss="modal"><?php echo _l('close'); ?></button>
+                <button type="submit" class="btn btn-info"><?php echo _l('submit'); ?></button>
+            </div>
+            <?php echo form_close(); ?>
+        </div>
+    </div>
+</div>
+
 <!-- /.modal -->
 <?php if (isset($discussion)) {
     echo form_hidden('discussion_id', $discussion->id);
@@ -303,6 +345,7 @@ echo form_hidden('project_percent', $percent);
     taskid = '<?php echo $this->input->get('taskid'); ?>';
 </script>
 <script>
+    init_editor("#comment");
     var gantt_data = {};
     <?php if (isset($gantt_data)) { ?>
         gantt_data = <?php echo json_encode($gantt_data); ?>;
@@ -554,6 +597,111 @@ function toggleProjectTimer(project_id) {
         var settings = $.extend({}, defaults, options);
         $(selector).comments(settings);
     }
+    
+    //set task id on modal open
+        $('#project-comment-modal').on('show.bs.modal', function(event) {
+
+            var project_id = <?php echo $project->id; ?>;
+
+            // //get project comments
+            $.post(admin_url + 'task_customize/get_project_comments', {
+                project_id: project_id
+            }).done(function(response) {
+                var res = JSON.parse(response);
+                if (res.status == true) {
+                    var comments = res.comments;
+                    $('.project-comment-history-body').html(comments);
+                }
+            });
+
+            $('#project_id_comment').val(project_id);
+        });
+        
+        //model hidden reset form
+        $('#project-comment-modal').on('hidden.bs.modal', function() {
+            $('#project-comment-form').trigger("reset");
+            $('#project-comment-form button[type="submit"]').prop('disabled', false);
+
+        });
+
+        //project-comment-form submit
+        // $('#project-comment-form').submit(function(event) {
+        //     console.log('submit fired');
+        //     //save button make disabled
+        //     $('#project-comment-form button[type="submit"]').prop('disabled', true);
+        //     event.preventDefault();
+        //     var form = $(this);
+        //     var url = form.attr('action');
+        //     var data = form.serialize();
+        //     $.post(url, data).done(function(success) {
+        //         var res = JSON.parse(success);
+        //         if (res.status == true) {
+        //             alert_float('success', res.message);
+        //             //reload table
+        //             $('#project-comment-modal').modal('hide');
+        //         } else {
+        //             //save button make enabled
+        //             $('#project-comment-form button[type="submit"]').prop('disabled', false);
+
+        //             alert_float('danger', res.message);
+        //         }
+        //     });
+        // });
+
+        $('.panel-collapse.in').prev('.panel-heading').find('.rotate-icon').addClass('rotate');
+
+        // Toggle icon rotation
+        $('.panel-collapse').on('show.bs.collapse', function() {
+            $(this).prev('.panel-heading').find('.rotate-icon').addClass('rotate');
+        }).on('hide.bs.collapse', function() {
+            $(this).prev('.panel-heading').find('.rotate-icon').removeClass('rotate');
+        });
+
+        // Allow clicking anywhere on header to toggle
+        $('.toggle-header').on('click', function() {
+            var target = $(this).data('target');
+            $(target).collapse('toggle');
+        });
+    // });
+
+    var project_id = "<?php echo $project->id ?? ''; ?>";
+
+    $(document).on('blur', '.panel-body input[type="text"]', function() {
+        var field_id = $(this).attr('id');
+        var field_value = $(this).val();
+
+        $.ajax({
+            url: admin_url + 'task_customize/update_project_resource_field',
+            type: "POST",
+            data: {
+                project_id: project_id,
+                field_id: field_id,
+                field_value: field_value
+            },
+            dataType: "json",
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                console.error("❌ AJAX Error:", error);
+            }
+        });
+    });
+
+    $('.search-icon').on('click', function() {
+        var inputVal = $(this).closest('.input-group').find('input').val().trim();
+
+        if (inputVal) {
+            if (!/^https?:\/\//i.test(inputVal)) {
+                inputVal = 'https://' + inputVal;
+            }
+
+            window.open(inputVal, '_blank');
+        } else {
+            alert_float('danger', 'No Url Provided!');
+        }
+    });
+
 </script>
 </body>
 

@@ -583,6 +583,10 @@
                                     $('#organic_social_id').selectpicker('refresh');
                                     $('#seo_lead_id').val(data.seo_lead_id);
                                     $('#seo_lead_id').selectpicker('refresh');
+                                    $('#content_id').val(data.content_id);
+                                    $('#content_id').selectpicker('refresh');
+                                    $('#web_lead_id').val(data.web_lead_id);
+                                    $('#web_lead_id').selectpicker('refresh');
 
                                 }
                             }

@@ -58,6 +58,66 @@ return App_table::find('projects')
             array_push($aColumns, 'ctable_' . $key . '.value as ' . $selectAs);
             array_push($join, 'LEFT JOIN ' . db_prefix() . 'customfieldsvalues as ctable_' . $key . ' ON ' . db_prefix() . 'projects.id = ctable_' . $key . '.relid AND ctable_' . $key . '.fieldto="' . $field['fieldto'] . '" AND ctable_' . $key . '.fieldid=' . $field['id']);
         }
+        
+        $custom_view_type = $this->ci->input->post('custom_view_type');
+        $filters = $this->ci->input->post('filters');
+
+        if ($custom_view_type && in_array($custom_view_type, ['website', 'landing_page'])) {
+
+            $services_included_alias = '';
+            $project_service_alias   = '';
+
+            foreach ($custom_fields as $key => $field) {
+                if ($field['slug'] === 'projects_services_included') {
+                    $services_included_alias = 'ctable_' . $key;
+                }
+                if ($field['slug'] === 'projects_service') {
+                    $project_service_alias = 'ctable_' . $key;
+                }
+            }
+
+            if ($custom_view_type === 'website' && $services_included_alias) {
+                $where[] = 'AND ' . $services_included_alias . '.value LIKE "%Website%"';
+            }
+
+            if ($custom_view_type === 'landing_page') {
+                if ($services_included_alias) {
+                    $where[] = 'AND ' . $services_included_alias . '.value LIKE "%Landing Pages%"';
+                }
+                if ($project_service_alias) {
+                    $where[] = 'AND ' . $project_service_alias . '.value = "Landing Page"';
+                }
+            }
+
+            $status_in     = [];
+            $status_not_in = [];
+
+            if (!empty($filters['rules'])) {
+                foreach ($filters['rules'] as $rule) {
+                    if ($rule['id'] === 'status') {
+                        if ($rule['operator'] === 'in') {
+                            $status_in = array_map('intval', (array) $rule['value']);
+                        }
+                        if ($rule['operator'] === 'not_in') {
+                            $status_not_in = array_map('intval', (array) $rule['value']);
+                        }
+                    }
+                }
+            }
+
+            if (!empty($status_in)) {
+                $where[] = 'AND ' . db_prefix() . 'projects.status IN (' . implode(',', $status_in) . ')';
+            }
+
+            if (!empty($status_not_in)) {
+                $status_not_in = array_diff($status_not_in, $status_in);
+                if (!empty($status_not_in)) {
+                    $where[] = 'AND ' . db_prefix() . 'projects.status NOT IN (' . implode(',', $status_not_in) . ')';
+                }
+            }
+
+            unset($_POST['filters']);
+        }
 
         $aColumns = hooks()->apply_filters('projects_table_sql_columns', $aColumns);
 
@@ -114,21 +174,25 @@ return App_table::find('projects')
             
 
             $membersOutput = '<div class="tw-flex -tw-space-x-1">';
-            $members       = explode(',', $aRow['members']);
+            
             $exportMembers = '';
-            foreach ($members as $key => $member) {
-                if ($member != '') {
-                    $members_ids = explode(',', $aRow['members_ids']);
-                    $member_id   = $members_ids[$key];
-                    $membersOutput .= '<a href="' . admin_url('profile/' . $member_id) . '">' .
-                        staff_profile_image($member_id, [
-                            'tw-inline-block tw-h-7 tw-w-7 tw-rounded-full tw-ring-2 tw-ring-white',
-                        ], 'small', [
-                            'data-toggle' => 'tooltip',
-                            'data-title'  => $member,
-                        ]) . '</a>';
-                    // For exporting
-                    $exportMembers .= $member . ', ';
+            if ($aRow['members'] != '') {
+                $members       = explode(',', $aRow['members']);
+
+                foreach ($members as $key => $member) {
+                    if ($member != '') {
+                        $members_ids = explode(',', $aRow['members_ids']);
+                        $member_id   = $members_ids[$key];
+                        $membersOutput .= '<a href="' . admin_url('profile/' . $member_id) . '">' .
+                            staff_profile_image($member_id, [
+                                'tw-inline-block tw-h-7 tw-w-7 tw-rounded-full tw-ring-2 tw-ring-white',
+                            ], 'small', [
+                                'data-toggle' => 'tooltip',
+                                'data-title'  => $member,
+                            ]) . '</a>';
+                        // For exporting
+                        $exportMembers .= $member . ', ';
+                    }
                 }
             }
 
@@ -217,7 +281,8 @@ return App_table::find('projects')
                     }
                     $outputCustomPriority .= '</ul>';
                     $outputCustomPriority .= '</div>';
-                    $row[] = $outputCustomPriority;
+                    // $row[] = $outputCustomPriority;
+                    $row[] = $outputCustomPriority . '<span class="hide">' . e($aRow[$customFieldColumn['name']]) . '</span>';
 
                 }else if ($customFieldColumn['id'] == PROJECT_PRIORITY_2 && staff_can('edit',  'projects')) {
                     $outputCustomPriority = '<div class="dropdown inline-block table-export-exclude">';
@@ -244,17 +309,18 @@ return App_table::find('projects')
                     }
                     $outputCustomPriority .= '</ul>';
                     $outputCustomPriority .= '</div>';
-                    $row[] = $outputCustomPriority;
+                    // $row[] = $outputCustomPriority;
+                    $row[] = $outputCustomPriority . '<span class="hide">' . e($aRow[$customFieldColumn['name']]) . '</span>';
                 }else if ($customFieldColumn['id'] == PROJECT_STATUS_NOTE && staff_can('edit',  'projects')) {
                      //make text area  when typing save in database
                     /* <textarea class="form-control status_notes" rows="3"  data-custom-field-id="' . $customFieldColumn['id'] . '" data-project-id="' . $aRow['id'] . '">' . $aRow[$customFieldColumn['name']] . '</textarea> */
-                     $row[] = '<a href="javascript:void(0);" class="project_status_note" data-custom-field-id="' . $customFieldColumn['id'] . '" data-custom-field-value="' . $aRow[$customFieldColumn['name']] . '" data-project-id="' . $aRow['id'] . '" ><i class="fa fa-comment"></i></a>';
+                     $row[] = '<a href="javascript:void(0);" class="project_status_note" data-custom-field-id="' . $customFieldColumn['id'] . '" data-custom-field-value="' . $aRow[$customFieldColumn['name']] . '" data-project-id="' . $aRow['id'] . '" ><i class="fa fa-comment"></i></a>' .'<span class="hide">' . e($aRow[$customFieldColumn['name']]) . '</span>';
                 }else if ($customFieldColumn['id'] == PROJECT_LAUNCH_ETA && staff_can('edit',  'projects')) {
                     $row[] = '<input name="project_launch_eta" tabindex="-1"
                             value="' . $aRow[$customFieldColumn['name']] . '"
                             id="project_launch_eta"
                             class="form-control project_launch_eta datepicker pointer tw-text-neutral-800" data-project_id="' . $aRow['id'] . '"
-                        data-field_id="" style="width: 100%;">';
+                        data-field_id="" style="width: 100%;">'. '<span class="hide">'.e($aRow[$customFieldColumn['name']]).'</span>';
                 } else if ($customFieldColumn['id'] == STOPLIGHT_REPORT && staff_can('edit',  'projects')) {
                     // for stoplight report render select picker jp
 
@@ -346,9 +412,17 @@ return App_table::find('projects')
                             </span>';
                     }
 
-                    $row[] = $outputStatus;
+                    // $row[] = $outputStatus;
+                    $row[] = $outputStatus . '<span class="hide">'.e($option_value).'</span>';
 
                     // for stoplight report render select picker 
+
+                } else if ($customFieldColumn['id'] == CAM_MEETING_DATE && staff_can('edit',  'projects')) {
+                    $row[] = '<input name="cam_meeting_date" tabindex="-1"
+                            value="' . $aRow[$customFieldColumn['name']] . '"
+                            id="cam_meeting_date"
+                            class="form-control cam_meeting_date datepicker pointer tw-text-neutral-800" data-project_id="' . $aRow['id'] . '"
+                        data-field_id="" style="width: 100%;">'. '<span class="hide">' . e($aRow[$customFieldColumn['name']]) . '</span>';
 
                 }else {
                     $row[] = (strpos($customFieldColumn['name'], 'date_picker_') !== false ? _d($aRow[$customFieldColumn['name']]) : $aRow[$customFieldColumn['name']]);
@@ -395,5 +469,102 @@ return App_table::find('projects')
                 $dbPrefix = db_prefix();
                 $sqlOperator = $sqlOperator['operator'];
                 return "({$dbPrefix}projects.id IN (SELECT project_id FROM {$dbPrefix}project_members WHERE staff_id $sqlOperator ('" . implode("','", $value) . "')))";
+            }),
+                App_table_filter::new('cam_id', 'SelectRule')
+                ->label(_l('cam_id'))
+                ->options(function ($ci) {
+                    $ci->load->model('staff_model');
+
+                    return collect($ci->staff_model->get())->map(fn($staff) => [
+                        'value' => $staff['staffid'],
+                        'label' => $staff['firstname'] . ' ' . $staff['lastname'],
+                    ]);
+                })
+                ->raw(function ($value) {
+                    return db_prefix() . 'projects.cam_id = ' . (int) $value;
+                }),
+
+        App_table_filter::new('optimizer_id', 'SelectRule')
+            ->label(_l('optimizer_id'))
+            ->options(function ($ci) {
+                $ci->load->model('staff_model');
+
+                return collect($ci->staff_model->get())->map(fn($staff) => [
+                    'value' => $staff['staffid'],
+                    'label' => $staff['firstname'] . ' ' . $staff['lastname'],
+                ]);
             })
+            ->raw(function ($value) {
+                return db_prefix() . 'projects.optimizer_id = ' . (int) $value;
+            }),
+
+        App_table_filter::new('organic_social_id', 'SelectRule')
+            ->label(_l('organic_social_id'))
+            ->options(function ($ci) {
+                $ci->load->model('staff_model');
+
+                return collect($ci->staff_model->get())->map(fn($staff) => [
+                    'value' => $staff['staffid'],
+                    'label' => $staff['firstname'] . ' ' . $staff['lastname'],
+                ]);
+            })
+            ->raw(function ($value) {
+                return db_prefix() . 'projects.organic_social_id = ' . (int) $value;
+            }),
+
+        App_table_filter::new('seo_lead_id', 'SelectRule')
+            ->label(_l('seo_lead_id'))
+            ->options(function ($ci) {
+                $ci->load->model('staff_model');
+
+                return collect($ci->staff_model->get())->map(fn($staff) => [
+                    'value' => $staff['staffid'],
+                    'label' => $staff['firstname'] . ' ' . $staff['lastname'],
+                ]);
+            })
+            ->raw(function ($value) {
+                return db_prefix() . 'projects.seo_lead_id = ' . (int) $value;
+            }),
+
+        App_table_filter::new('sale_rep_id', 'SelectRule')
+            ->label(_l('sale_rep_id'))
+            ->options(function ($ci) {
+                $ci->load->model('staff_model');
+
+                return collect($ci->staff_model->get())->map(fn($staff) => [
+                    'value' => $staff['staffid'],
+                    'label' => $staff['firstname'] . ' ' . $staff['lastname'],
+                ]);
+            })
+            ->raw(function ($value) {
+                return db_prefix() . 'projects.sale_rep_id = ' . (int) $value;
+            }),
+
+        App_table_filter::new('content_id', 'SelectRule')
+            ->label(_l('content_id'))
+            ->options(function ($ci) {
+                $ci->load->model('staff_model');
+
+                return collect($ci->staff_model->get())->map(fn($staff) => [
+                    'value' => $staff['staffid'],
+                    'label' => $staff['firstname'] . ' ' . $staff['lastname'],
+                ]);
+            })
+            ->raw(function ($value) {
+                return db_prefix() . 'projects.content_id = ' . (int) $value;
+            }),
+
+        App_table_filter::new('web_lead_id', 'SelectRule')
+            ->label(_l('web_lead_id'))
+            ->options(function ($ci) {
+                $ci->load->model('staff_model');
+
+                return collect($ci->staff_model->get())->map(fn($staff) => [
+                    'value' => $staff['staffid'],
+                    'label' => $staff['firstname'] . ' ' . $staff['lastname'],
+                ]);
+            })
+            ->raw(function ($value) {
+                return db_prefix() . 'projects.web_lead_id = ' . (int) $value;
+            }),
     ]);
