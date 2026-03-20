@@ -1,11 +1,11 @@
 <?php
 
 defined('BASEPATH') or exit('No direct script access allowed');
-$my_projects_path = APPPATH . 'views/admin/tasks/my_task.php';
-$module_my_projects_path = module_dir_path(TASK_CUSTOMIZE_MODULE_NAME) . 'system_changes/my_task.php';
-if (!file_exists($my_projects_path)) {
-  copy($module_my_projects_path, $my_projects_path);
-}
+// $my_projects_path = APPPATH . 'views/admin/tasks/my_task.php';
+// $module_my_projects_path = module_dir_path(TASK_CUSTOMIZE_MODULE_NAME) . 'system_changes/my_task.php';
+// if (!file_exists($my_projects_path)) {
+//   copy($module_my_projects_path, $my_projects_path);
+// }
 
 
 $my_projects_path = APPPATH . 'views/admin/tables/my_tasks.php';

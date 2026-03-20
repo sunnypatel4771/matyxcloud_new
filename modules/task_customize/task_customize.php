@@ -406,6 +406,52 @@ function task_customize_module_activation_hook()
     if (! file_exists($my_filters_path)) {
         copy($module_my_filters_path, $my_filters_path);
     }
+
+
+    // this is that files which is used by system but not in this module 
+
+    // application\views\admin\clients\groups\my_contracts.php
+    // modules\task_customize\system_changes\clients\my_contracts.php
+    $my_filters_path        = APPPATH . 'views/admin/clients/groups/my_contracts.php';
+    $module_my_filters_path = module_dir_path(TASK_CUSTOMIZE_MODULE_NAME) . 'system_changes/clients/my_contracts.php';
+    if (! file_exists($my_filters_path)) {
+        copy($module_my_filters_path, $my_filters_path);
+    }
+
+    // application\views\admin\clients\my_client_js.php
+    // modules\task_customize\system_changes\clients\my_client_js.php
+    $my_filters_path        = APPPATH . 'views/admin/clients/my_client_js.php';
+    $module_my_filters_path = module_dir_path(TASK_CUSTOMIZE_MODULE_NAME) . 'system_changes/clients/my_client_js.php';
+    if (! file_exists($my_filters_path)) {
+        copy($module_my_filters_path, $my_filters_path);
+    }
+
+    // application\views\admin\contracts\my_manage.php
+    // modules\task_customize\system_changes\contracts\my_manage.php
+    $my_filters_path        = APPPATH . 'views/admin/contracts/my_manage.php';
+    $module_my_filters_path = module_dir_path(TASK_CUSTOMIZE_MODULE_NAME) . 'system_changes/contracts/my_manage.php';
+    if (! file_exists($my_filters_path)) {
+        copy($module_my_filters_path, $my_filters_path);
+    }
+    
+
+    // application\views\admin\contracts\my_table_html.php
+    // modules\task_customize\system_changes\contracts\my_table_html.php
+    $my_filters_path        = APPPATH . 'views/admin/contracts/my_table_html.php';
+    $module_my_filters_path = module_dir_path(TASK_CUSTOMIZE_MODULE_NAME) . 'system_changes/contracts/my_table_html';
+    if (! file_exists($my_filters_path)) {
+        copy($module_my_filters_path, $my_filters_path);
+    }
+
+    // application\views\admin\tables\my_contracts.php
+    // modules\task_customize\system_changes\contracts\my_contracts.php
+    $my_filters_path        = APPPATH . 'views/admin/tables/my_contracts.php';
+    $module_my_filters_path = module_dir_path(TASK_CUSTOMIZE_MODULE_NAME) . 'system_changes/contracts/my_contracts';
+    if (! file_exists($my_filters_path)) {
+        copy($module_my_filters_path, $my_filters_path);
+    }
+
+    // this is that files which is used by system but not in this module 
 }
 
 
